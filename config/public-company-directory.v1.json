@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "company": {
+    "publicId": "company_zer0",
+    "displayName": "zer0"
+  },
+  "agents": [
+    {
+      "publicId": "role_captain",
+      "displayName": "Captain",
+      "roleLabel": "Company authority",
+      "order": 1
+    },
+    {
+      "publicId": "role_first_mate",
+      "displayName": "First Mate",
+      "roleLabel": "Portfolio orchestration",
+      "order": 2
+    },
+    {
+      "publicId": "role_second_mates",
+      "displayName": "Second Mates",
+      "roleLabel": "Persistent project leadership",
+      "order": 3
+    },
+    {
+      "publicId": "role_crewmates",
+      "displayName": "Crewmates",
+      "roleLabel": "Task execution",
+      "order": 4
+    },
+    {
+      "publicId": "role_verifiers",
+      "displayName": "Verifiers",
+      "roleLabel": "Independent review",
+      "order": 5
+    }
+  ],
+  "meshEntities": [
+    {
+      "publicId": "mesh_0",
+      "displayName": "0",
+      "entityType": "hermes-node",
+      "roleLabel": "Primary Hermes node",
+      "order": 1
+    },
+    {
+      "publicId": "mesh_mbp",
+      "displayName": "mbp",
+      "entityType": "compute-node",
+      "roleLabel": "Secondary compute node",
+      "order": 2
+    },
+    {
+      "publicId": "mesh_telegram_gateway",
+      "displayName": "Telegram Gateway",
+      "entityType": "transport-gateway",
+      "roleLabel": "Messaging gateway for this chat",
+      "order": 3
+    }
+  ]
+}

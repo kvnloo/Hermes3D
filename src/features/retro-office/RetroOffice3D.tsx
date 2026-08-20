@@ -231,6 +231,7 @@ import {
   computeOverviewCameraPosition,
   FollowCamController as FollowCamSystem,
   SCENE_CAMERA_FOV,
+  StreamCameraController,
 } from "@/features/retro-office/systems/cameraLighting";
 import {
   SceneAtmosphere,
@@ -5828,6 +5829,7 @@ export function RetroOffice3D({
               presetRef={cameraPresetRef}
               orbitRef={orbitRef}
             />
+            <StreamCameraController orbitRef={orbitRef} />
 
             {/* Follow cam: third-person perspective camera trailing the selected agent. */}
             <FollowCamSystem
