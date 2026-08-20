@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { RunningAvatarLoader } from "@/features/agents/components/RunningAvatarLoader";
 import { AgentStoreProvider } from "@/features/agents/state/store";
 import { OfficeScreen } from "@/features/office/screens/OfficeScreen";
+import publicCompanyDirectory from "../../../config/public-company-directory.v1.json";
+import { parseCompanyDirectoryV1 } from "@/lib/public-directory/companyDirectoryV1";
 
 const ENABLED_RE = /^(1|true|yes|on)$/i;
 
@@ -32,11 +34,15 @@ function OfficeLoadingFallback() {
 
 export default function OfficePage() {
   const showHermesConsole = readDebugFlag(process.env.DEBUG);
+  const directory = parseCompanyDirectoryV1(publicCompanyDirectory);
 
   return (
     <AgentStoreProvider>
       <Suspense fallback={<OfficeLoadingFallback />}>
-        <OfficeScreen showHermesConsole={showHermesConsole} />
+        <OfficeScreen
+          showHermesConsole={showHermesConsole}
+          publicCompanyDirectory={directory}
+        />
       </Suspense>
     </AgentStoreProvider>
   );

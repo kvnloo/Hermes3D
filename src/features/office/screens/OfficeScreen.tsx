@@ -150,6 +150,8 @@ import { KanbanDisabledPanel } from "@/features/office/components/panels/KanbanD
 import { PlaybooksPanel } from "@/features/office/components/panels/PlaybooksPanel";
 import { SkillsMarketplaceModal } from "@/features/office/components/panels/SkillsMarketplaceModal";
 import { TaskBoardPanel } from "@/features/office/components/panels/TaskBoardPanel";
+import { PublicCompanyDirectory } from "@/features/office/components/PublicCompanyDirectory";
+import type { CompanyDirectoryV1 } from "@/lib/public-directory/companyDirectoryV1";
 import { JukeboxPanel } from "@/features/spotify-jukebox/components/JukeboxPanel";
 import { JukeboxDisabledPanel } from "@/features/spotify-jukebox/components/JukeboxDisabledPanel";
 import { executeBrowserJukeboxCommand } from "@/features/spotify-jukebox/agentBridge";
@@ -894,10 +896,12 @@ const inferRunningFromAgentSessions = async (params: {
 
 type OfficeScreenProps = {
   showHermesConsole?: boolean;
+  publicCompanyDirectory?: CompanyDirectoryV1 | null;
 };
 
 export function OfficeScreen({
   showHermesConsole = true,
+  publicCompanyDirectory = null,
 }: OfficeScreenProps) {
   // Patch Hermes Phase 2: avoid useSearchParams() at component root — it
   // suspends during hydration in Next.js dev mode and keeps the parent
@@ -4702,6 +4706,8 @@ export function OfficeScreen({
           />
         ) : null}
       </section>
+
+      <PublicCompanyDirectory directory={publicCompanyDirectory} />
 
       {showEmptyFleetBanner ? (
         <div className="pointer-events-none fixed left-1/2 top-16 z-40 w-full max-w-xl -translate-x-1/2 px-4">
