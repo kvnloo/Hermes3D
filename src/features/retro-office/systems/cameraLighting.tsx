@@ -91,8 +91,18 @@ type OrbitControllerLike = {
   update: () => void;
 };
 
-const STREAM_CAMERA_TARGET = new THREE.Vector3(...DISTRICT_CAMERA_TARGET);
-export const STREAM_ORBIT_PERIOD_SECONDS = 180;
+/**
+ * Authored around the occupied local office, not the district/world origin.
+ * The local floor is x [-16.2, 16.2], z [-16.2, -3.24]; desks and synthetic
+ * agents occupy its central band. 1.15m puts the sightline through desk and
+ * character torso height while preserving the floor-plan read.
+ */
+export const STREAM_ORBIT_TARGET: [number, number, number] = [0, 1.15, -9.72];
+export const STREAM_ORBIT_RADIUS = 18;
+export const STREAM_ORBIT_HEIGHT = 13.25;
+export const STREAM_ORBIT_INITIAL_ANGLE = Math.atan2(14, 11.5);
+const STREAM_CAMERA_TARGET = new THREE.Vector3(...STREAM_ORBIT_TARGET);
+export const STREAM_ORBIT_PERIOD_SECONDS = 60;
 export const STREAM_ORBIT_ANGULAR_SPEED = (Math.PI * 2) / STREAM_ORBIT_PERIOD_SECONDS;
 
 let activeStreamCameraWriters = 0;
@@ -108,20 +118,14 @@ export function StreamCameraController({
 }) {
   const { camera } = useThree();
   const streamOrbitEnabledRef = useRef(false);
-  const angleRef = useRef(0);
-  const radiusRef = useRef(1);
-  const fixedHeightRef = useRef(DISTRICT_CAMERA_POSITION[1]);
+  const angleRef = useRef(STREAM_ORBIT_INITIAL_ANGLE);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     streamOrbitEnabledRef.current = params.get("camera") === "ORBIT";
     if (!streamOrbitEnabledRef.current) return;
 
-    const dx = camera.position.x - STREAM_CAMERA_TARGET.x;
-    const dz = camera.position.z - STREAM_CAMERA_TARGET.z;
-    radiusRef.current = Math.max(Math.hypot(dx, dz), 1);
-    fixedHeightRef.current = camera.position.y;
-    angleRef.current = Math.atan2(dz, dx);
+    angleRef.current = STREAM_ORBIT_INITIAL_ANGLE;
 
     activeStreamCameraWriters += 1;
     if (activeStreamCameraWriters !== 1) {
@@ -152,9 +156,9 @@ export function StreamCameraController({
 
     angleRef.current = advanceStreamOrbitAngle(angleRef.current, delta);
     camera.position.set(
-      STREAM_CAMERA_TARGET.x + radiusRef.current * Math.cos(angleRef.current),
-      fixedHeightRef.current,
-      STREAM_CAMERA_TARGET.z + radiusRef.current * Math.sin(angleRef.current),
+      STREAM_CAMERA_TARGET.x + STREAM_ORBIT_RADIUS * Math.cos(angleRef.current),
+      STREAM_ORBIT_HEIGHT,
+      STREAM_CAMERA_TARGET.z + STREAM_ORBIT_RADIUS * Math.sin(angleRef.current),
     );
     camera.lookAt(STREAM_CAMERA_TARGET);
     state.invalidate();
