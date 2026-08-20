@@ -33,7 +33,7 @@ export function PublicLiveStatus() {
       <div className="flex items-center gap-2">
         <span className={`h-2 w-2 rounded-full ${healthy ? `bg-cyan-300 ${styles.livePulse}` : "bg-slate-500"}`} aria-hidden="true" />
         <span className="text-[10px] font-semibold tracking-[0.16em] text-white">HERMES LIVE</span>
-        <span className="rounded border border-white/15 px-1 py-0.5 text-[8px] tracking-[0.12em] text-white/60">DEMO</span>
+        <span className="rounded border border-white/15 px-1 py-0.5 text-[8px] tracking-[0.12em] text-white/60">· DEMO</span>
       </div>
       <p className="mt-1 text-[8px] tracking-[0.08em] text-white/50">{label}</p>
     </div>
