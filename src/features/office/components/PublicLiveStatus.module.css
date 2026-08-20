@@ -1,0 +1,22 @@
+@keyframes hermes-live-pulse {
+  0%, 100% { opacity: .56; transform: scale(.86); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hermes-orb-think {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes hermes-orb-breathe {
+  0%, 100% { opacity: .52; transform: scale(.92); }
+  50% { opacity: .82; transform: scale(1); }
+}
+
+.livePulse { animation: hermes-live-pulse 2.4s ease-in-out infinite; }
+.thinkingRing { animation: hermes-orb-think 6s linear infinite; }
+.waitingOrb { animation: hermes-orb-breathe 5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .livePulse, .thinkingRing, .waitingOrb { animation: none; }
+}
