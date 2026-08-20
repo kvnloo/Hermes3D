@@ -1,6 +1,6 @@
 import { parseMuseumExhibitV1, type MuseumExhibitV1 } from "../../core/MuseumExhibitV1";
 
-const manifest = {
+export const manifest = {
   schemaVersion: "museum-exhibit/v1", id: "museum:call-of-duty", slug: "call-of-duty",
   title: "Call of Duty fan-project study", category: "game",
   oneLineIntent: "An original spatial study of tactical communication, cover and coordinated movement.",
