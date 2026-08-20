@@ -11,8 +11,6 @@ import {
 import { toWorld } from "@/features/retro-office/core/geometry";
 import type { RenderAgent } from "@/features/retro-office/core/types";
 import {
-  autoCameraModeAt,
-  resolveCameraDwellSeconds,
   resolveStreamCameraMode,
   type AutoCameraMode,
 } from "@/features/retro-office/core/streamCameraModes";
@@ -111,7 +109,6 @@ export function StreamCameraController({
 }) {
   const { camera } = useThree();
   const configuredModeRef = useRef<ReturnType<typeof resolveStreamCameraMode>>("DEFAULT");
-  const dwellSecondsRef = useRef(45);
   const elapsedSecondsRef = useRef(0);
   const targetPositionRef = useRef(new THREE.Vector3());
   const desiredPositionRef = useRef(new THREE.Vector3());
@@ -119,26 +116,25 @@ export function StreamCameraController({
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     configuredModeRef.current = resolveStreamCameraMode(params.get("camera"));
-    dwellSecondsRef.current = resolveCameraDwellSeconds(params.get("cameraDwell"));
   }, []);
 
   useFrame((state, delta) => {
-    if (document.hidden) return;
     const configuredMode = configuredModeRef.current;
     if (configuredMode === "DEFAULT") return;
 
     elapsedSecondsRef.current += Math.min(delta, 0.1);
-    const mode: AutoCameraMode = configuredMode === "AUTO"
-      ? autoCameraModeAt(elapsedSecondsRef.current, dwellSecondsRef.current)
-      : configuredMode;
-    if (mode === "DEFAULT") {
-      targetPositionRef.current.set(...DISTRICT_CAMERA_POSITION);
-    } else if (mode === "WIDE") {
+    // AUTO previously spent long intervals on static presets, which made the
+    // live stream appear frozen. Keep legacy AUTO browser sources moving until
+    // they are recreated with the explicit ORBIT query.
+    const mode: AutoCameraMode = configuredMode === "AUTO" ? "ORBIT" : configuredMode;
+    if (mode === "WIDE") {
       targetPositionRef.current.copy(STREAM_CAMERA_WIDE);
     } else if (mode === "DRONE") {
       targetPositionRef.current.copy(STREAM_CAMERA_DRONE);
     } else {
-      const angle = elapsedSecondsRef.current * 0.045;
+      // One revolution every ~105 seconds: obvious within a few seconds while
+      // remaining slow enough for an unattended stream.
+      const angle = elapsedSecondsRef.current * 0.06;
       targetPositionRef.current.set(
         STREAM_CAMERA_TARGET.x + Math.cos(angle) * 22,
         18,
