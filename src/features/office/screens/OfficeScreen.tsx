@@ -154,6 +154,7 @@ import { TaskBoardPanel } from "@/features/office/components/panels/TaskBoardPan
 import { PublicCompanyDirectory } from "@/features/office/components/PublicCompanyDirectory";
 import type { CompanyDirectoryV1 } from "@/lib/public-directory/companyDirectoryV1";
 import type { PublicBoplogProjectionV1 } from "@/lib/public-boplog/publicBoplogProjectionV1";
+import type { PublicKanbanProjectionV1 } from "@/lib/public-boplog/publicKanbanProjectionV1";
 import { JukeboxPanel } from "@/features/spotify-jukebox/components/JukeboxPanel";
 import { JukeboxDisabledPanel } from "@/features/spotify-jukebox/components/JukeboxDisabledPanel";
 import { executeBrowserJukeboxCommand } from "@/features/spotify-jukebox/agentBridge";
@@ -900,12 +901,14 @@ type OfficeScreenProps = {
   showHermesConsole?: boolean;
   publicCompanyDirectory?: CompanyDirectoryV1 | null;
   publicBoplogProjection?: PublicBoplogProjectionV1 | null;
+  publicKanbanProjection?: PublicKanbanProjectionV1 | null;
 };
 
 export function OfficeScreen({
   showHermesConsole = true,
   publicCompanyDirectory = null,
   publicBoplogProjection = null,
+  publicKanbanProjection = null,
 }: OfficeScreenProps) {
   // Patch Hermes Phase 2: avoid useSearchParams() at component root — it
   // suspends during hydration in Next.js dev mode and keeps the parent
@@ -4712,7 +4715,7 @@ export function OfficeScreen({
       </section>
 
       <PublicCompanyDirectory directory={publicCompanyDirectory} />
-      <PublicBoplogProjects projection={publicBoplogProjection} />
+      <PublicBoplogProjects projection={publicBoplogProjection} kanbanProjection={publicKanbanProjection} />
 
       {showEmptyFleetBanner ? (
         <div className="pointer-events-none fixed left-1/2 top-16 z-40 w-full max-w-xl -translate-x-1/2 px-4">

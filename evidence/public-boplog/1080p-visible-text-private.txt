@@ -1,0 +1,94 @@
+KANBAN BOARD
+LUKE HEADQUARTERS
+M
+1
+AGENTS
+ADD
+DEMO • DISCONNECTED
+0 working
+·
+1 idle
+·
+0 error
+·
+quiet
+·
+drag · scroll · space+drag · dbl-click
+
+PUBLIC DIRECTORY PREVIEW
+
+zer0
+
+No live activity or private data
+
+GOVERNANCE ROLES
+Captain
+Company authority
+First Mate
+Portfolio orchestration
+Second Mates
+Persistent project leadership
+Crewmates
+Task execution
+Verifiers
+Independent review
+MESH TOPOLOGY PREVIEW
+
+Static directory - no live connectivity data
+
+0
+mbp
+Telegram Gateway
+
+Mesh: transport | Kanban: lifecycle authority | Keel: authorization and evidence | Live backend: disconnected
+
+PUBLIC PROJECTS
+
+From Boplog
+
+Published public information only
+
+hermes-keel
+EXPERIMENT
+
+A self-evolving, performance-based execution kernel for Hermes Agent.
+
+Kanban: 17 completed / 20 total / 3 blocked
+Published aggregate only
+Public link
+baseline-tennis
+EXPERIMENT
+
+Interactive open-data tennis map, charts, and statistical query engine.
+
+Kanban snapshot: Summary unavailable
+Published aggregate only
+Public link
+boplog
+PRODUCT
+
+Static public build log with llms.txt and a JSON project manifest for agents.
+
+Kanban: 0 completed / 0 total
+Published aggregate only
+Public link
+aliens-made-this
+EXPERIMENT
+
+Playful generative-art capability test: what can the aliens make?
+
+Kanban snapshot: Summary unavailable
+Published aggregate only
+Public link
+8 allowlisted entries
+Page 1 / 2
+OPEN HQ
+MARKETPLACE
+ANALYTICS
+AGENT EVENT CONSOLE
+AGENTS 1 | EVENTS 0/0
+Copy JSON
+Download JSON
+Clear
+Expand
+CHAT
