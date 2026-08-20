@@ -10,6 +10,12 @@ import {
 } from "@/features/retro-office/core/district";
 import { toWorld } from "@/features/retro-office/core/geometry";
 import type { RenderAgent } from "@/features/retro-office/core/types";
+import {
+  autoCameraModeAt,
+  resolveCameraDwellSeconds,
+  resolveStreamCameraMode,
+  type AutoCameraMode,
+} from "@/features/retro-office/core/streamCameraModes";
 
 /** Vertical field of view for the cinematic overview camera. */
 export const SCENE_CAMERA_FOV = 40;
@@ -88,6 +94,69 @@ type OrbitControllerLike = {
   target: THREE.Vector3;
   update: () => void;
 };
+
+const STREAM_CAMERA_TARGET = new THREE.Vector3(...DISTRICT_CAMERA_TARGET);
+const STREAM_CAMERA_WIDE = new THREE.Vector3(-20, 24, 25);
+const STREAM_CAMERA_DRONE = new THREE.Vector3(1, 38, 8);
+const STREAM_CAMERA_BOUNDS = new THREE.Box3(
+  new THREE.Vector3(-24, 5, -24),
+  new THREE.Vector3(24, 40, 28),
+);
+
+/** Query-only, stream-safe camera motion for synthetic OBS browser sources. */
+export function StreamCameraController({
+  orbitRef,
+}: {
+  orbitRef: RefObject<OrbitControllerLike | null>;
+}) {
+  const { camera } = useThree();
+  const configuredModeRef = useRef<ReturnType<typeof resolveStreamCameraMode>>("DEFAULT");
+  const dwellSecondsRef = useRef(45);
+  const elapsedSecondsRef = useRef(0);
+  const targetPositionRef = useRef(new THREE.Vector3());
+  const desiredPositionRef = useRef(new THREE.Vector3());
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    configuredModeRef.current = resolveStreamCameraMode(params.get("camera"));
+    dwellSecondsRef.current = resolveCameraDwellSeconds(params.get("cameraDwell"));
+  }, []);
+
+  useFrame((state, delta) => {
+    if (document.hidden) return;
+    const configuredMode = configuredModeRef.current;
+    if (configuredMode === "DEFAULT") return;
+
+    elapsedSecondsRef.current += Math.min(delta, 0.1);
+    const mode: AutoCameraMode = configuredMode === "AUTO"
+      ? autoCameraModeAt(elapsedSecondsRef.current, dwellSecondsRef.current)
+      : configuredMode;
+    if (mode === "DEFAULT") {
+      targetPositionRef.current.set(...DISTRICT_CAMERA_POSITION);
+    } else if (mode === "WIDE") {
+      targetPositionRef.current.copy(STREAM_CAMERA_WIDE);
+    } else if (mode === "DRONE") {
+      targetPositionRef.current.copy(STREAM_CAMERA_DRONE);
+    } else {
+      const angle = elapsedSecondsRef.current * 0.045;
+      targetPositionRef.current.set(
+        STREAM_CAMERA_TARGET.x + Math.cos(angle) * 22,
+        18,
+        STREAM_CAMERA_TARGET.z + Math.sin(angle) * 22,
+      );
+    }
+
+    desiredPositionRef.current.copy(targetPositionRef.current);
+    STREAM_CAMERA_BOUNDS.clampPoint(desiredPositionRef.current, desiredPositionRef.current);
+    const easing = 1 - Math.exp(-delta * 0.7);
+    camera.position.lerp(desiredPositionRef.current, easing);
+    orbitRef.current?.target.lerp(STREAM_CAMERA_TARGET, easing);
+    orbitRef.current?.update();
+    state.invalidate();
+  });
+
+  return null;
+}
 
 export function CameraAnimator({
   presetRef,

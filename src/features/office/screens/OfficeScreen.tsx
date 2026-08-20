@@ -1202,7 +1202,11 @@ export function OfficeScreen({
     voiceId: voiceRepliesPreference.voiceId,
     speed: voiceRepliesPreference.speed,
   });
-  const showOnboardingWizard = showOnboarding || forceShowOnboarding;
+  // The bundled demo is a non-interactive synthetic feed (including OBS).
+  // Never cover it with first-run setup; explicit Help/Setup still reopens it.
+  const showOnboardingWizard =
+    forceShowOnboarding ||
+    (showOnboarding && selectedAdapterType !== "demo" && activeAdapterType !== "demo");
   const handleOpenOnboarding = useCallback(() => {
     resetOnboarding();
     setCompanyCreatedSignal(0);
