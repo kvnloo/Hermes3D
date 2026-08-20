@@ -10,10 +10,6 @@ import {
 } from "@/features/retro-office/core/district";
 import { toWorld } from "@/features/retro-office/core/geometry";
 import type { RenderAgent } from "@/features/retro-office/core/types";
-import {
-  resolveStreamCameraMode,
-  type AutoCameraMode,
-} from "@/features/retro-office/core/streamCameraModes";
 
 /** Vertical field of view for the cinematic overview camera. */
 export const SCENE_CAMERA_FOV = 40;
@@ -90,16 +86,19 @@ export const CAMERA_PRESETS = {
 
 type OrbitControllerLike = {
   target: THREE.Vector3;
+  enabled: boolean;
+  enableDamping: boolean;
   update: () => void;
 };
 
 const STREAM_CAMERA_TARGET = new THREE.Vector3(...DISTRICT_CAMERA_TARGET);
-const STREAM_CAMERA_WIDE = new THREE.Vector3(-20, 24, 25);
-const STREAM_CAMERA_DRONE = new THREE.Vector3(1, 38, 8);
-const STREAM_CAMERA_BOUNDS = new THREE.Box3(
-  new THREE.Vector3(-24, 5, -24),
-  new THREE.Vector3(24, 40, 28),
-);
+export const STREAM_ORBIT_PERIOD_SECONDS = 180;
+export const STREAM_ORBIT_ANGULAR_SPEED = (Math.PI * 2) / STREAM_ORBIT_PERIOD_SECONDS;
+
+let activeStreamCameraWriters = 0;
+
+export const advanceStreamOrbitAngle = (angle: number, delta: number) =>
+  angle + Math.min(Math.max(delta, 0), 0.05) * STREAM_ORBIT_ANGULAR_SPEED;
 
 /** Query-only, stream-safe camera motion for synthetic OBS browser sources. */
 export function StreamCameraController({
@@ -108,46 +107,56 @@ export function StreamCameraController({
   orbitRef: RefObject<OrbitControllerLike | null>;
 }) {
   const { camera } = useThree();
-  const configuredModeRef = useRef<ReturnType<typeof resolveStreamCameraMode>>("DEFAULT");
-  const elapsedSecondsRef = useRef(0);
-  const targetPositionRef = useRef(new THREE.Vector3());
-  const desiredPositionRef = useRef(new THREE.Vector3());
+  const streamOrbitEnabledRef = useRef(false);
+  const angleRef = useRef(0);
+  const radiusRef = useRef(1);
+  const fixedHeightRef = useRef(DISTRICT_CAMERA_POSITION[1]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    configuredModeRef.current = resolveStreamCameraMode(params.get("camera"));
-  }, []);
+    streamOrbitEnabledRef.current = params.get("camera") === "ORBIT";
+    if (!streamOrbitEnabledRef.current) return;
 
-  useFrame((state, delta) => {
-    const configuredMode = configuredModeRef.current;
-    if (configuredMode === "DEFAULT") return;
+    const dx = camera.position.x - STREAM_CAMERA_TARGET.x;
+    const dz = camera.position.z - STREAM_CAMERA_TARGET.z;
+    radiusRef.current = Math.max(Math.hypot(dx, dz), 1);
+    fixedHeightRef.current = camera.position.y;
+    angleRef.current = Math.atan2(dz, dx);
 
-    elapsedSecondsRef.current += Math.min(delta, 0.1);
-    // AUTO previously spent long intervals on static presets, which made the
-    // live stream appear frozen. Keep legacy AUTO browser sources moving until
-    // they are recreated with the explicit ORBIT query.
-    const mode: AutoCameraMode = configuredMode === "AUTO" ? "ORBIT" : configuredMode;
-    if (mode === "WIDE") {
-      targetPositionRef.current.copy(STREAM_CAMERA_WIDE);
-    } else if (mode === "DRONE") {
-      targetPositionRef.current.copy(STREAM_CAMERA_DRONE);
-    } else {
-      // One revolution every ~105 seconds: obvious within a few seconds while
-      // remaining slow enough for an unattended stream.
-      const angle = elapsedSecondsRef.current * 0.06;
-      targetPositionRef.current.set(
-        STREAM_CAMERA_TARGET.x + Math.cos(angle) * 22,
-        18,
-        STREAM_CAMERA_TARGET.z + Math.sin(angle) * 22,
-      );
+    activeStreamCameraWriters += 1;
+    if (activeStreamCameraWriters !== 1) {
+      activeStreamCameraWriters -= 1;
+      throw new Error(`Expected exactly one stream camera writer, found ${activeStreamCameraWriters + 1}`);
     }
 
-    desiredPositionRef.current.copy(targetPositionRef.current);
-    STREAM_CAMERA_BOUNDS.clampPoint(desiredPositionRef.current, desiredPositionRef.current);
-    const easing = 1 - Math.exp(-delta * 0.7);
-    camera.position.lerp(desiredPositionRef.current, easing);
-    orbitRef.current?.target.lerp(STREAM_CAMERA_TARGET, easing);
-    orbitRef.current?.update();
+    const orbit = orbitRef.current;
+    const previousOrbitState = orbit
+      ? { enabled: orbit.enabled, enableDamping: orbit.enableDamping }
+      : null;
+    if (orbit) {
+      orbit.enabled = false;
+      orbit.enableDamping = false;
+    }
+
+    return () => {
+      activeStreamCameraWriters -= 1;
+      if (orbit && previousOrbitState) {
+        orbit.enabled = previousOrbitState.enabled;
+        orbit.enableDamping = previousOrbitState.enableDamping;
+      }
+    };
+  }, [camera, orbitRef]);
+
+  useFrame((state, delta) => {
+    if (!streamOrbitEnabledRef.current) return;
+
+    angleRef.current = advanceStreamOrbitAngle(angleRef.current, delta);
+    camera.position.set(
+      STREAM_CAMERA_TARGET.x + radiusRef.current * Math.cos(angleRef.current),
+      fixedHeightRef.current,
+      STREAM_CAMERA_TARGET.z + radiusRef.current * Math.sin(angleRef.current),
+    );
+    camera.lookAt(STREAM_CAMERA_TARGET);
     state.invalidate();
   });
 
