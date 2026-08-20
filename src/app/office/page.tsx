@@ -3,7 +3,9 @@ import { RunningAvatarLoader } from "@/features/agents/components/RunningAvatarL
 import { AgentStoreProvider } from "@/features/agents/state/store";
 import { OfficeScreen } from "@/features/office/screens/OfficeScreen";
 import publicCompanyDirectory from "../../../config/public-company-directory.v1.json";
+import publicBoplogProjection from "../../../config/public-boplog-projection.v1.json";
 import { parseCompanyDirectoryV1 } from "@/lib/public-directory/companyDirectoryV1";
+import { parsePublicBoplogProjectionV1 } from "@/lib/public-boplog/publicBoplogProjectionV1";
 
 const ENABLED_RE = /^(1|true|yes|on)$/i;
 
@@ -35,6 +37,7 @@ function OfficeLoadingFallback() {
 export default function OfficePage() {
   const showHermesConsole = readDebugFlag(process.env.DEBUG);
   const directory = parseCompanyDirectoryV1(publicCompanyDirectory);
+  const boplogProjection = parsePublicBoplogProjectionV1(publicBoplogProjection);
 
   return (
     <AgentStoreProvider>
@@ -42,6 +45,7 @@ export default function OfficePage() {
         <OfficeScreen
           showHermesConsole={showHermesConsole}
           publicCompanyDirectory={directory}
+          publicBoplogProjection={boplogProjection}
         />
       </Suspense>
     </AgentStoreProvider>
