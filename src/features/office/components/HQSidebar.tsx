@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 
 export type HQSidebarTab =
+  | "agents"
   | "inbox"
   | "history"
   | "kanban"
@@ -19,6 +20,7 @@ type HQSidebarProps = {
   onAddAgent?: () => void;
   onOpenCompanyBuilder?: () => void;
   inboxPanel: ReactNode;
+  agentsPanel: ReactNode;
   historyPanel: ReactNode;
   kanbanPanel: ReactNode;
   playbooksPanel: ReactNode;
@@ -26,6 +28,7 @@ type HQSidebarProps = {
 };
 
 const TAB_LABELS: Record<HQSidebarTab, string> = {
+  agents: "Agents",
   inbox: "Inbox",
   history: "History",
   kanban: "Kanban",
@@ -33,7 +36,7 @@ const TAB_LABELS: Record<HQSidebarTab, string> = {
   analytics: "Analytics",
 };
 
-const PRIMARY_TABS: HQSidebarTab[] = ["inbox", "history", "kanban", "playbooks"];
+const PRIMARY_TABS: HQSidebarTab[] = ["agents", "inbox", "history", "kanban", "playbooks"];
 
 export function HQSidebar({
   open,
@@ -45,6 +48,7 @@ export function HQSidebar({
   onAddAgent,
   onOpenCompanyBuilder,
   inboxPanel,
+  agentsPanel,
   historyPanel,
   kanbanPanel,
   playbooksPanel,
@@ -53,7 +57,9 @@ export function HQSidebar({
   const analyticsOnly = activeTab === "analytics";
   const railOnly = analyticsOnly;
   const activePanel =
-    activeTab === "inbox"
+    activeTab === "agents"
+      ? agentsPanel
+      : activeTab === "inbox"
       ? inboxPanel
       : activeTab === "history"
         ? historyPanel
@@ -162,7 +168,7 @@ export function HQSidebar({
             <div
               role="tablist"
               aria-label="Headquarters panels"
-              className="grid grid-cols-4 border-b border-cyan-500/15"
+              className="grid grid-cols-5 border-b border-cyan-500/15"
             >
               {PRIMARY_TABS.map((tab) => {
                 const isActive = tab === activeTab;

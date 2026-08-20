@@ -151,6 +151,8 @@ import { PlaybooksPanel } from "@/features/office/components/panels/PlaybooksPan
 import { SkillsMarketplaceModal } from "@/features/office/components/panels/SkillsMarketplaceModal";
 import { TaskBoardPanel } from "@/features/office/components/panels/TaskBoardPanel";
 import { PublicCompanyDirectory } from "@/features/office/components/PublicCompanyDirectory";
+import { PublicLiveStatus } from "@/features/office/components/PublicLiveStatus";
+import { DemoAgentStatePanel } from "@/features/office/components/DemoAgentStatePanel";
 import type { CompanyDirectoryV1 } from "@/lib/public-directory/companyDirectoryV1";
 import { JukeboxPanel } from "@/features/spotify-jukebox/components/JukeboxPanel";
 import { JukeboxDisabledPanel } from "@/features/spotify-jukebox/components/JukeboxDisabledPanel";
@@ -1065,7 +1067,7 @@ export function OfficeScreen({
   // The office has a single floor — Hermes.
   const activeFloorId = DEFAULT_ACTIVE_FLOOR_ID;
   const [gatewayModels, setGatewayModels] = useState<GatewayModelChoice[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [marketplaceOpen, setMarketplaceOpen] = useState(false);
   const [kanbanInstallPromptOpen, setKanbanInstallPromptOpen] = useState(false);
   const [kanbanInstallProgress, setKanbanInstallProgress] = useState<{
@@ -1089,7 +1091,7 @@ export function OfficeScreen({
     return searchParams.has("code");
   });
   const [activeSidebarTab, setActiveSidebarTab] =
-    useState<HQSidebarTab>("inbox");
+    useState<HQSidebarTab>("agents");
   const pendingJukeboxCommandTimeoutsRef = useRef<
     Map<string, { requestKey: string; timeoutId: number }>
   >(new Map());
@@ -4708,6 +4710,7 @@ export function OfficeScreen({
       </section>
 
       <PublicCompanyDirectory directory={publicCompanyDirectory} />
+      <PublicLiveStatus />
 
       {showEmptyFleetBanner ? (
         <div className="pointer-events-none fixed left-1/2 top-16 z-40 w-full max-w-xl -translate-x-1/2 px-4">
@@ -4774,6 +4777,9 @@ export function OfficeScreen({
           onOpenMarketplace={() => setMarketplaceOpen(true)}
           onAddAgent={handleOpenCreateAgentWizard}
           onOpenCompanyBuilder={handleOpenCompanyBuilder}
+          agentsPanel={
+            <DemoAgentStatePanel roles={publicCompanyDirectory?.agents ?? []} />
+          }
           inboxPanel={
             <InboxPanel
               agents={state.agents}
