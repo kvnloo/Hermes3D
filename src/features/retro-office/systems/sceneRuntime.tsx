@@ -182,8 +182,8 @@ export function PingPongBall({
   );
 }
 
-export function GameLoop({ tick }: { tick: () => void }) {
-  useFrame(() => tick());
+export function GameLoop({ tick }: { tick: (deltaSeconds: number) => void }) {
+  useFrame((_, delta) => tick(delta));
   return null;
 }
 

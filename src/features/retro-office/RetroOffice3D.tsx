@@ -74,8 +74,11 @@ import {
   SNAP_GRID,
   WALK_SPEED,
   WALL_THICKNESS,
-  WORKING_WALK_SPEED_MULTIPLIER,
 } from "@/features/retro-office/core/constants";
+import {
+  locomotionSpeedUnitsPerSecond,
+  locomotionStepDistance,
+} from "@/features/retro-office/core/locomotion";
 import {
   ensureOfficeAtm,
   ensureOfficeGymRoom,
@@ -1935,7 +1938,7 @@ function useAgentTick(
   ]);
 
   // Tick called each frame — follows A* waypoints, no React state.
-  const tick = () => {
+  const tick = (deltaSeconds: number) => {
     const grid = getNavGrid();
     const now = Date.now();
     const furnitureItems = furnitureRef.current ?? [];
@@ -2099,10 +2102,14 @@ function useAgentTick(
         };
       }
       const baseSpeed = agent.walkSpeed ?? WALK_SPEED;
-      const speed =
-        agent.status === "working" && agent.state !== "sitting"
-          ? baseSpeed * WORKING_WALK_SPEED_MULTIPLIER
-          : baseSpeed;
+      const speedUnitsPerSecond = locomotionSpeedUnitsPerSecond(
+        baseSpeed,
+        agent.status === "working" && agent.state !== "sitting",
+      );
+      const stepDistance = locomotionStepDistance(
+        speedUnitsPerSecond,
+        deltaSeconds,
+      );
       // Move toward the first waypoint. An empty path means astar found no route —
       // the agent stays put instead of walking through walls toward the raw target.
       const path = agent.path ?? [];
@@ -2119,9 +2126,9 @@ function useAgentTick(
         npath = path;
       let conversationTalkPulse = false;
 
-      if (dist > speed) {
-        nx = agent.x + (dx / dist) * speed;
-        ny = agent.y + (dy / dist) * speed;
+      if (dist > stepDistance) {
+        nx = agent.x + (dx / dist) * stepDistance;
+        ny = agent.y + (dy / dist) * stepDistance;
         // atan2(dx, dy) gives the rotation.y angle for the direction of travel
         // (local +Z aligns with the movement vector when rotation.y = atan2(dx, dy)).
         nf = Math.atan2(dx, dy);
@@ -5768,7 +5775,7 @@ export function RetroOffice3D({
           1. `orthographic` prop + `camera` prop on Canvas → R3F creates the camera
              and it defaults to looking at origin, fixing the black screen.
           2. `CameraRig` explicitly calls camera.lookAt(0,0,0) after mount for safety.
-          3. `GameLoop` only calls tick() with no setState → zero React re-renders per frame.
+          3. `GameLoop` only calls tick(delta) with no setState → zero React re-renders per frame.
           4. Agent components read from `renderAgentsRef` via useFrame → pure Three.js mutations.
           5. Floor/walls render immediately (no Suspense). Only GLB models are suspended.
         */}

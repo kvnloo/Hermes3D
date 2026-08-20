@@ -16,6 +16,11 @@ export const MIN_WALL_LENGTH = SNAP_GRID * 2;
 export const ELEVATION_STEP = 0.08;
 export const WALK_SPEED = 0.3;
 export const WORKING_WALK_SPEED_MULTIPLIER = 3;
+export const UPSTREAM_BASELINE_FPS = 60;
+export const LOCOMOTION_PREVIEW_MULTIPLIER = 2;
+// Prevent the legacy 3x working route boost from compounding into 6x during
+// this preview. Special routes may run at most 3x the upstream base rate.
+export const MAX_PREVIEW_STATE_SPEED_MULTIPLIER = 1.5;
 export const WALK_ANIM_SPEED = 0.15;
 export const AGENT_SCALE = 1.75;
 export const BUMP_FREEZE_MS = 1500;
