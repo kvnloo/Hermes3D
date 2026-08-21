@@ -174,7 +174,12 @@ export function validateMuseumExhibitV1(value: unknown): MuseumExhibitV1 {
     if (!finiteVec3(anchor.position) || !finiteVec3(anchor.target) || !Number.isFinite(anchor.fov) || anchor.fov < 20 || anchor.fov > 100 || !Number.isFinite(anchor.minDwellMs) || anchor.minDwellMs < 0) throw new Error(`Camera anchor ${name} is invalid`);
   }
   const expectedTiers = ["hero", "near", "far", "sleep"];
-  if (exhibit.lod.length !== expectedTiers.length || exhibit.lod.some((tier, index) => tier.tier !== expectedTiers[index] || !Number.isFinite(tier.enterDistance) || !Number.isFinite(tier.exitDistance) || tier.enterDistance > tier.exitDistance || tier.maxTriangles < 0 || tier.maxDrawCalls < 0 || tier.animationHz < 0)) throw new Error("LOD tiers or hysteresis are invalid");
+  if (exhibit.lod.length !== expectedTiers.length || exhibit.lod.some((tier, index) => {
+    const invalidHysteresis = tier.tier === "sleep"
+      ? tier.enterDistance < tier.exitDistance
+      : tier.enterDistance > tier.exitDistance;
+    return tier.tier !== expectedTiers[index] || !Number.isFinite(tier.enterDistance) || !Number.isFinite(tier.exitDistance) || invalidHysteresis || tier.maxTriangles < 0 || tier.maxDrawCalls < 0 || tier.animationHz < 0;
+  })) throw new Error("LOD tiers or hysteresis are invalid");
   const ceilings = { maxInitialBytes: 1572864, maxDeferredBytes: 6291456, maxTriangles: 180000, maxDrawCalls: 90, maxTextures: 12, maxTextureEdgePx: 2048, maxCpuFrameMsP95: 8, maxGpuFrameMsP95: 10 } as const;
   for (const [key, ceiling] of Object.entries(ceilings)) {
     const actual = exhibit.budget[key as keyof typeof ceilings];

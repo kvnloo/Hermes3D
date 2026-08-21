@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "label": "UNAPPROVED NIGHTLY CANDIDATE",
+  "all_feature_branches_accounted_for": true,
+  "captain_approved": false,
+  "promoted": false,
+  "public_history_contains_private_evidence": false,
+  "obsidian_mode": "STATIC_DISABLED_PLACEHOLDER_ONLY",
+  "superseded_pack_status": "SUPERSEDED_INCOMPLETE_FEATURE_SET",
+  "exact_private_manifest": "revision-bound external evidence pack"
+}

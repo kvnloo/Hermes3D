@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 const securityHeaders = [
   {
@@ -57,6 +58,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const nextConfig: NextConfig = {
+  generateBuildId: async () => execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
   turbopack: {
     root: path.resolve(__dirname),
   },
