@@ -10,11 +10,12 @@ export default defineConfig({
       : undefined,
   },
   webServer: {
-    command: `npm run dev -- --port ${port}`,
+    command: "npm run dev",
     port,
     reuseExistingServer: !process.env.CI,
     env: {
       ...process.env,
+      PORT: String(port),
       HERMES_STATE_DIR: path.resolve("./tests/fixtures/gateway-empty-state"),
       NEXT_PUBLIC_GATEWAY_URL: "",
     },
