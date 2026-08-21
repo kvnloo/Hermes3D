@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with: {ref: '${{ github.event.pull_request.head.sha }}', persist-credentials: false, fetch-depth: 0}
       - name: Validate strict schema, attestation binding, and exact current dev
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           test '${{ github.event.pull_request.draft }}' = true
@@ -27,8 +29,20 @@ jobs:
           git fetch --no-tags origin dev
           current_dev="$(git rev-parse origin/dev)"
           test "$current_dev" = '${{ github.event.pull_request.base.sha }}'
-          node scripts/gitops-policy.mjs validate-promotion .gitops/promotion-manifest.json "$current_dev" > promotion.digest
-          test "$(sha256sum .gitops/nightly-manifest.json|cut -d' ' -f1)" = "$(jq -r .nightlyAttestation.manifestDigest .gitops/promotion-manifest.json)"
+          manifest_digest="$(jq -r .nightlyAttestation.manifestDigest .gitops/promotion-manifest.json)"
+          artifact="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" | jq -s --arg name "nightly-trusted-$manifest_digest" '[.[].artifacts[]|select(.expired==false and .name==$name)]|if length==1 then .[0] else empty end')"
+          test -n "$artifact"
+          gh api "$(jq -r .archive_download_url <<<"$artifact")" > "$RUNNER_TEMP/nightly-trusted.zip"
+          unzip -q "$RUNNER_TEMP/nightly-trusted.zip" -d "$RUNNER_TEMP/nightly-trusted"
+          receipt="$RUNNER_TEMP/nightly-trusted/nightly-trusted-receipt.json"
+          test "$(jq -r .manifestDigest "$receipt")" = "$manifest_digest"
+          run="$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/$(jq -r .workflow_run.id <<<"$artifact")")"
+          test "$(jq -r .name <<<"$run")" = 'Nightly Compose'
+          test "$(jq -r .event <<<"$run")" = push
+          test "$(jq -r .head_branch <<<"$run")" = dev
+          test "$(jq -r .conclusion <<<"$run")" = success
+          gh attestation verify "$receipt" --repo "$GITHUB_REPOSITORY"
+          node scripts/gitops-policy.mjs validate-promotion .gitops/promotion-manifest.json "$current_dev" "$receipt" .gitops/nightly-manifest.json > promotion.digest
           node scripts/gitops-policy.mjs scan
       - name: Deterministic individual and all-set replay
         run: |

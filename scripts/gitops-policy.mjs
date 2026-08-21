@@ -78,7 +78,12 @@ function walk(dir, budget={files:0,bytes:0}){
   return output;
 }
 function scan(paths){
-  for(const path of paths){const rel=relative(ROOT,path).split(sep).join("/");let text;try{text=readFileSync(path,"utf8");}catch{continue;}for(const [kind,pattern] of PRIVATE_PATTERNS)if(pattern.test(`${rel}\n${text}`))fail(`public-safety finding (${kind}) in ${rel}; matched value suppressed`);}
+  for(const path of paths){const rel=relative(ROOT,path).split(sep).join("/");let text;try{text=readFileSync(path,"utf8");}catch{continue;}for(const [kind,pattern] of PRIVATE_PATTERNS){
+    // The scanner necessarily contains private-host detector literals. Only that
+    // detector is suppressed for its own source; every other class still runs.
+    if(rel==="scripts/gitops-policy.mjs"&&kind==="private-host")continue;
+    if(pattern.test(`${rel}\n${text}`))fail(`public-safety finding (${kind}) in ${rel}; matched value suppressed`);
+  }}
 }
 function git(args){return execFileSync("git",args,{cwd:ROOT,encoding:"utf8"}).trim();}
 function changed(base,head="HEAD",filter="ACMR"){const text=git(["diff","--name-only",`--diff-filter=${filter}`,`${base}...${head}`]);return text?text.split("\n"):[];}
@@ -94,7 +99,7 @@ function ownership(manifest){
     for(const file of owned){if(claims.has(file)&&claims.get(file)!==feature.slug)fail(`cross-feature ownership collision: ${file}`);claims.set(file,feature.slug);}
   }
 }
-function validatePromotion(value,currentDev,now=Date.now()){
+function validatePromotion(value,currentDev,trustedReceipt,nightlyManifest,now=Date.now()){
   assertKeys(value,["schemaVersion","mode","captainGate","base","nightlyAttestation","features","expiresAt"],"promotion");
   if(value.schemaVersion!==1||!["individual","all"].includes(value.mode)||value.captainGate!=="G1_G2_REQUIRED"||!future(value.expiresAt,now)) fail("invalid or expired promotion");
   assertKeys(value.base,["branch","sha"],"promotion base");
@@ -103,6 +108,15 @@ function validatePromotion(value,currentDev,now=Date.now()){
   if(!SHA256.test(value.nightlyAttestation.manifestDigest)||!SHA40.test(value.nightlyAttestation.treeSha)||!SHA256.test(value.nightlyAttestation.receiptDigest)) fail("invalid attestation binding");
   if(!Array.isArray(value.features)||value.features.length<1||value.features.length>3||(value.mode==="individual"&&value.features.length!==1)) fail("promotion feature set does not match mode");
   for(const [index,feature] of value.features.entries()){assertKeys(feature,["slug","headSha","order"],`promotion feature ${index}`);if(!SLUG.test(feature.slug)||!SHA40.test(feature.headSha)||feature.order!==index)fail("promotion features must be exact and deterministically ordered");}
+  if(trustedReceipt&&nightlyManifest){
+    assertKeys(trustedReceipt,["schemaVersion","repository","manifestDigest","treeSha","features"],"trusted nightly receipt");
+    if(trustedReceipt.schemaVersion!==1||trustedReceipt.repository!=="kvnloo/Hermes3D"||digest(trustedReceipt)!==value.nightlyAttestation.receiptDigest||trustedReceipt.manifestDigest!==value.nightlyAttestation.manifestDigest||trustedReceipt.treeSha!==value.nightlyAttestation.treeSha)fail("promotion is not bound to the trusted nightly receipt");
+    if(digest(nightlyManifest)!==trustedReceipt.manifestDigest)fail("trusted receipt manifest substitution detected");
+    const exact=nightlyManifest.features.map(({slug,headSha,order})=>({slug,headSha,order}));
+    if(canonical(trustedReceipt.features)!==canonical(exact))fail("trusted receipt feature set mismatch");
+    const selected=value.mode==="all"?exact:exact.filter(item=>item.slug===value.features[0].slug);
+    if(canonical(value.features)!==canonical(selected))fail("promotion selected set does not match attested nightly set");
+  } else fail("trusted nightly receipt and manifest are required");
   return digest(value);
 }
 function validatePreview(value,now=Date.now()){
@@ -129,7 +143,7 @@ try{
   else if(command==="validate-checks"){validateChecks(load(args[0]),args[1]);console.log("required checks passed");}
   else if(command==="scan"){const targets=args.length?args.flatMap(p=>statSync(resolve(ROOT,p)).isDirectory()?walk(resolve(ROOT,p)):[resolve(ROOT,p)]):defaultScanTargets();scan(targets);console.log(`public-safety scan passed (${targets.length} files)`);}
   else if(command==="ownership"){const manifest=load(args[0]||".gitops/nightly-manifest.json");validateNightly(manifest,process.env.NOW?Date.parse(process.env.NOW):Date.now());ownership(manifest);console.log("ownership and collision checks passed");}
-  else if(command==="validate-promotion")console.log(validatePromotion(load(args[0]||".gitops/promotion-manifest.json"),args[1],process.env.NOW?Date.parse(process.env.NOW):Date.now()));
+  else if(command==="validate-promotion")console.log(validatePromotion(load(args[0]||".gitops/promotion-manifest.json"),args[1],args[2]?load(args[2]):null,args[3]?load(args[3]):null,process.env.NOW?Date.parse(process.env.NOW):Date.now()));
   else if(command==="validate-preview"){const value=load(args[0]);const result=validatePreview(value,process.env.NOW?Date.parse(process.env.NOW):Date.now());if(args[1])verifyPreviewFiles(value,resolve(ROOT,args[1]));console.log(result);}
   else fail("usage: gitops-policy.mjs validate-nightly|validate-checks|scan|ownership|validate-promotion|validate-preview");
 }catch(error){console.error(`gitops policy failed: ${error.message}`);process.exit(1);}

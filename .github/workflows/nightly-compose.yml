@@ -39,7 +39,7 @@ jobs:
             test "$(jq -r .head.sha <<<"$actual")" = "$sha"
             git fetch --no-tags origin "$sha"
             gh api "repos/${GITHUB_REPOSITORY}/issues/${pr}/labels" --jq '.[].name' | grep -Fx nightly-eligible >/dev/null
-            gh api --paginate "repos/${GITHUB_REPOSITORY}/commits/${sha}/check-runs?per_page=100" > all-checks.json
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/commits/${sha}/check-runs?per_page=100" | jq -s '{check_runs: [.[].check_runs[]] | sort_by(.name,.id)}' > all-checks.json
             jq --arg sha "$sha" --arg receipt "$receipt" '{sha:$sha,independentReviewReceipt:$receipt,checks:[.check_runs[]|select(.name=="policy / public-safety" or .name=="quality / node-matrix" or .name=="provenance / preview-artifact" or .name=="review / independent-receipt")|{name,sha:.head_sha,status,conclusion}]}' all-checks.json > exact-checks.json
             test "$(jq -r --arg receipt "$receipt" '[.check_runs[]|select(.name=="review / independent-receipt" and .external_id==$receipt)]|length' all-checks.json)" = 1
             node scripts/gitops-policy.mjs validate-checks exact-checks.json "$sha"
@@ -83,6 +83,7 @@ jobs:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with: {name: 'nightly-composition-${{ github.run_id }}-${{ github.run_attempt }}'}
       - name: Verify, preserve, and compare-and-swap
+        id: receipt
         run: |
           set -euo pipefail
           sha256sum -c nightly-bundle.sha256
@@ -92,15 +93,23 @@ jobs:
           test "$(git rev-parse refs/nightly-composed^{tree})" = "$(cat nightly-tree.sha)"
           current="$(git ls-remote origin refs/heads/nightly | cut -f1)"
           generation="$(jq -r .generation .gitops/nightly-manifest.json)"; digest="$(cut -c1-12 nightly-manifest.sha256)"; tag="nightly/g${generation}-${digest}"
+          if [[ "$current" != "$target" ]]; then git push --force-with-lease="refs/heads/nightly:${current}" origin "$target:refs/heads/nightly"; fi
+          # Preserve the displaced tip only after winning CAS. A losing writer
+          # creates no tag, so retry cannot be poisoned by a stale generation tag.
           if [[ -n "$current" && "$current" != "$target" ]]; then
             remote_tag="$(git ls-remote origin "refs/tags/$tag^{}" | cut -f1)"
             if [[ -n "$remote_tag" ]]; then test "$remote_tag" = "$current"; else git tag -a "$tag" "$current" -m "Preserved nightly tip before generation $generation"; git push origin "refs/tags/$tag"; fi
           fi
-          if [[ "$current" != "$target" ]]; then git push --force-with-lease="refs/heads/nightly:${current}" origin "$target:refs/heads/nightly"; fi
+          manifest_digest="$(node scripts/gitops-policy.mjs validate-nightly .gitops/nightly-manifest.json)"
+          echo "manifest_digest=$manifest_digest" >> "$GITHUB_OUTPUT"
+          jq -c --arg manifestDigest "$manifest_digest" --arg treeSha "$(cat nightly-tree.sha)" '{schemaVersion:1,repository:"kvnloo/Hermes3D",manifestDigest:$manifestDigest,treeSha:$treeSha,features:[.features[]|{slug,headSha,order}]}' .gitops/nightly-manifest.json > nightly-trusted-receipt.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with: {name: 'nightly-trusted-${{ steps.receipt.outputs.manifest_digest }}', path: nightly-trusted-receipt.json, retention-days: 90, if-no-files-found: error}
       - name: Attest trusted receipt only after successful CAS
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: |
+            nightly-trusted-receipt.json
             nightly-tree.sha
             nightly-manifest.sha256
             nightly-bundle.sha256
