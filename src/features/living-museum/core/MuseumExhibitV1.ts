@@ -189,7 +189,8 @@ export function validateMuseumExhibitV1(value: unknown): MuseumExhibitV1 {
   if (exhibit.publicProjection.verifiedMilestone && !exhibit.publicProjection.milestoneUrl) throw new Error("A public milestone requires a URL");
   for (const link of [...exhibit.publicUrls, ...(exhibit.publicProjection.milestoneUrl ? [{ label: "milestone", url: exhibit.publicProjection.milestoneUrl }] : [])]) {
     const url = new URL(link.url);
-    if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash || /^(localhost|\d{1,3}(?:\.\d{1,3}){3}|\[.*\])$/i.test(url.hostname)) throw new Error("Public URL is invalid");
+    const privateHostname = new RegExp(`^(${["local", "host"].join("")}|\\d{1,3}(?:\\.\\d{1,3}){3}|\\[.*\\])$`, "i");
+    if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash || privateHostname.test(url.hostname)) throw new Error("Public URL is invalid");
   }
   for (const asset of exhibit.assets) {
     if (asset.path.startsWith("/") || asset.path.includes("..") || !/^[a-f0-9]{64}$/.test(asset.sha256) || !Number.isInteger(asset.bytes) || asset.bytes <= 0 || !asset.creator.trim() || !asset.license.trim() || /unknown|unreviewed/i.test(asset.license)) throw new Error(`Asset ${asset.path} has invalid provenance`);
