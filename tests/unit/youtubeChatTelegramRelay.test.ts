@@ -1,13 +1,17 @@
 import { describe, expect, it } from "vitest";
+import { EventEmitter } from "node:events";
+import { PassThrough } from "node:stream";
 import {
   ConfigStore,
   DESTINATION,
   MemoryStore,
+  QuotaBudget,
   RelayEngine,
   YouTubeClient,
   formatSummary,
   hermesSender,
   sanitizeText,
+  transportSafeText,
   validateConfig,
 } from "../../scripts/youtube-chat-telegram-relay.mjs";
 
@@ -16,8 +20,8 @@ const message = (id: string, text: string, name = "Viewer", extra = {}) => ({
   snippet: { type: "textMessageEvent", displayMessage: text },
   authorDetails: { displayName: name, ...extra },
 });
-const deleted = (id: string) => ({ id, snippet: { type: "messageDeletedEvent" }, authorDetails: { displayName: "mod" } });
-const config = (patch = {}) => ({ mode: "summary", summaryIntervalMs: 300_000, messagesPerMinute: 20, queueLimit: 200, pollWhileOff: true, hybridTriggers: ["?", "@kvnloo"], ...patch });
+const deleted = (eventId: string, deletedMessageId = eventId) => ({ id: eventId, snippet: { type: "messageDeletedEvent", deletedMessageId }, authorDetails: { displayName: "mod" } });
+const config = (patch = {}) => ({ mode: "summary", summaryIntervalMs: 300_000, messagesPerMinute: 20, telegramSendsPerMinute: 6, queueLimit: 200, maxPendingBytes: 200_000, dailyQuotaUnits: 9_000, discoveryIntervalMs: 900_000, pollWhileOff: true, hybridTriggers: ["?", "@kvnloo"], ...patch });
 class TestConfigStore extends MemoryStore { async loadConfig() { return validateConfig(await this.load(config())); } }
 async function engine(mode = "continuous", now = () => 0) {
   const stateStore = new MemoryStore();
@@ -106,21 +110,84 @@ describe("YouTube chat Telegram relay", () => {
     expect(relay.queue.length).toBeLessThanOrEqual(10);
   });
 
-  it("resolves channel handle and rollover using only official OAuth API calls", async () => {
+  it.each(["summary", "hybrid"])("bounds a 10k %s accumulator by count and bytes", async (mode) => {
+    const { relay, configStore, sent } = await engine(mode);
+    await configStore.save(config({ mode, queueLimit: 10, maxPendingBytes: 10_000 }));
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await relay.ingest("chat", Array.from({ length: 10_000 }, (_, i) => message(String(i), `ordinary-body-${i}`)), "url");
+    expect(relay.state.pending.length).toBeLessThanOrEqual(10);
+    expect(Buffer.byteLength(JSON.stringify(relay.state.pending))).toBeLessThanOrEqual(10_000);
+    expect(sent.join("\n")).toContain("older messages dropped");
+  });
+
+  it("retracts pending content in either event order and records post-delivery deletion", async () => {
+    const { relay, configStore, sent } = await engine("continuous");
+    await configStore.save(config({ mode: "continuous", messagesPerMinute: 1 }));
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await relay.ingest("chat", [message("a", "delivered"), message("b", "must vanish")], "url");
+    await relay.ingest("chat", [deleted("d-b", "b"), deleted("d-a", "a")], "url");
+    expect(relay.state.pending.some((item: { id: string }) => item.id === "b")).toBe(false);
+    expect(relay.state.deletedDelivered).toBe(1);
+    expect(sent.join("\n")).not.toContain("must vanish");
+    const samePage = await engine("summary");
+    await samePage.relay.ingest("other", [message("prime", "prime")], "url");
+    await samePage.relay.ingest("other", [deleted("d-x", "x"), message("x", "secret")], "url");
+    expect(samePage.relay.summary).toEqual([]);
+  });
+
+  it("persists pending content, rate counters, and cursor across restart", async () => {
+    const { relay, stateStore, configStore } = await engine("continuous");
+    await configStore.save(config({ mode: "continuous", messagesPerMinute: 1 }));
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await relay.ingest("chat", [message("a", "one"), message("b", "two")], "url", "cursor-2");
+    const restarted = await new RelayEngine({ stateStore, configStore, send: async () => {}, now: () => 0 }).init();
+    expect(restarted.queue.map((item: { id: string }) => item.id)).toEqual(["b"]);
+    expect(restarted.state.sourceSentAt).toHaveLength(1);
+    expect(restarted.state.pageTokens.chat).toBe("cursor-2");
+  });
+
+  it("retains pending content on Telegram outage and quarantines ambiguous crash", async () => {
+    const stateStore = new MemoryStore();
+    const configStore = new TestConfigStore(config({ mode: "continuous" }));
+    const relay = await new RelayEngine({ stateStore, configStore, send: async () => { throw new Error("offline"); }, now: () => 0 }).init();
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await expect(relay.ingest("chat", [message("a", "retained")], "url")).rejects.toThrow("offline");
+    expect(relay.queue.map((item: { id: string }) => item.id)).toEqual(["a"]);
+    relay.state.inFlight = { ids: ["a"] }; await stateStore.save(relay.state);
+    await expect(new RelayEngine({ stateStore, configStore, send: async () => {} }).init()).rejects.toThrow("quarantined");
+  });
+
+  it("neutralizes markup, links, mentions and code in actual Hermes argv", async () => {
+    let argv: string[] = [];
+    const spawnImpl = (_command: string, args: string[]) => {
+      argv = args; const child = new EventEmitter() as EventEmitter & { stderr: PassThrough };
+      child.stderr = new PassThrough(); process.nextTick(() => child.emit("exit", 0)); return child;
+    };
+    await hermesSender(DESTINATION, spawnImpl as never)("<b>@all</b> [x](https://user:pass@host) ```code``` *bold*");
+    expect(argv.slice(0, 4)).toEqual(["send", "--quiet", "--to", DESTINATION]);
+    expect(argv[4]).not.toMatch(/<b>|@all|https:\/\/|```|\*bold\*/u);
+    expect(transportSafeText("@x <b> `x` https://host")).toContain("＠x");
+  });
+
+  it("enforces a durable deterministic daily quota budget", async () => {
+    const state = { quota: { day: "", used: 0 } }; let saves = 0;
+    const budget = new QuotaBudget({ state, limit: 6, save: async () => { saves += 1; }, now: () => Date.UTC(2026, 7, 21) });
+    await budget.spend(1); await budget.spend(5);
+    await expect(budget.spend(1)).rejects.toThrow("exhausted");
+    expect(state.quota.used).toBe(6); expect(saves).toBe(2);
+  });
+
+  it("resolves an owned active broadcast without expensive search.list", async () => {
     const calls: Array<{ url: string; auth?: string }> = [];
     const fetchImpl: typeof fetch = async (input, init) => {
       const url = String(input); calls.push({ url, auth: (init?.headers as Record<string, string> | undefined)?.Authorization });
-      if (url.includes("youtube/v3/channels")) return new Response(JSON.stringify({ items: [{ id: "public-channel" }] }), { status: 200 });
-      if (url.includes("youtube/v3/search")) return new Response(JSON.stringify({ items: [{ id: { videoId: "abcdefghijk" } }] }), { status: 200 });
-      return new Response(JSON.stringify({ items: [{ snippet: { channelId: "public-channel" }, liveStreamingDetails: { activeLiveChatId: "chat-new" } }] }), { status: 200 });
+      return new Response(JSON.stringify({ items: [{ id: "abcdefghijk", snippet: { liveChatId: "chat-new" } }] }), { status: 200 });
     };
     const live = await new YouTubeClient({ token: "test-token", fetchImpl }).resolveLive();
-    expect(live).toMatchObject({ videoId: "abcdefghijk", chatId: "chat-new", channelId: "public-channel" });
-    expect(calls.map((call) => call.url)).toEqual(expect.arrayContaining([
-      expect.stringContaining("youtube/v3/channels"),
-      expect.stringContaining("youtube/v3/search"),
-      expect.stringContaining("youtube/v3/videos"),
-    ]));
+    expect(live).toMatchObject({ videoId: "abcdefghijk", chatId: "chat-new" });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].url).toContain("youtube/v3/liveBroadcasts");
+    expect(calls[0].url).not.toContain("search");
     expect(calls.every((call) => call.auth === "Bearer test-token")).toBe(true);
   });
 
