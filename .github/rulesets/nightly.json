@@ -1,0 +1,11 @@
+{
+  "name": "nightly-automation-disabled-template",
+  "target": "branch",
+  "enforcement": "disabled",
+  "conditions": {"ref_name": {"include": ["refs/heads/nightly"], "exclude": []}},
+  "rules": [
+    {"type": "deletion"},
+    {"type": "non_fast_forward"},
+    {"type": "required_status_checks", "parameters": {"strict_required_status_checks_policy": true, "do_not_enforce_on_create": false, "required_status_checks": [{"context": "integration / conflict-and-order"}, {"context": "integration / trusted-mutation"}]}}
+  ]
+}
