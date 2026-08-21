@@ -24,10 +24,10 @@ describe("single stream orbit controller", () => {
     expect(STREAM_ORBIT_INITIAL_ANGLE).toBeCloseTo(Math.atan2(14, 11.5));
   });
 
-  it("clamps frame deltas and never moves backwards", () => {
+  it("tracks elapsed time exactly and never moves backwards", () => {
     expect(advanceStreamOrbitAngle(1, -1)).toBe(1);
     expect(advanceStreamOrbitAngle(1, 1)).toBeCloseTo(
-      1 + STREAM_ORBIT_ANGULAR_SPEED * 0.05,
+      1 + STREAM_ORBIT_ANGULAR_SPEED,
     );
   });
 });

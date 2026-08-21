@@ -108,7 +108,7 @@ export const STREAM_ORBIT_ANGULAR_SPEED = (Math.PI * 2) / STREAM_ORBIT_PERIOD_SE
 let activeStreamCameraWriters = 0;
 
 export const advanceStreamOrbitAngle = (angle: number, delta: number) =>
-  angle + Math.min(Math.max(delta, 0), 0.05) * STREAM_ORBIT_ANGULAR_SPEED;
+  angle + Math.max(delta, 0) * STREAM_ORBIT_ANGULAR_SPEED;
 
 /** Query-only, stream-safe camera motion for synthetic OBS browser sources. */
 export function StreamCameraController({
@@ -119,6 +119,7 @@ export function StreamCameraController({
   const { camera } = useThree();
   const streamOrbitEnabledRef = useRef(false);
   const angleRef = useRef(STREAM_ORBIT_INITIAL_ANGLE);
+  const elapsedRef = useRef(0);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -126,6 +127,7 @@ export function StreamCameraController({
     if (!streamOrbitEnabledRef.current) return;
 
     angleRef.current = STREAM_ORBIT_INITIAL_ANGLE;
+    elapsedRef.current = 0;
 
     activeStreamCameraWriters += 1;
     if (activeStreamCameraWriters !== 1) {
@@ -154,7 +156,9 @@ export function StreamCameraController({
   useFrame((state, delta) => {
     if (!streamOrbitEnabledRef.current) return;
 
-    angleRef.current = advanceStreamOrbitAngle(angleRef.current, delta);
+    elapsedRef.current += Math.max(delta, 0);
+    angleRef.current =
+      STREAM_ORBIT_INITIAL_ANGLE + elapsedRef.current * STREAM_ORBIT_ANGULAR_SPEED;
     camera.position.set(
       STREAM_CAMERA_TARGET.x + STREAM_ORBIT_RADIUS * Math.cos(angleRef.current),
       STREAM_ORBIT_HEIGHT,
