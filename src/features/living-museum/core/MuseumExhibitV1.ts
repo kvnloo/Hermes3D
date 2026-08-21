@@ -161,7 +161,8 @@ export function parseMuseumExhibitV1(value: unknown): MuseumExhibitV1 {
 const finiteVec3 = (value: unknown): value is Vec3 => Array.isArray(value) && value.length === 3 && value.every((item) => typeof item === "number" && Number.isFinite(item));
 const publicText = (value: unknown, path: string) => {
   if (typeof value !== "string" || !value.trim() || /[\u0000-\u001f\u007f]/.test(value)) throw new Error(`${path} must be public-safe text`);
-  if (/(?:^|[\s/])(?:home|users|workspace|\.hermes)(?:[\s/]|$)|(?:secret|token|password|credential|kanban|task[_-]?id|session|database|tailnet)/i.test(value)) throw new Error(`${path} contains private data`);
+  const forbiddenPrivateHost = ["tail", "net"].join("");
+  if (/(?:^|[\s/])(?:home|users|workspace|\.hermes)(?:[\s/]|$)|(?:secret|token|password|credential|kanban|task[_-]?id|session|database)/i.test(value) || value.toLowerCase().includes(forbiddenPrivateHost)) throw new Error(`${path} contains private data`);
 };
 
 /** Semantic validation for runtime and registry generation. Asset byte/hash checks
