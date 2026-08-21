@@ -3,6 +3,7 @@
 import { useFrame, useThree } from "@react-three/fiber";
 import { useEffect, useMemo, useRef, type RefObject } from "react";
 import * as THREE from "three";
+import { shouldRunAnimationFrame } from "@/features/retro-office/core/graphicsQuality";
 import {
   PING_PONG_BALL_RADIUS,
   PING_PONG_TABLE_SURFACE_Y,
@@ -183,7 +184,9 @@ export function PingPongBall({
 }
 
 export function GameLoop({ tick }: { tick: (deltaSeconds: number) => void }) {
-  useFrame((_, delta) => tick(delta));
+  useFrame((_, delta) => {
+    if (shouldRunAnimationFrame(document.visibilityState)) tick(delta);
+  });
   return null;
 }
 
