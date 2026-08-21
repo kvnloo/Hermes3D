@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { ThinkingOrb, type OrbState } from "thinking-orbs";
 import type { CompanyDirectoryAgentV1 } from "@/lib/public-directory/companyDirectoryV1";
 import { syntheticStateAt, type DemoAgentState } from "@/lib/live/publicDemoState";
-import styles from "./PublicLiveStatus.module.css";
 
 const STATE_LABELS: Record<DemoAgentState, string> = {
   idle: "IDLE",
@@ -12,12 +12,35 @@ const STATE_LABELS: Record<DemoAgentState, string> = {
   offline: "OFFLINE",
 };
 
-function DemoOrb({ state }: { state: DemoAgentState }) {
-  const offline = state === "offline";
+const ORB_STATE: Record<DemoAgentState, OrbState> = {
+  idle: "breathing",
+  thinking: "working",
+  waiting: "connecting",
+  offline: "shaping",
+};
+
+function DemoOrb({ state, roleName }: { state: DemoAgentState; roleName: string }) {
+  const paused = state === "idle" || state === "offline";
   return (
-    <span className="relative flex h-8 w-8 shrink-0 items-center justify-center" aria-hidden="true">
-      {state === "thinking" ? <span className={`absolute inset-0 rounded-full border border-cyan-300/25 border-t-cyan-200 ${styles.thinkingRing}`} /> : null}
-      <span className={`h-4 w-4 rounded-full border ${offline ? "border-slate-500/50 bg-slate-600/50" : state === "idle" ? "border-cyan-300/20 bg-cyan-300/25" : state === "waiting" ? `border-cyan-200/30 bg-cyan-300/35 ${styles.waitingOrb}` : `border-cyan-100/50 bg-cyan-300/65 ${styles.livePulse}`}`} />
+    <span
+      className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-md border bg-[#07131a] ${
+        state === "thinking"
+          ? "border-cyan-200/55"
+          : state === "waiting"
+            ? "border-cyan-300/25 opacity-75"
+            : state === "offline"
+              ? "border-slate-500/20 opacity-35 grayscale"
+              : "border-white/10 opacity-65"
+      }`}
+    >
+      <ThinkingOrb
+        state={ORB_STATE[state]}
+        size={64}
+        theme="dark"
+        speed={state === "waiting" ? 0.45 : 1}
+        paused={paused}
+        aria-label={`${roleName}: ${STATE_LABELS[state].toLowerCase()} synthetic agent state`}
+      />
     </span>
   );
 }
@@ -43,7 +66,7 @@ export function DemoAgentStatePanel({ roles }: { roles: CompanyDirectoryAgentV1[
           const state = syntheticStateAt(elapsedMs, index);
           return (
             <li key={role.publicId} className="flex items-center gap-2 rounded-md border border-white/10 bg-white/[0.03] px-2 py-2">
-              <DemoOrb state={state} />
+              <DemoOrb state={state} roleName={role.displayName} />
               <div className="min-w-0">
                 <p className="truncate text-[11px] font-semibold text-white/85">{role.displayName}</p>
                 <p className="font-mono text-[9px] tracking-[0.1em] text-white/45">{STATE_LABELS[state]} - SYNTHETIC</p>

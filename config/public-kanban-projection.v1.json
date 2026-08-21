@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-20T20:00:00Z",
+  "sourceRevision": "zer0-company:company-registry-v1",
+  "projectionHash": "sha256:216aee8961bb0c3fbf2202a38b510c5463facb13542cee71ef3736e196fced57",
+  "entries": [
+    {
+      "publicId": "hermes-keel",
+      "repoIdentity": "github.com/kvnloo/hermes-keel",
+      "selector": "git-common-dir:github.com/kvnloo/hermes-keel",
+      "provenance": "exact public repo remote plus canonical workspace identity",
+      "counts": {
+        "planned": 0,
+        "active": 0,
+        "review": 0,
+        "blocked": 3,
+        "completed": 17,
+        "total": 20
+      },
+      "lastUpdatedBucket": "today"
+    },
+    {
+      "publicId": "boplog",
+      "repoIdentity": "github.com/kvnloo/boplog",
+      "selector": "registry:product_boplog",
+      "provenance": "exact public repo remote plus canonical company registry product",
+      "counts": {
+        "planned": 0,
+        "active": 0,
+        "review": 0,
+        "blocked": 0,
+        "completed": 0,
+        "total": 0
+      },
+      "lastUpdatedBucket": "older"
+    }
+  ]
+}

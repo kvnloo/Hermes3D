@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-15T19:03:26Z",
+  "source": {
+    "canonicalUrl": "https://kvnloo.github.io/boplog/data/manifest.json",
+    "contentHash": "sha256:15c5de9c2a6cc3d02bb0ff6c2e146a520dd263ab26c616fad5987e5e0a52ca4c"
+  },
+  "pageSize": 4,
+  "entries": [
+    {
+      "publicId": "hermes-keel",
+      "displayName": "hermes-keel",
+      "kind": "experiment",
+      "summary": "A self-evolving, performance-based execution kernel for Hermes Agent.",
+      "urls": ["https://kvnloo.github.io/hermes-keel/", "https://github.com/kvnloo/hermes-keel"],
+      "order": 1,
+      "tags": ["dev"]
+    },
+    {
+      "publicId": "baseline-tennis",
+      "displayName": "baseline-tennis",
+      "kind": "experiment",
+      "summary": "Interactive open-data tennis map, charts, and statistical query engine.",
+      "urls": ["https://kvnloo.github.io/baseline-tennis/", "https://github.com/kvnloo/baseline-tennis"],
+      "order": 2,
+      "tags": ["dev"]
+    },
+    {
+      "publicId": "boplog",
+      "displayName": "boplog",
+      "kind": "product",
+      "summary": "Static public build log with llms.txt and a JSON project manifest for agents.",
+      "urls": ["https://kvnloo.github.io/boplog/", "https://github.com/kvnloo/boplog"],
+      "order": 3,
+      "tags": ["dev"]
+    },
+    {
+      "publicId": "aliens-made-this",
+      "displayName": "aliens-made-this",
+      "kind": "experiment",
+      "summary": "Playful generative-art capability test: what can the aliens make?",
+      "urls": ["https://kvnloo.github.io/aliens-made-this/", "https://github.com/kvnloo/aliens-made-this"],
+      "order": 4,
+      "tags": ["dev"]
+    },
+    {
+      "publicId": "halo",
+      "displayName": "halo",
+      "kind": "experiment",
+      "summary": "A first-person shooter in Three.js, measured frame by frame against its reference target.",
+      "urls": ["https://github.com/kvnloo/halo"],
+      "order": 5,
+      "tags": ["dev"]
+    },
+    {
+      "publicId": "tmux-agent-fleet",
+      "displayName": "tmux-agent-fleet",
+      "kind": "oss",
+      "summary": "Zero-daemon, harness-neutral command palette for coding agents across tmux panes.",
+      "urls": ["https://github.com/kvnloo/tmux-agent-fleet"],
+      "order": 6,
+      "tags": ["dev", "agent-tooling"]
+    },
+    {
+      "publicId": "tesla",
+      "displayName": "tesla",
+      "kind": "project",
+      "summary": "Tesla infotainment system experiment in React, TypeScript, and Vite.",
+      "urls": ["https://kvnloo.github.io/tesla/", "https://github.com/kvnloo/tesla"],
+      "order": 7,
+      "tags": ["dev"]
+    },
+    {
+      "publicId": "kpu-sim",
+      "displayName": "kpu-sim",
+      "kind": "oss",
+      "summary": "Public contribution work adding GitHub Pages delivery for KPU simulator animations.",
+      "urls": ["https://kvnloo.github.io/kpu-sim/", "https://github.com/kvnloo/kpu-sim"],
+      "order": 8,
+      "tags": ["dev", "open-source-contrib"]
+    }
+  ]
+}

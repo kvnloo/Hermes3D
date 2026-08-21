@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/kvnloo/Hermes3D/blob/dev/.gitops/nightly-manifest.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "base", "generation", "features"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "base": {
+      "type": "object", "additionalProperties": false, "required": ["branch", "sha"],
+      "properties": {"branch": {"const": "dev"}, "sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}}
+    },
+    "generation": {"type": "integer", "minimum": 1},
+    "features": {"type": "array", "maxItems": 3, "items": {"$ref": "#/$defs/feature"}}
+  },
+  "$defs": {"feature": {
+    "type": "object", "additionalProperties": false,
+    "required": ["slug", "repository", "branch", "pullRequest", "headSha", "order", "ownership", "publicReceipt", "expiresAt"],
+    "properties": {
+      "slug": {"type": "string", "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"},
+      "repository": {"const": "kvnloo/Hermes3D"}, "branch": {"type": "string", "pattern": "^feature/hermes3d/[a-z0-9]+(?:-[a-z0-9]+)*$"},
+      "pullRequest": {"type": "integer", "minimum": 1}, "headSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+      "order": {"type": "integer", "minimum": 0}, "ownership": {"type": "array", "minItems": 1, "items": {"type": "string", "maxLength": 160}},
+      "publicReceipt": {"type": "string", "pattern": "^prv_[A-Za-z0-9_-]{8,64}$"}, "expiresAt": {"type": "string", "format": "date-time"}
+    }
+  }}
+}

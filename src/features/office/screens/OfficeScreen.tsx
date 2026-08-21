@@ -11,6 +11,7 @@ import {
 import { useRouter } from "next/navigation";
 import { MessageSquare, ChevronDown, ChevronLeft, ChevronRight, Mic } from "lucide-react";
 import { RetroOffice3D } from "@/features/retro-office/RetroOffice3D";
+import { PublicBoplogProjects } from "@/features/office/components/PublicBoplogProjects";
 import type { OfficeAgent } from "@/features/retro-office/core/types";
 import { RunningAvatarLoader } from "@/features/agents/components/RunningAvatarLoader";
 import { GatewayConnectScreen } from "@/features/agents/components/GatewayConnectScreen";
@@ -154,6 +155,8 @@ import { PublicCompanyDirectory } from "@/features/office/components/PublicCompa
 import { PublicLiveStatus } from "@/features/office/components/PublicLiveStatus";
 import { DemoAgentStatePanel } from "@/features/office/components/DemoAgentStatePanel";
 import type { CompanyDirectoryV1 } from "@/lib/public-directory/companyDirectoryV1";
+import type { PublicBoplogProjectionV1 } from "@/lib/public-boplog/publicBoplogProjectionV1";
+import type { PublicKanbanProjectionV1 } from "@/lib/public-boplog/publicKanbanProjectionV1";
 import { JukeboxPanel } from "@/features/spotify-jukebox/components/JukeboxPanel";
 import { JukeboxDisabledPanel } from "@/features/spotify-jukebox/components/JukeboxDisabledPanel";
 import { executeBrowserJukeboxCommand } from "@/features/spotify-jukebox/agentBridge";
@@ -899,11 +902,15 @@ const inferRunningFromAgentSessions = async (params: {
 type OfficeScreenProps = {
   showHermesConsole?: boolean;
   publicCompanyDirectory?: CompanyDirectoryV1 | null;
+  publicBoplogProjection?: PublicBoplogProjectionV1 | null;
+  publicKanbanProjection?: PublicKanbanProjectionV1 | null;
 };
 
 export function OfficeScreen({
   showHermesConsole = true,
   publicCompanyDirectory = null,
+  publicBoplogProjection = null,
+  publicKanbanProjection = null,
 }: OfficeScreenProps) {
   // Patch Hermes Phase 2: avoid useSearchParams() at component root — it
   // suspends during hydration in Next.js dev mode and keeps the parent
@@ -4711,6 +4718,7 @@ export function OfficeScreen({
 
       <PublicCompanyDirectory directory={publicCompanyDirectory} />
       <PublicLiveStatus />
+      <PublicBoplogProjects projection={publicBoplogProjection} kanbanProjection={publicKanbanProjection} />
 
       {showEmptyFleetBanner ? (
         <div className="pointer-events-none fixed left-1/2 top-16 z-40 w-full max-w-xl -translate-x-1/2 px-4">

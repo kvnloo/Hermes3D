@@ -94,11 +94,31 @@ type OrbitControllerLike = {
 const STREAM_CAMERA_TARGET = new THREE.Vector3(...DISTRICT_CAMERA_TARGET);
 export const STREAM_ORBIT_PERIOD_SECONDS = 180;
 export const STREAM_ORBIT_ANGULAR_SPEED = (Math.PI * 2) / STREAM_ORBIT_PERIOD_SECONDS;
+export const STREAM_ORBIT_MAX_STEP_SECONDS = 0.05;
 
 let activeStreamCameraWriters = 0;
+let persistedStreamOrbitAngle: number | null = null;
 
 export const advanceStreamOrbitAngle = (angle: number, delta: number) =>
-  angle + Math.min(Math.max(delta, 0), 0.05) * STREAM_ORBIT_ANGULAR_SPEED;
+  angle + Math.min(Math.max(delta, 0), STREAM_ORBIT_MAX_STEP_SECONDS) * STREAM_ORBIT_ANGULAR_SPEED;
+
+export type StreamCameraProofSnapshot = {
+  enabled: boolean;
+  updates: number;
+  angle: number;
+  position: [number, number, number];
+  quaternion: [number, number, number, number];
+  target: [number, number, number];
+  radius: number;
+  height: number;
+  collidingObjectNames: string[];
+};
+
+declare global {
+  interface Window {
+    __HERMES3D_STREAM_CAMERA_PROOF__?: () => StreamCameraProofSnapshot;
+  }
+}
 
 /** Query-only, stream-safe camera motion for synthetic OBS browser sources. */
 export function StreamCameraController({
@@ -106,11 +126,12 @@ export function StreamCameraController({
 }: {
   orbitRef: RefObject<OrbitControllerLike | null>;
 }) {
-  const { camera } = useThree();
+  const { camera, scene } = useThree();
   const streamOrbitEnabledRef = useRef(false);
   const angleRef = useRef(0);
   const radiusRef = useRef(1);
   const fixedHeightRef = useRef(DISTRICT_CAMERA_POSITION[1]);
+  const updatesRef = useRef(0);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -121,7 +142,7 @@ export function StreamCameraController({
     const dz = camera.position.z - STREAM_CAMERA_TARGET.z;
     radiusRef.current = Math.max(Math.hypot(dx, dz), 1);
     fixedHeightRef.current = camera.position.y;
-    angleRef.current = Math.atan2(dz, dx);
+    angleRef.current = persistedStreamOrbitAngle ?? Math.atan2(dz, dx);
 
     activeStreamCameraWriters += 1;
     if (activeStreamCameraWriters !== 1) {
@@ -138,25 +159,56 @@ export function StreamCameraController({
       orbit.enableDamping = false;
     }
 
+    const cameraPoint = new THREE.Vector3();
+    const objectBounds = new THREE.Box3();
+    window.__HERMES3D_STREAM_CAMERA_PROOF__ = () => {
+      cameraPoint.copy(camera.position);
+      const collidingObjectNames: string[] = [];
+      scene.traverseVisible((object) => {
+        if (!(object instanceof THREE.Mesh) || object.userData?.cameraCollision === false) return;
+        objectBounds.setFromObject(object);
+        if (!objectBounds.isEmpty() && objectBounds.containsPoint(cameraPoint)) {
+          collidingObjectNames.push(object.name || object.uuid);
+        }
+      });
+      const dx = camera.position.x - STREAM_CAMERA_TARGET.x;
+      const dz = camera.position.z - STREAM_CAMERA_TARGET.z;
+      return {
+        enabled: streamOrbitEnabledRef.current,
+        updates: updatesRef.current,
+        angle: angleRef.current,
+        position: camera.position.toArray(),
+        quaternion: camera.quaternion.toArray(),
+        target: STREAM_CAMERA_TARGET.toArray(),
+        radius: Math.hypot(dx, dz),
+        height: camera.position.y,
+        collidingObjectNames,
+      };
+    };
+
     return () => {
+      delete window.__HERMES3D_STREAM_CAMERA_PROOF__;
       activeStreamCameraWriters -= 1;
       if (orbit && previousOrbitState) {
         orbit.enabled = previousOrbitState.enabled;
         orbit.enableDamping = previousOrbitState.enableDamping;
       }
     };
-  }, [camera, orbitRef]);
+  }, [camera, orbitRef, scene]);
 
   useFrame((state, delta) => {
     if (!streamOrbitEnabledRef.current) return;
 
     angleRef.current = advanceStreamOrbitAngle(angleRef.current, delta);
+    persistedStreamOrbitAngle = angleRef.current;
     camera.position.set(
       STREAM_CAMERA_TARGET.x + radiusRef.current * Math.cos(angleRef.current),
       fixedHeightRef.current,
       STREAM_CAMERA_TARGET.z + radiusRef.current * Math.sin(angleRef.current),
     );
     camera.lookAt(STREAM_CAMERA_TARGET);
+    camera.updateMatrixWorld();
+    updatesRef.current += 1;
     state.invalidate();
   });
 
