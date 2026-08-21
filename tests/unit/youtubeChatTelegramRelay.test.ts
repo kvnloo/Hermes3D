@@ -23,9 +23,9 @@ const message = (id: string, text: string, name = "Viewer", extra = {}) => ({
 const deleted = (eventId: string, deletedMessageId = eventId) => ({ id: eventId, snippet: { type: "messageDeletedEvent", deletedMessageId }, authorDetails: { displayName: "mod" } });
 const config = (patch = {}) => ({ mode: "summary", summaryIntervalMs: 300_000, messagesPerMinute: 20, telegramSendsPerMinute: 6, queueLimit: 200, maxPendingBytes: 200_000, dailyQuotaUnits: 9_000, discoveryIntervalMs: 900_000, pollWhileOff: true, hybridTriggers: ["?", "@kvnloo"], ...patch });
 class TestConfigStore extends MemoryStore { async loadConfig() { return validateConfig(await this.load(config())); } }
-async function engine(mode = "continuous", now = () => 0) {
+async function engine(mode = "continuous", now = () => 0, patch = {}) {
   const stateStore = new MemoryStore();
-  const configStore = new TestConfigStore(config({ mode }));
+  const configStore = new TestConfigStore(config({ mode, ...patch }));
   const sent: string[] = [];
   const relay = await new RelayEngine({ stateStore, configStore, send: async (text: string) => sent.push(text), now }).init();
   return { relay, stateStore, configStore, sent };
@@ -67,7 +67,7 @@ describe("YouTube chat Telegram relay", () => {
     expect(restarted).toEqual([]);
   });
 
-  it("supports off to summary transition without cross-mode replay", async () => {
+  it("ignores changed static defaults after initialization", async () => {
     let now = 0;
     const { relay, configStore, sent } = await engine("off", () => now);
     await relay.ingest("chat", [message("1", "prime")], "url");
@@ -77,10 +77,8 @@ describe("YouTube chat Telegram relay", () => {
     await relay.ingest("chat", [message("2", "while off"), message("3", "fresh topic")], "url");
     now = 122_000;
     await relay.ingest("chat", [], "url");
-    expect(sent).toHaveLength(1);
-    expect(sent[0]).not.toContain("while off");
-    expect(sent[0]).not.toContain("fresh topic");
-    expect(sent[0]).toContain("Messages: 1");
+    expect(relay.config.mode).toBe("off");
+    expect(sent).toEqual([]);
   });
 
   it("suppresses empty summaries and excludes viewer identity/direct quotes", async () => {
@@ -101,8 +99,7 @@ describe("YouTube chat Telegram relay", () => {
   });
 
   it("bounds a 10k burst, rate, queue, and emits aggregate overflow notice", async () => {
-    const { relay, configStore, sent } = await engine("continuous");
-    await configStore.save(config({ mode: "continuous", messagesPerMinute: 2, queueLimit: 10 }));
+    const { relay, sent } = await engine("continuous", () => 0, { messagesPerMinute: 2, queueLimit: 10 });
     await relay.ingest("chat", [message("prime", "prime")], "url");
     await relay.ingest("chat", Array.from({ length: 10_000 }, (_, i) => message(String(i), `body-${i}`)), "url");
     expect(sent.length).toBeLessThanOrEqual(2);
@@ -111,8 +108,7 @@ describe("YouTube chat Telegram relay", () => {
   });
 
   it.each(["summary", "hybrid"])("bounds a 10k %s accumulator by count and bytes", async (mode) => {
-    const { relay, configStore, sent } = await engine(mode);
-    await configStore.save(config({ mode, queueLimit: 10, maxPendingBytes: 10_000 }));
+    const { relay, sent } = await engine(mode, () => 0, { queueLimit: 10, maxPendingBytes: 10_000 });
     await relay.ingest("chat", [message("prime", "prime")], "url");
     await relay.ingest("chat", Array.from({ length: 10_000 }, (_, i) => message(String(i), `ordinary-body-${i}`)), "url");
     expect(relay.state.pending.length).toBeLessThanOrEqual(10);
@@ -121,13 +117,13 @@ describe("YouTube chat Telegram relay", () => {
   });
 
   it("retracts pending content in either event order and records post-delivery deletion", async () => {
-    const { relay, configStore, sent } = await engine("continuous");
-    await configStore.save(config({ mode: "continuous", messagesPerMinute: 1 }));
+    const { relay, sent } = await engine("continuous", () => 0, { messagesPerMinute: 1 });
     await relay.ingest("chat", [message("prime", "prime")], "url");
     await relay.ingest("chat", [message("a", "delivered"), message("b", "must vanish")], "url");
     await relay.ingest("chat", [deleted("d-b", "b"), deleted("d-a", "a")], "url");
     expect(relay.state.pending.some((item: { id: string }) => item.id === "b")).toBe(false);
-    expect(relay.state.deletedDelivered).toBe(1);
+    expect(relay.state.deletedAfterDelivery).toBe(1);
+    expect(relay.state.unknownDeletion).toBe(0);
     expect(sent.join("\n")).not.toContain("must vanish");
     const samePage = await engine("summary");
     await samePage.relay.ingest("other", [message("prime", "prime")], "url");
@@ -136,8 +132,7 @@ describe("YouTube chat Telegram relay", () => {
   });
 
   it("persists pending content, rate counters, and cursor across restart", async () => {
-    const { relay, stateStore, configStore } = await engine("continuous");
-    await configStore.save(config({ mode: "continuous", messagesPerMinute: 1 }));
+    const { relay, stateStore, configStore } = await engine("continuous", () => 0, { messagesPerMinute: 1 });
     await relay.ingest("chat", [message("prime", "prime")], "url");
     await relay.ingest("chat", [message("a", "one"), message("b", "two")], "url", "cursor-2");
     const restarted = await new RelayEngine({ stateStore, configStore, send: async () => {}, now: () => 0 }).init();
@@ -154,7 +149,67 @@ describe("YouTube chat Telegram relay", () => {
     await expect(relay.ingest("chat", [message("a", "retained")], "url")).rejects.toThrow("offline");
     expect(relay.queue.map((item: { id: string }) => item.id)).toEqual(["a"]);
     relay.state.inFlight = { ids: ["a"] }; await stateStore.save(relay.state);
-    await expect(new RelayEngine({ stateStore, configStore, send: async () => {} }).init()).rejects.toThrow("quarantined");
+    const recovered = await new RelayEngine({ stateStore, configStore, send: async () => {} }).init();
+    expect(recovered.config.mode).toBe("off");
+    expect(recovered.state.pending).toEqual([]);
+  });
+
+  it.each(["continuous", "summary", "hybrid", "off"].flatMap((from) => ["continuous", "summary", "hybrid", "off"].map((to) => [from, to])))
+  ("discards all pending content for explicit %s to %s transition and restart", async (from, to) => {
+    const { relay, stateStore, configStore, sent } = await engine(from);
+    relay.state.pending = [
+      { id: "continuous-secret", name: "n", text: "continuous-secret", kind: "continuous", generation: 0 },
+      { id: "summary-secret", name: "n", text: "summary-secret", kind: "summary", generation: 0 },
+      { id: "hybrid-secret", name: "n", text: "hybrid-secret?", kind: "continuous", generation: 0 },
+    ];
+    await stateStore.save(relay.state);
+    await relay.transitionMode(to);
+    expect(relay.state.modeGeneration).toBe(1);
+    expect(relay.state.pending).toEqual([]);
+    expect(relay.state.droppedOnModeChange).toMatchObject({ count: 3 });
+    const restarted = await new RelayEngine({ stateStore, configStore, send: async (text: string) => sent.push(text), now: () => 999_999 }).init();
+    await restarted.flush("url"); await restarted.maybeSummarize("url");
+    expect(sent).toEqual([]);
+  });
+
+  it("reproduces continuous pending to off to summary with no stale send", async () => {
+    const { relay, stateStore, configStore, sent } = await engine("continuous", () => 0, { messagesPerMinute: 1, summaryIntervalMs: 60_000 });
+    relay.state.pending = [{ id: "reviewer-fixture", name: "n", text: "must-never-send", kind: "continuous", generation: 0 }];
+    await stateStore.save(relay.state);
+    await relay.transitionMode("off"); await relay.transitionMode("summary");
+    const restarted = await new RelayEngine({ stateStore, configStore, send: async (text: string) => sent.push(text), now: () => 120_000 }).init();
+    await restarted.flush("url"); await restarted.maybeSummarize("url");
+    expect(sent).toEqual([]);
+  });
+
+  it("counts unknown deletion separately and expires delivered IDs", async () => {
+    let now = 0;
+    const { relay } = await engine("continuous", () => now);
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await relay.ingest("chat", [deleted("delete-unknown", "never-delivered")], "url");
+    expect(relay.state.deletedAfterDelivery).toBe(0);
+    expect(relay.state.unknownDeletion).toBe(1);
+    relay.state.deliveredSourceIds = [{ id: "expired", deliveredAt: 0, generation: 0 }];
+    now = 8 * 24 * 60 * 60 * 1000; relay.pruneDelivered();
+    expect(relay.state.deliveredSourceIds).toEqual([]);
+  });
+
+  it("rechecks canonical generation immediately before send", async () => {
+    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" })); const sent: string[] = [];
+    const relay: RelayEngine = await new RelayEngine({ stateStore, configStore, send: async (text: string) => sent.push(text), now: () => 0,
+      beforeSend: async () => { await relay.transitionMode("off"); } }).init();
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await relay.ingest("chat", [message("stale", "must-never-send")], "url");
+    expect(sent).toEqual([]);
+    expect(relay.config.mode).toBe("off");
+  });
+
+  it("migrates v2 once using persisted mode and purges legacy content", async () => {
+    const legacy = { version: 2, mode: "hybrid", modeGeneration: 7, pending: [{ id: "legacy-body" }], seen: [], initializedChats: [], pageTokens: {}, quota: { day: "", used: 0 } };
+    const stateStore = new MemoryStore(legacy); const configStore = new TestConfigStore(config({ mode: "summary" }));
+    const relay = await new RelayEngine({ stateStore, configStore, send: async () => {} }).init();
+    expect(relay.config.mode).toBe("hybrid"); expect(relay.state.modeGeneration).toBe(7); expect(relay.state.pending).toEqual([]);
+    expect(relay.state.migrationReceipt).toMatchObject({ fromVersion: 2, pendingDiscarded: 1 });
   });
 
   it("neutralizes markup, links, mentions and code in actual Hermes argv", async () => {
