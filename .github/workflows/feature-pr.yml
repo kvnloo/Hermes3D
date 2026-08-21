@@ -42,18 +42,32 @@ jobs:
         with: { persist-credentials: false }
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with: { node-version: 20, cache: npm }
-      - run: npm ci --ignore-scripts && npm run build
-      - name: Package inert preview and hashes
+      - name: Deterministic rebuild, SBOM, provenance, and strict manifest
         run: |
           set -euo pipefail
+          npm ci --ignore-scripts
+          npm run build
+          tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -czf preview-a.tar.gz .next server package.json package-lock.json
+          rm -rf .next && npm run build
           tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner -czf hermes3d-preview.tar.gz .next server package.json package-lock.json
-          sha256sum hermes3d-preview.tar.gz > preview.sha256
-          node scripts/gitops-policy.mjs scan .next server package.json package-lock.json preview.sha256
+          cmp preview-a.tar.gz hermes3d-preview.tar.gz
+          npm sbom --sbom-format cyclonedx > preview-sbom.json
+          printf '{"builder":"github-actions","workflow":"%s","commit":"%s","tree":"%s"}\n' "$GITHUB_WORKFLOW_REF" "$GITHUB_SHA" "$(git rev-parse HEAD^{tree})" > preview-provenance.json
+          created="$(date -u +%Y-%m-%dT%H:%M:%SZ)"; expires="$(date -u -d '+7 days' +%Y-%m-%dT%H:%M:%SZ)"
+          jq -n --arg repo "$GITHUB_REPOSITORY" --argjson run "$GITHUB_RUN_ID" --argjson attempt "$GITHUB_RUN_ATTEMPT" --arg commit "$GITHUB_SHA" --arg tree "$(git rev-parse HEAD^{tree})" --arg created "$created" --arg expires "$expires" \
+            --arg ad "$(sha256sum hermes3d-preview.tar.gz|cut -d' ' -f1)" --argjson ab "$(stat -c%s hermes3d-preview.tar.gz)" \
+            --arg sd "$(sha256sum preview-sbom.json|cut -d' ' -f1)" --argjson sb "$(stat -c%s preview-sbom.json)" \
+            --arg pd "$(sha256sum preview-provenance.json|cut -d' ' -f1)" --argjson pb "$(stat -c%s preview-provenance.json)" \
+            '{schemaVersion:1,repository:$repo,runId:$run,runAttempt:$attempt,commitSha:$commit,treeSha:$tree,artifact:{name:"hermes3d-preview.tar.gz",digest:$ad,bytes:$ab},sbom:{name:"preview-sbom.json",digest:$sd,bytes:$sb},provenance:{name:"preview-provenance.json",digest:$pd,bytes:$pb},createdAt:$created,expiresAt:$expires}' > preview-manifest.json
+          node scripts/gitops-policy.mjs validate-preview preview-manifest.json .
+          node scripts/gitops-policy.mjs scan .next server package.json package-lock.json preview-sbom.json preview-provenance.json preview-manifest.json
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: feature-preview-${{ github.event.pull_request.head.sha }}
           path: |
             hermes3d-preview.tar.gz
-            preview.sha256
+            preview-sbom.json
+            preview-provenance.json
+            preview-manifest.json
           retention-days: 7
           if-no-files-found: error

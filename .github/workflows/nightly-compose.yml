@@ -15,71 +15,92 @@ jobs:
   compose:
     name: integration / conflict-and-order
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: read
-      checks: read
-      id-token: write
-      attestations: write
+    permissions: {contents: read, pull-requests: read, checks: read}
     env:
       GH_TOKEN: ${{ github.token }}
       MANIFEST: .gitops/nightly-manifest.json
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
-        with: {fetch-depth: 0, persist-credentials: true}
-      - name: Validate desired state and repository metadata
+        with: {fetch-depth: 0, persist-credentials: false}
+      - name: Validate exact desired state and eligibility
         run: |
           set -euo pipefail
           node scripts/gitops-policy.mjs validate-nightly "$MANIFEST"
           expected_base="$(git rev-parse HEAD)"
-          if [[ "${GITHUB_EVENT_NAME}" == push ]]; then expected_base="$(git rev-parse HEAD^)"; fi
+          if [[ "$GITHUB_EVENT_NAME" == push ]]; then expected_base="$(git rev-parse HEAD^)"; fi
           test "$(jq -r .base.sha "$MANIFEST")" = "$expected_base"
           jq -c '.features[]' "$MANIFEST" | while read -r feature; do
-            pr="$(jq -r .pullRequest <<<"$feature")"; expected="$(jq -r .headSha <<<"$feature")"; branch="$(jq -r .branch <<<"$feature")"
+            pr="$(jq -r .pullRequest <<<"$feature")"; sha="$(jq -r .headSha <<<"$feature")"; branch="$(jq -r .branch <<<"$feature")"; receipt="$(jq -r .publicReceipt <<<"$feature")"
             actual="$(gh api "repos/${GITHUB_REPOSITORY}/pulls/${pr}")"
             test "$(jq -r .draft <<<"$actual")" = true
             test "$(jq -r .base.ref <<<"$actual")" = dev
             test "$(jq -r .head.repo.full_name <<<"$actual")" = "$GITHUB_REPOSITORY"
             test "$(jq -r .head.ref <<<"$actual")" = "$branch"
-            test "$(jq -r .head.sha <<<"$actual")" = "$expected"
+            test "$(jq -r .head.sha <<<"$actual")" = "$sha"
+            git fetch --no-tags origin "$sha"
             gh api "repos/${GITHUB_REPOSITORY}/issues/${pr}/labels" --jq '.[].name' | grep -Fx nightly-eligible >/dev/null
-            failures="$(gh api "repos/${GITHUB_REPOSITORY}/commits/${expected}/check-runs" --jq '[.check_runs[] | select(.conclusion != "success" and .conclusion != "neutral" and .conclusion != "skipped")] | length')"
-            test "$failures" = 0
+            gh api --paginate "repos/${GITHUB_REPOSITORY}/commits/${sha}/check-runs?per_page=100" > all-checks.json
+            jq --arg sha "$sha" --arg receipt "$receipt" '{sha:$sha,independentReviewReceipt:$receipt,checks:[.check_runs[]|select(.name=="policy / public-safety" or .name=="quality / node-matrix" or .name=="provenance / preview-artifact" or .name=="review / independent-receipt")|{name,sha:.head_sha,status,conclusion}]}' all-checks.json > exact-checks.json
+            test "$(jq -r --arg receipt "$receipt" '[.check_runs[]|select(.name=="review / independent-receipt" and .external_id==$receipt)]|length' all-checks.json)" = 1
+            node scripts/gitops-policy.mjs validate-checks exact-checks.json "$sha"
           done
-      - name: Compose exact pinned SHAs
+          node scripts/gitops-policy.mjs ownership "$MANIFEST"
+      - name: Compose unprivileged exact pinned SHAs
         run: |
           set -euo pipefail
           git config user.name github-actions
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-          jq -r '.features | sort_by(.order,.slug)[] | .headSha' "$MANIFEST" | while read -r sha; do
-            git fetch --no-tags origin "$sha"
-            git merge --no-ff --no-edit "$sha"
-          done
-          node scripts/gitops-policy.mjs scan
+          jq -r '.features[]|.headSha' "$MANIFEST" | while read -r sha; do git merge --no-ff --no-edit "$sha"; done
+          GITHUB_BASE_SHA="$(jq -r .base.sha "$MANIFEST")" GITHUB_HEAD_SHA=HEAD node scripts/gitops-policy.mjs scan
           git fsck --strict
+          git rev-parse HEAD > nightly-commit.sha
           git rev-parse HEAD^{tree} > nightly-tree.sha
           sha256sum "$MANIFEST" > nightly-manifest.sha256
-      - name: Advance disposable nightly alias with immutable receipt tag
-        if: github.event_name == 'push' && vars.NIGHTLY_AUTOMATION_ENABLED == 'true'
+          git bundle create nightly.bundle HEAD
+          sha256sum nightly.bundle > nightly-bundle.sha256
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: nightly-composition-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            .gitops/nightly-manifest.json
+            nightly-commit.sha
+            nightly-tree.sha
+            nightly-manifest.sha256
+            nightly.bundle
+            nightly-bundle.sha256
+          retention-days: 90
+          if-no-files-found: error
+  mutate:
+    name: integration / trusted-mutation
+    needs: compose
+    if: github.event_name == 'push' && vars.NIGHTLY_AUTOMATION_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: nightly-automation-disabled
+    permissions: {contents: write, id-token: write, attestations: write}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with: {fetch-depth: 0, persist-credentials: true}
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with: {name: 'nightly-composition-${{ github.run_id }}-${{ github.run_attempt }}'}
+      - name: Verify, preserve, and compare-and-swap
         run: |
           set -euo pipefail
-          digest="$(cut -c1-12 nightly-manifest.sha256)"
-          stamp="$(date -u +%Y%m%d-%H%M)"
-          old="$(git ls-remote origin refs/heads/nightly | cut -f1)"
-          if [[ -n "$old" ]]; then git tag -a "nightly/${stamp}-${digest}" "$old" -m "Preserved nightly tip before generation $(jq -r .generation "$MANIFEST")"; git push origin "refs/tags/nightly/${stamp}-${digest}"; fi
-          git push --force-with-lease="refs/heads/nightly:${old}" origin HEAD:refs/heads/nightly
-      - name: Attest trusted nightly receipt
-        if: github.event_name == 'push' && vars.NIGHTLY_AUTOMATION_ENABLED == 'true'
+          sha256sum -c nightly-bundle.sha256
+          sha256sum -c nightly-manifest.sha256
+          git fetch nightly.bundle HEAD:refs/nightly-composed
+          target="$(cat nightly-commit.sha)"; test "$(git rev-parse refs/nightly-composed)" = "$target"
+          test "$(git rev-parse refs/nightly-composed^{tree})" = "$(cat nightly-tree.sha)"
+          current="$(git ls-remote origin refs/heads/nightly | cut -f1)"
+          generation="$(jq -r .generation .gitops/nightly-manifest.json)"; digest="$(cut -c1-12 nightly-manifest.sha256)"; tag="nightly/g${generation}-${digest}"
+          if [[ -n "$current" && "$current" != "$target" ]]; then
+            remote_tag="$(git ls-remote origin "refs/tags/$tag^{}" | cut -f1)"
+            if [[ -n "$remote_tag" ]]; then test "$remote_tag" = "$current"; else git tag -a "$tag" "$current" -m "Preserved nightly tip before generation $generation"; git push origin "refs/tags/$tag"; fi
+          fi
+          if [[ "$current" != "$target" ]]; then git push --force-with-lease="refs/heads/nightly:${current}" origin "$target:refs/heads/nightly"; fi
+      - name: Attest trusted receipt only after successful CAS
         uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
         with:
           subject-path: |
             nightly-tree.sha
             nightly-manifest.sha256
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: nightly-receipt-${{ github.sha }}
-          path: |
-            .gitops/nightly-manifest.json
-            nightly-tree.sha
-            nightly-manifest.sha256
-          retention-days: 90
+            nightly-bundle.sha256

@@ -1,10 +1,15 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "type": "object", "additionalProperties": false,
-  "required": ["schemaVersion", "previewId", "channel", "source", "build", "artifacts", "routeKey", "createdAt", "expiresAt", "teardownAfter"],
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "repository", "runId", "runAttempt", "commitSha", "treeSha", "artifact", "sbom", "provenance", "createdAt", "expiresAt"],
   "properties": {
-    "schemaVersion": {"const": 1}, "previewId": {"type": "string"}, "channel": {"enum": ["feature", "nightly", "promotion"]},
-    "source": {"type": "object"}, "build": {"type": "object"}, "artifacts": {"type": "array", "minItems": 1}, "routeKey": {"type": "string", "pattern": "^(nightly|feature-[a-z0-9-]+)$"},
-    "createdAt": {"type": "string", "format": "date-time"}, "expiresAt": {"type": "string", "format": "date-time"}, "teardownAfter": {"type": "string", "format": "date-time"}
-  }
+    "schemaVersion": {"const": 1},
+    "repository": {"const": "kvnloo/Hermes3D"},
+    "runId": {"type": "integer", "minimum": 1}, "runAttempt": {"type": "integer", "minimum": 1},
+    "commitSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"}, "treeSha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "artifact": {"$ref": "#/$defs/artifact"}, "sbom": {"$ref": "#/$defs/artifact"}, "provenance": {"$ref": "#/$defs/artifact"},
+    "createdAt": {"type": "string", "format": "date-time"}, "expiresAt": {"type": "string", "format": "date-time"}
+  },
+  "$defs": {"artifact": {"type": "object", "additionalProperties": false, "required": ["name", "digest", "bytes"], "properties": {"name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,127}$"}, "digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "bytes": {"type": "integer", "minimum": 1}}}}
 }
