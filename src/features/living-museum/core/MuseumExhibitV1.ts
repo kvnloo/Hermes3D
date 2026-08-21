@@ -157,3 +157,37 @@ export function parseMuseumExhibitV1(value: unknown): MuseumExhibitV1 {
   if (root.id !== `museum:${String(root.slug)}`) throw new Error("Exhibit id must match its slug");
   return root as MuseumExhibitV1;
 }
+
+const finiteVec3 = (value: unknown): value is Vec3 => Array.isArray(value) && value.length === 3 && value.every((item) => typeof item === "number" && Number.isFinite(item));
+const publicText = (value: unknown, path: string) => {
+  if (typeof value !== "string" || !value.trim() || /[\u0000-\u001f\u007f]/.test(value)) throw new Error(`${path} must be public-safe text`);
+  if (/(?:^|[\s/])(?:home|users|workspace|\.hermes)(?:[\s/]|$)|(?:secret|token|password|credential|kanban|task[_-]?id|session|database|tailnet)/i.test(value)) throw new Error(`${path} contains private data`);
+};
+
+/** Semantic validation for runtime and registry generation. Asset byte/hash checks
+ * remain a filesystem-only CI responsibility and never run in the browser. */
+export function validateMuseumExhibitV1(value: unknown): MuseumExhibitV1 {
+  const exhibit = parseMuseumExhibitV1(value);
+  [exhibit.title, exhibit.oneLineIntent, exhibit.summary, exhibit.whyItMatters, exhibit.trademarkNotice, exhibit.story.heroArtifact, exhibit.story.processSummary, exhibit.story.interactiveDetail, exhibit.story.reflectionPrompt].forEach((text, index) => publicText(text, `exhibit.publicText[${index}]`));
+  if (!finiteVec3(exhibit.bounds.min) || !finiteVec3(exhibit.bounds.max) || exhibit.bounds.min.some((min, index) => min >= exhibit.bounds.max[index])) throw new Error("Exhibit bounds are invalid");
+  for (const [name, anchor] of Object.entries(exhibit.cameraAnchors)) {
+    if (!finiteVec3(anchor.position) || !finiteVec3(anchor.target) || !Number.isFinite(anchor.fov) || anchor.fov < 20 || anchor.fov > 100 || !Number.isFinite(anchor.minDwellMs) || anchor.minDwellMs < 0) throw new Error(`Camera anchor ${name} is invalid`);
+  }
+  const expectedTiers = ["hero", "near", "far", "sleep"];
+  if (exhibit.lod.length !== expectedTiers.length || exhibit.lod.some((tier, index) => tier.tier !== expectedTiers[index] || !Number.isFinite(tier.enterDistance) || !Number.isFinite(tier.exitDistance) || tier.enterDistance > tier.exitDistance || tier.maxTriangles < 0 || tier.maxDrawCalls < 0 || tier.animationHz < 0)) throw new Error("LOD tiers or hysteresis are invalid");
+  const ceilings = { maxInitialBytes: 1572864, maxDeferredBytes: 6291456, maxTriangles: 180000, maxDrawCalls: 90, maxTextures: 12, maxTextureEdgePx: 2048, maxCpuFrameMsP95: 8, maxGpuFrameMsP95: 10 } as const;
+  for (const [key, ceiling] of Object.entries(ceilings)) {
+    const actual = exhibit.budget[key as keyof typeof ceilings];
+    if (!Number.isFinite(actual) || actual < 0 || actual > ceiling) throw new Error(`Budget ${key} exceeds its ceiling`);
+  }
+  if (exhibit.publicProjection.allowedFields.join(",") !== "verifiedMilestone,milestoneUrl,updatedAt") throw new Error("Public projection allowlist is invalid");
+  if (exhibit.publicProjection.verifiedMilestone && !exhibit.publicProjection.milestoneUrl) throw new Error("A public milestone requires a URL");
+  for (const link of [...exhibit.publicUrls, ...(exhibit.publicProjection.milestoneUrl ? [{ label: "milestone", url: exhibit.publicProjection.milestoneUrl }] : [])]) {
+    const url = new URL(link.url);
+    if (url.protocol !== "https:" || url.username || url.password || url.search || url.hash || /^(localhost|\d{1,3}(?:\.\d{1,3}){3}|\[.*\])$/i.test(url.hostname)) throw new Error("Public URL is invalid");
+  }
+  for (const asset of exhibit.assets) {
+    if (asset.path.startsWith("/") || asset.path.includes("..") || !/^[a-f0-9]{64}$/.test(asset.sha256) || !Number.isInteger(asset.bytes) || asset.bytes <= 0 || !asset.creator.trim() || !asset.license.trim() || /unknown|unreviewed/i.test(asset.license)) throw new Error(`Asset ${asset.path} has invalid provenance`);
+  }
+  return exhibit;
+}
