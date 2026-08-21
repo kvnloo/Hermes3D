@@ -66,7 +66,11 @@ export function validateConfig(candidate) {
 }
 
 export class JsonStore {
-  constructor(path) { this.path = path; }
+  constructor(path, { fault = async (_step) => {}, suffix = () => `${Date.now()}-${process.pid}-${Math.random().toString(16).slice(2)}` } = {}) {
+    this.path = path;
+    this.fault = fault;
+    this.suffix = suffix;
+  }
   async load(fallback, { corruptFallback } = {}) {
     try { return JSON.parse(await readFile(this.path, "utf8")); }
     catch (error) {
@@ -81,22 +85,29 @@ export class JsonStore {
   async replaceCorrupt(sentinel) {
     const directoryPath = dirname(this.path);
     await mkdir(directoryPath, { recursive: true, mode: 0o700 });
-    const suffix = `${Date.now()}-${process.pid}-${Math.random().toString(16).slice(2)}`;
+    const suffix = this.suffix();
     const quarantine = `${this.path}.corrupt-${suffix}`;
     const temp = `${this.path}.${suffix}.tmp`;
     const invalid = await readFile(this.path);
     let quarantineFile;
     let sentinelFile;
     try {
-      quarantineFile = await open(quarantine, "wx", 0o600);
-      await quarantineFile.writeFile(invalid); await quarantineFile.sync(); await quarantineFile.close(); quarantineFile = null;
-      sentinelFile = await open(temp, "wx", 0o600);
-      await sentinelFile.writeFile(`${JSON.stringify(sentinel, null, 2)}\n`); await sentinelFile.sync(); await sentinelFile.close(); sentinelFile = null;
+      await this.fault("quarantine:open"); quarantineFile = await open(quarantine, "wx", 0o600);
+      await this.fault("quarantine:write"); await quarantineFile.writeFile(invalid);
+      await this.fault("quarantine:fsync"); await quarantineFile.sync();
+      await this.fault("quarantine:close"); await quarantineFile.close(); quarantineFile = null;
+      await this.fault("safe-temp:open"); sentinelFile = await open(temp, "wx", 0o600);
+      await this.fault("safe-temp:write"); await sentinelFile.writeFile(`${JSON.stringify(sentinel, null, 2)}\n`);
+      await this.fault("safe-temp:fsync"); await sentinelFile.sync();
+      await this.fault("safe-temp:close"); await sentinelFile.close(); sentinelFile = null;
+      await this.fault("state:rename");
       await rename(temp, this.path);
+      await this.fault("parent:open");
       const directory = await open(directoryPath, "r");
-      try { await directory.sync(); } finally { await directory.close(); }
+      try { await this.fault("parent:fsync"); await directory.sync(); }
+      finally { await this.fault("parent:close"); await directory.close(); }
     } catch (error) {
-      await quarantineFile?.close(); await sentinelFile?.close(); await rm(temp, { force: true });
+      await quarantineFile?.close().catch(() => {}); await sentinelFile?.close().catch(() => {}); await rm(temp, { force: true });
       throw new Error(`relay state corrupt and durable safe-off replacement failed: ${error.message}`);
     }
   }
@@ -217,12 +228,13 @@ function validState(state) {
 }
 
 export class RelayEngine {
-  constructor({ stateStore, configStore, send, now = () => Date.now(), beforeSend = async () => {} }) {
+  constructor({ stateStore, configStore, send, now = () => Date.now(), beforeSend = async () => {}, transitionTimeoutMs = 30_000 }) {
     this.stateStore = stateStore;
     this.configStore = configStore;
     this.send = send;
     this.now = now;
     this.beforeSend = beforeSend;
+    this.transitionTimeoutMs = transitionTimeoutMs;
     this.state = null;
     this.config = null;
   }
@@ -265,7 +277,7 @@ export class RelayEngine {
       this.discardPending(); this.state.config.mode = mode; this.state.modeGeneration += 1;
       this.state.summaryStartedAt = this.now(); this.state.sourceSentAt = []; this.state.telegramSentAt = []; this.state.inFlight = null;
       await this.stateStore.save(this.state); this.config = this.state.config; return this.state;
-    });
+    }, this.transitionTimeoutMs);
   }
   discardPending() {
     this.state.droppedOnModeChange.count += this.state.pending.length;
@@ -374,7 +386,7 @@ export class RelayEngine {
       this.state.sourceSentAt.push(...Array(sourceCount).fill(this.now())); this.state.telegramSentAt.push(this.now());
       this.recordDelivered(ids, generation); this.state.inFlight = null;
       await this.stateStore.save(this.state); return true;
-    });
+    }, this.transitionTimeoutMs);
   }
   async maybeSummarize(videoUrl) {
     this.purgeStale();

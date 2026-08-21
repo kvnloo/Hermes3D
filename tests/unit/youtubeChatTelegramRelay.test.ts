@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { EventEmitter } from "node:events";
 import { PassThrough } from "node:stream";
+import { chmod, lstat, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
   ConfigStore,
   DESTINATION,
+  JsonStore,
   MemoryStore,
   QuotaBudget,
   RelayEngine,
@@ -213,6 +217,104 @@ describe("YouTube chat Telegram relay", () => {
     await delivery; await off;
     expect(offAcknowledged).toBe(true);
     expect((await stateStore.load(null))).toMatchObject({ config: { mode: "off" }, modeGeneration: 1, pending: [], inFlight: null });
+  });
+
+  it("records every deferred transport boundary and never completes an old generation after off acknowledgment", async () => {
+    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" }));
+    const events: string[] = []; let release!: () => void;
+    const held = new Promise<void>((resolve) => { release = resolve; });
+    const relay = await new RelayEngine({ stateStore, configStore, send: async () => { events.push("send:start"); await held; events.push("send:complete"); }, now: () => 10 }).init();
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    relay.state.pending = [{ id: "old", name: "n", text: "old", kind: "continuous", generation: 0 }]; await stateStore.save(relay.state);
+    const delivery = relay.deliver("old", ["old"], 1);
+    while (!events.includes("send:start")) await Promise.resolve();
+    expect(await stateStore.load(null)).toMatchObject({ config: { mode: "continuous" }, modeGeneration: 0, inFlight: { ids: ["old"], generation: 0 }, pending: [{ id: "old" }], dropped: 0, inFlightUncertain: 0 });
+    const off = relay.transitionMode("off").then(() => events.push("off:ack"));
+    await Promise.resolve(); expect(events).toEqual(["send:start"]);
+    release(); await Promise.all([delivery, off]);
+    expect(events).toEqual(["send:start", "send:complete", "off:ack"]);
+    expect(await stateStore.load(null)).toMatchObject({ config: { mode: "off" }, modeGeneration: 1, inFlight: null, pending: [], dropped: 0, inFlightUncertain: 0, droppedOnModeChange: { count: 0 } });
+  });
+
+  it("persists transport rejection as uncertain and restart fails closed without replay", async () => {
+    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" })); let sends = 0;
+    const relay = await new RelayEngine({ stateStore, configStore, send: async () => { sends += 1; throw new Error("transport rejected"); }, now: () => 20 }).init();
+    relay.state.pending = [{ id: "reject", name: "n", text: "secret", kind: "continuous", generation: 0 }]; await stateStore.save(relay.state);
+    await expect(relay.deliver("secret", ["reject"], 1)).rejects.toThrow("transport rejected");
+    expect(await stateStore.load(null)).toMatchObject({ config: { mode: "continuous" }, modeGeneration: 0, pending: [{ id: "reject" }], inFlight: { uncertain: true, sourceCount: 1 }, inFlightUncertain: 0 });
+    const restarted = await new RelayEngine({ stateStore, configStore, send: async () => { sends += 1; }, now: () => 30 }).init();
+    expect(restarted.state).toMatchObject({ config: { mode: "off" }, modeGeneration: 1, pending: [], inFlight: null, inFlightUncertain: 1, droppedOnModeChange: { count: 1 } });
+    await restarted.flush("url"); expect(sends).toBe(1);
+  });
+
+  it("bounds an off command waiting on a hung transport without false acknowledgment", async () => {
+    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" })); let release!: () => void;
+    const held = new Promise<void>((resolve) => { release = resolve; });
+    const relay = await new RelayEngine({ stateStore, configStore, send: async () => held, transitionTimeoutMs: 5 }).init();
+    relay.state.pending = [{ id: "hung", name: "n", text: "hung", kind: "continuous", generation: 0 }]; await stateStore.save(relay.state);
+    const delivery = relay.deliver("hung", ["hung"], 1); await Promise.resolve();
+    await expect(relay.transitionMode("off")).rejects.toThrow("in-flight transport did not settle");
+    expect(await stateStore.load(null)).toMatchObject({ config: { mode: "continuous" }, modeGeneration: 0, pending: [{ id: "hung" }], inFlight: { ids: ["hung"] }, dropped: 0, inFlightUncertain: 0 });
+    release(); await delivery;
+    expect(await stateStore.load(null)).toMatchObject({ config: { mode: "continuous" }, modeGeneration: 0, pending: [], inFlight: null, inFlightUncertain: 0 });
+  });
+
+  it("serializes two concurrent sends and concurrent mode commands at every boundary", async () => {
+    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" }));
+    const releases: Array<() => void> = []; const events: string[] = [];
+    const relay = await new RelayEngine({ stateStore, configStore, send: async (text: string) => { events.push(`start:${text}`); await new Promise<void>((resolve) => releases.push(resolve)); events.push(`done:${text}`); } }).init();
+    relay.state.pending = ["a", "b"].map((id) => ({ id, name: "n", text: id, kind: "continuous", generation: 0 })); await stateStore.save(relay.state);
+    const first = relay.deliver("a", ["a"], 1); while (releases.length < 1) await Promise.resolve();
+    const second = relay.deliver("b", ["b"], 1); const off = relay.transitionMode("off"); const summary = relay.transitionMode("summary");
+    await Promise.resolve(); expect(events).toEqual(["start:a"]);
+    expect(await stateStore.load(null)).toMatchObject({ modeGeneration: 0, pending: [{ id: "a" }, { id: "b" }], inFlight: { ids: ["a"] }, dropped: 0, inFlightUncertain: 0 });
+    releases.shift()!(); while (releases.length < 1) await Promise.resolve(); expect(events).toEqual(["start:a", "done:a", "start:b"]);
+    expect(await stateStore.load(null)).toMatchObject({ modeGeneration: 0, pending: [{ id: "b" }], inFlight: { ids: ["b"] }, inFlightUncertain: 0 });
+    releases.shift()!(); await Promise.all([first, second, off, summary]);
+    expect(events).toEqual(["start:a", "done:a", "start:b", "done:b"]);
+    expect(await stateStore.load(null)).toMatchObject({ config: { mode: "summary" }, modeGeneration: 2, pending: [], inFlight: null, dropped: 0, inFlightUncertain: 0, droppedOnModeChange: { count: 0 } });
+  });
+
+  it.each(["malformed", "truncated", "schema-invalid"])("recovers real-filesystem %s state to canonical 0600 off without static active defaults", async (kind) => {
+    const root = await mkdtemp(join(tmpdir(), "relay-json-")); const path = join(root, "state.json");
+    const original = kind === "malformed" ? Buffer.from("{bad-json") : kind === "truncated" ? Buffer.from('{"version":3,') : Buffer.from(JSON.stringify({ version: 3, config: config({ mode: "continuous" }) }));
+    await writeFile(path, original, { mode: 0o600 }); let sends = 0;
+    const relay = new RelayEngine({ stateStore: new JsonStore(path, { suffix: () => "fixture" }), configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; }, now: () => 42 });
+    if (kind === "schema-invalid") await expect(relay.init()).rejects.toThrow("failed closed off"); else await relay.init();
+    const canonical = JSON.parse(await readFile(path, "utf8")); expect(canonical).toMatchObject({ version: 3, config: { mode: "off" }, pending: [], inFlight: null });
+    expect((await lstat(path)).mode & 0o777).toBe(0o600);
+    expect(await readFile(`${path}.corrupt-fixture`)).toEqual(original);
+    expect((await lstat(`${path}.corrupt-fixture`)).mode & 0o777).toBe(0o600);
+    const restarted = await new RelayEngine({ stateStore: new JsonStore(path), configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; } }).init();
+    expect(restarted.config.mode).toBe("off"); expect(sends).toBe(0); await rm(root, { recursive: true, force: true });
+  });
+
+  const recoverySteps = ["quarantine:open", "quarantine:write", "quarantine:fsync", "quarantine:close", "safe-temp:open", "safe-temp:write", "safe-temp:fsync", "safe-temp:close", "state:rename", "parent:open", "parent:fsync", "parent:close"];
+  it.each(recoverySteps)("fails closed at filesystem step %s with original retryable or durable off", async (step) => {
+    const root = await mkdtemp(join(tmpdir(), "relay-fault-")); const path = join(root, "state.json"); const original = Buffer.from("{malformed"); await writeFile(path, original, { mode: 0o600 }); let sends = 0;
+    const store = new JsonStore(path, { suffix: () => "fault", fault: async (at: string) => { if (at === step) throw new Error(`injected ${at}`); } });
+    await expect(new RelayEngine({ stateStore: store, configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; } }).init()).rejects.toThrow("durable safe-off replacement failed");
+    const after = await readFile(path); const isOriginal = after.equals(original);
+    if (isOriginal) {
+      const retry = await new RelayEngine({ stateStore: new JsonStore(path, { suffix: () => "retry" }), configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; } }).init();
+      expect(retry.config.mode).toBe("off");
+    } else expect(JSON.parse(after.toString())).toMatchObject({ version: 3, config: { mode: "off" }, pending: [], inFlight: null });
+    expect(sends).toBe(0); expect(await lstat(path)).toBeTruthy(); await rm(root, { recursive: true, force: true });
+  });
+
+  it("preserves malformed state for unwritable directories, quarantine collisions, symlinks, and path substitution", async () => {
+    for (const attack of ["unwritable", "collision", "symlink", "substitution"]) {
+      const root = await mkdtemp(join(tmpdir(), "relay-attack-")); const path = join(root, "state.json"); const original = Buffer.from("{original-malformed"); await writeFile(path, original, { mode: 0o600 });
+      if (attack === "collision") await writeFile(`${path}.corrupt-fixed`, "occupied", { mode: 0o600 });
+      if (attack === "symlink") await symlink(path, `${path}.corrupt-fixed`);
+      if (attack === "substitution") { await rm(path); await mkdir(path); }
+      if (attack === "unwritable") await chmod(root, 0o500);
+      const store = new JsonStore(path, { suffix: () => "fixed" });
+      await expect(store.load(null, { corruptFallback: { version: 3, config: config({ mode: "off" }) } })).rejects.toThrow();
+      if (attack === "unwritable") { await chmod(root, 0o700); expect(await readFile(path)).toEqual(original); }
+      else if (attack !== "substitution") expect(await readFile(path)).toEqual(original);
+      await rm(root, { recursive: true, force: true });
+    }
   });
 
   it("migrates v2 once using persisted mode and purges legacy content", async () => {
