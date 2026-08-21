@@ -18,6 +18,8 @@
     "studio:setup": "node scripts/studio-setup.js",
     "doctor": "node scripts/hermes3doctor.mjs",
     "smoke:dev-server": "node scripts/smoke-dev-server.mjs",
+    "relay:youtube-chat": "node scripts/youtube-chat-telegram-relay.mjs run",
+    "relay:youtube-chat:status": "node scripts/youtube-chat-telegram-relay.mjs status",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
     "test:gitops": "node --test tests/gitops-policy.test.mjs",
