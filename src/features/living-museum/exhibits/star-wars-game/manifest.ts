@@ -1,6 +1,6 @@
 import { parseMuseumExhibitV1, type MuseumExhibitV1 } from "../../core/MuseumExhibitV1";
 
-const manifest = {
+export const manifest = {
   schemaVersion: "museum-exhibit/v1",
   id: "museum:star-wars-game",
   slug: "star-wars-game",

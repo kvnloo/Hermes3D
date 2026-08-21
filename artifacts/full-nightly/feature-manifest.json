@@ -1,0 +1,321 @@
+{
+  "schema_version": "hermes3d-full-nightly-candidate/v1",
+  "label": "UNAPPROVED NIGHTLY CANDIDATE",
+  "task_id": "t_407da0ef",
+  "branch": "wt/t_407da0ef",
+  "base": {
+    "nightly_commit": "558803cee784e3c49435b87d4a73cc4c848844ff",
+    "nightly_tree": "0ab00ed043e74f4cc030366c4a8599f5ebe921c9",
+    "dev_commit": "558803cee784e3c49435b87d4a73cc4c848844ff",
+    "dev_tree": "0ab00ed043e74f4cc030366c4a8599f5ebe921c9"
+  },
+  "all_feature_branches_accounted_for": true,
+  "exclusions": [],
+  "privacy_constraints": {
+    "obsidian": "STATIC_DISABLED_PLACEHOLDER_ONLY; no filesystem or network access",
+    "boplog": "AGGREGATE_ONLY_FAIL_CLOSED",
+    "private_evidence_committed": false
+  },
+  "superseded_evidence": [
+    {
+      "refs": [
+        "nightly-preview/24d0b276d0d0",
+        "nightly-preview/ae445a082ac5",
+        "wt/t_ea527d2f"
+      ],
+      "disposition": "SUPERSEDED_INCOMPLETE_FEATURE_SET; preserved refs; not deleted or rewritten"
+    }
+  ],
+  "features": [
+    {
+      "slug": "camera-modes",
+      "source_branch": "hotfix/t_37772021-camera-modes",
+      "source_commit": "c96f2da3ff4e82952ba0a54c4baaf5a142bbfa43",
+      "source_tree": "5b89d354edddf9333448c661ef1f0df95fd5c54c",
+      "patch_id": "06b0627bab86288863369be6eade2c0e4c19d017",
+      "status": "implemented",
+      "dependencies": [],
+      "included_files": [
+        "src/features/office/screens/OfficeScreen.tsx",
+        "src/features/retro-office/RetroOffice3D.tsx",
+        "src/features/retro-office/core/streamCameraModes.ts",
+        "src/features/retro-office/systems/cameraLighting.tsx",
+        "tests/unit/streamCameraModes.test.ts"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "/office"
+    },
+    {
+      "slug": "company-directory-agents",
+      "source_branch": "feature/t_d1b3961e-public-directory",
+      "source_commit": "3aa99773171969357f26b5afd7aa6dfe4b193d9d",
+      "source_tree": "df765c383ce848cb1c14461fce7d6e0e9cf950bb",
+      "patch_id": "81d63c70766f4df2baebec86a43b9d1dd684ac43",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "camera-modes",
+        "official-thinking-orbs"
+      ],
+      "included_files": [
+        "src/features/retro-office/systems/cameraLighting.tsx"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "/office"
+    },
+    {
+      "slug": "public-boplog-kanban",
+      "source_branch": "feature/t_6eb40393-public-boplog",
+      "source_commit": "eff0e1a5504801efab2bd6782066ced684a626a1",
+      "source_tree": "2f3205cb0c588f7b85a0e72987c0c62ec1a1ef7e",
+      "patch_id": "9a5e0e033624cf49f226444cd66dd8482c7ffec3",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "company-directory-agents"
+      ],
+      "included_files": [
+        "config/public-kanban-projection.v1.json",
+        "evidence/public-boplog/1080p-private.png",
+        "evidence/public-boplog/1080p-visible-text-private.txt",
+        "evidence/public-boplog/capture-private.cjs",
+        "evidence/public-boplog/contact-sheet.png",
+        "evidence/public-boplog/mobile-private.png",
+        "evidence/public-boplog/mobile-visible-text-private.txt",
+        "src/app/office/page.tsx",
+        "src/features/office/components/PublicBoplogProjects.tsx",
+        "src/features/office/screens/OfficeScreen.tsx",
+        "src/lib/public-boplog/publicKanbanProjectionV1.ts",
+        "tests/unit/publicKanbanProjectionV1.test.ts"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "/office"
+    },
+    {
+      "slug": "official-thinking-orbs",
+      "source_branch": "preview/official-thinking-orbs-t_27cc13cf",
+      "source_commit": "1f68e1c6b4e9ae9660042d61c384080e70fe54a5",
+      "source_tree": "fb7ffed17363abe176374bd925277b8c632ee301",
+      "patch_id": "f46efadddd54d8b69e75708b2cb4314958f7f438",
+      "status": "candidate-unreviewed",
+      "dependencies": [],
+      "included_files": [
+        "package-lock.json",
+        "package.json",
+        "src/features/office/components/DemoAgentStatePanel.tsx"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "/office"
+    },
+    {
+      "slug": "nightly-gitops",
+      "source_branch": "origin/gitops/nightly-implementation",
+      "source_commit": "a16a58bddc06013148b8ea720b58db1b24a84fa9",
+      "source_tree": "0a0c042e8eb96bcf6a5dfe9c1d597dea64081733",
+      "patch_id": "3cfd6ef07b6e483f312d01ed5a95290dde8f725c",
+      "status": "candidate-unreviewed",
+      "dependencies": [],
+      "included_files": [
+        ".github/workflows/nightly-compose.yml",
+        "tests/gitops-policy.test.mjs"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "artifact-only"
+    },
+    {
+      "slug": "adaptive-mobile-rendering",
+      "source_branch": "origin/perf/adaptive-mobile-t_24f370d9",
+      "source_commit": "9a4373458342666f6f5837a536ef8725a86f6391",
+      "source_tree": "e1815c74850ac162ad9345518f7240910cc84c69",
+      "patch_id": "3a57023b23e97d1a40c8673cbf448cf6d43c7767",
+      "status": "candidate-unreviewed",
+      "dependencies": [],
+      "included_files": [
+        "src/features/retro-office/RetroOffice3D.tsx",
+        "src/features/retro-office/core/graphicsQuality.ts",
+        "src/features/retro-office/systems/atmosphere.tsx",
+        "src/features/retro-office/systems/sceneRuntime.tsx",
+        "tests/unit/graphicsQuality.test.ts"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "/office"
+    },
+    {
+      "slug": "stream-orbit",
+      "source_branch": "preview/t_37b076b4-orbit",
+      "source_commit": "5b9e4be02abb1478381ec81a8057535ff4b84277",
+      "source_tree": "c8809f09d8d84a4eeb7f898aac9684d0a1381a64",
+      "patch_id": "56d65dad2787ddfd2682b0c1f2122eb6b839fb07",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "camera-modes",
+        "adaptive-mobile-rendering"
+      ],
+      "included_files": [
+        "src/features/retro-office/RetroOffice3D.tsx",
+        "src/features/retro-office/core/graphicsQuality.ts",
+        "src/features/retro-office/systems/atmosphere.tsx",
+        "src/features/retro-office/systems/sceneRuntime.tsx",
+        "tests/unit/graphicsQuality.test.ts"
+      ],
+      "conflict_resolution": "repaired successor semantics selected; one camera arbiter; delta timing plus hidden-tab suspension retained",
+      "visual_route": "/office"
+    },
+    {
+      "slug": "living-museum-shell",
+      "source_branch": "repair/museum-shell-provenance",
+      "source_commit": "44a8811e82cdf87e77d1c733ec9393de9493bdf6",
+      "source_tree": "6ccff595b8f1476378e12a5469af9d4dc2f0e8d8",
+      "patch_id": "b3798682eeeb8e8002eaedfda4d267bc7fbdf81e",
+      "status": "candidate-unreviewed",
+      "dependencies": [],
+      "included_files": [
+        "package.json",
+        "scripts/generate-museum-registry.mjs",
+        "scripts/new-museum-exhibit.mjs",
+        "src/app/museum/page.tsx",
+        "src/features/living-museum/core/MuseumExhibitV1.ts",
+        "src/features/living-museum/core/MuseumRuntimeV1.ts",
+        "src/features/living-museum/core/MuseumSearchV1.ts",
+        "src/features/living-museum/registry/generated.ts",
+        "src/features/living-museum/registry/index.ts",
+        "src/features/living-museum/shell/MuseumCanvas.tsx",
+        "src/features/living-museum/shell/MuseumSearch.tsx",
+        "src/features/living-museum/shell/MuseumShell.tsx",
+        "src/features/living-museum/shell/museum.css",
+        "tests/unit/museumShellSearch.test.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum"
+    },
+    {
+      "slug": "pokemon-cards",
+      "source_branch": "wt/t_3ed518a3",
+      "source_commit": "bc3b60c2c69864b1d170e4304fc173cfb514442e",
+      "source_tree": "9487fda5f8a61517bfacd60376ebe04417311654",
+      "patch_id": "e5e95101ad36f22afdbd854db2f9f5d63ab355b0",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "living-museum-shell"
+      ],
+      "included_files": [
+        "src/features/living-museum/exhibits/pokemon-cards/ExhibitScene.tsx",
+        "src/features/living-museum/exhibits/pokemon-cards/manifest.ts",
+        "src/features/living-museum/exhibits/pokemon-cards/tests/manifest.test.ts",
+        "src/features/living-museum/exhibits/pokemon-cards/vitest.config.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum?exhibit=pokemon-cards"
+    },
+    {
+      "slug": "star-wars-game",
+      "source_branch": "wt/t_21f9e55e",
+      "source_commit": "b6af997044002d3614ca8df8b26c33ccfb23c5fc",
+      "source_tree": "9202f89635df9b8c98ba5cf2906ea6fa6adc0964",
+      "patch_id": "6d5dd442dd9e94fbede7301bec20b9a7c9da6756",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "living-museum-shell"
+      ],
+      "included_files": [
+        "src/features/living-museum/exhibits/star-wars-game/ExhibitScene.tsx",
+        "src/features/living-museum/exhibits/star-wars-game/manifest.ts",
+        "src/features/living-museum/exhibits/star-wars-game/tests/manifest.test.ts",
+        "src/features/living-museum/exhibits/star-wars-game/vitest.config.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum?exhibit=star-wars-game"
+    },
+    {
+      "slug": "call-of-duty",
+      "source_branch": "wt/t_8ca73d2e",
+      "source_commit": "fb78a9887f6739eeb29127bfa444a8de8ece1ed8",
+      "source_tree": "ba142f9abea1b53db4ca9733bdba6098a6c59473",
+      "patch_id": "db25db2d32f1f2e895b91643deb31e0fcc3388c9",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "living-museum-shell"
+      ],
+      "included_files": [
+        "src/features/living-museum/exhibits/call-of-duty/ExhibitScene.tsx",
+        "src/features/living-museum/exhibits/call-of-duty/manifest.ts",
+        "src/features/living-museum/exhibits/call-of-duty/tests/manifest.test.ts",
+        "src/features/living-museum/exhibits/call-of-duty/vitest.config.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum?exhibit=call-of-duty"
+    },
+    {
+      "slug": "halo",
+      "source_branch": "wt/t_e57e52d6",
+      "source_commit": "12e3e921622acf5f4f2885030d76a31c8966a1ba",
+      "source_tree": "d8b73b93244a212c42049a576fa3aebbfa50f63a",
+      "patch_id": "5da9b43afdb9fabc1bc88fd0d67760a362ce4fad",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "living-museum-shell"
+      ],
+      "included_files": [
+        "src/features/living-museum/exhibits/halo/ExhibitScene.tsx",
+        "src/features/living-museum/exhibits/halo/manifest.ts",
+        "src/features/living-museum/exhibits/halo/tests/manifest.test.ts",
+        "src/features/living-museum/exhibits/halo/vitest.config.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum?exhibit=halo"
+    },
+    {
+      "slug": "obsidian-disabled-placeholder",
+      "source_branch": "wt/t_9de0deb4",
+      "source_commit": "058c55f3db5d902680545d9787cae8f393015975",
+      "source_tree": "5118cf1e839a1af52b6fd5a08c20044626dc7b34",
+      "patch_id": "572744488593b561d2992ebe3f4b4b6a84daaa05",
+      "status": "candidate-unreviewed-disabled",
+      "dependencies": [
+        "living-museum-shell"
+      ],
+      "included_files": [
+        "src/features/living-museum/exhibits/obsidian-vault/ExhibitScene.tsx",
+        "src/features/living-museum/exhibits/obsidian-vault/manifest.ts",
+        "src/features/living-museum/exhibits/obsidian-vault/tests/manifest.test.ts",
+        "src/features/living-museum/exhibits/obsidian-vault/vitest.config.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum?exhibit=obsidian-vault"
+    },
+    {
+      "slug": "pokemon-game",
+      "source_branch": "wt/t_3bc090e3",
+      "source_commit": "1e96e9b6de1a4d269f27c85d4b5443797a556e6f",
+      "source_tree": "91a60c982d12df3634e76662e0a65d8072f6a57b",
+      "patch_id": "82b950c404e94a3855f6e812a8903143de9f11d9",
+      "status": "candidate-unreviewed",
+      "dependencies": [
+        "living-museum-shell"
+      ],
+      "included_files": [
+        "src/features/living-museum/exhibits/pokemon-game/ExhibitScene.tsx",
+        "src/features/living-museum/exhibits/pokemon-game/manifest.ts",
+        "src/features/living-museum/exhibits/pokemon-game/tests/manifest.test.ts",
+        "src/features/living-museum/exhibits/pokemon-game/vitest.config.ts"
+      ],
+      "conflict_resolution": "canonical shell registry owns search/deep-link/camera; generated adapters preserve leaf LOD and inactive suspension",
+      "visual_route": "/museum?exhibit=pokemon-game"
+    },
+    {
+      "slug": "youtube-chat-telegram-relay",
+      "source_branch": "wt/t_407da0ef",
+      "source_commit": "8f0e0f1588da62bd2c50f4078cc3cb0110094b14",
+      "source_tree": "cf02a3f93827e9978773a15c9ddd4dde8b3dd809",
+      "patch_id": "73046a5f007e013c8fe6f62ea7728bedf6956cf3",
+      "status": "candidate-unreviewed-disabled-by-default",
+      "dependencies": [],
+      "included_files": [
+        "docs/integrations/youtube-chat-telegram-relay.md",
+        "package.json",
+        "scripts/youtube-chat-telegram-relay.mjs",
+        "tests/unit/youtubeChatTelegramRelay.test.ts"
+      ],
+      "conflict_resolution": "central composition; no duplicate route/source introduced",
+      "visual_route": "artifact-only"
+    }
+  ]
+}

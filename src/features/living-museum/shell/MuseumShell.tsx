@@ -32,6 +32,7 @@ export function MuseumShell() {
         {active ? <button type="button" onClick={() => setSelectedSlug(null)}>Return to arrival</button> : validatedMuseumExhibits.length > 0 ? <button type="button" onClick={() => setSelectedSlug(validatedMuseumExhibits[0].manifest.slug)}>Begin the journey</button> : <span className="museum-quiet">The galleries are being prepared.</span>}
       </section>
       <footer className="museum-footer">
+        <span>UNAPPROVED NIGHTLY CANDIDATE</span>
         <span>{webglAvailable ? "Spatial view" : "Static composition"}</span>
         <span>{reducedMotion ? "Reduced motion" : "Authored camera"}</span>
       </footer>
