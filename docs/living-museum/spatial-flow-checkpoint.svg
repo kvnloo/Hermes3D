@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Hermes3D Living Museum spatial flow</title>
+  <desc id="desc">An original curatorial journey diagram from arrival through thematic rooms, hero works, process details, reflection and exit.</desc>
+  <rect width="1600" height="900" fill="#101314"/>
+  <path d="M120 450 C260 450 270 230 420 230 S600 610 760 610 S900 250 1070 250 S1220 450 1480 450" fill="none" stroke="#a6bdb4" stroke-width="3" stroke-dasharray="8 14"/>
+  <g fill="#181e1f" stroke="#52645e" stroke-width="2">
+    <path d="M70 330h220v240H70z"/>
+    <path d="M350 90h330v300H350z"/>
+    <path d="M700 470h300v300H700z"/>
+    <path d="M1030 100h340v300h-340z"/>
+    <path d="M1260 520h270v220h-270z"/>
+  </g>
+  <g fill="#d8e1dd" font-family="Arial, sans-serif">
+    <text x="70" y="62" font-size="24" letter-spacing="5" fill="#8ea59c">LIVING MUSEUM / AUTHORED JOURNEY</text>
+    <text x="100" y="390" font-size="34" font-weight="700">ARRIVAL</text>
+    <text x="100" y="430" font-size="20" fill="#9aaba4">thesis + orientation</text>
+    <text x="390" y="150" font-size="34" font-weight="700">THEMATIC ROOMS</text>
+    <text x="390" y="190" font-size="20" fill="#9aaba4">compression / reveal</text>
+    <text x="740" y="540" font-size="34" font-weight="700">HERO WORK</text>
+    <text x="740" y="580" font-size="20" fill="#9aaba4">one active sightline</text>
+    <text x="1070" y="160" font-size="34" font-weight="700">PROCESS</text>
+    <text x="1070" y="200" font-size="20" fill="#9aaba4">details + public studies</text>
+    <text x="1300" y="590" font-size="34" font-weight="700">REFLECT</text>
+    <text x="1300" y="630" font-size="20" fill="#9aaba4">quiet exit anchor</text>
+  </g>
+  <g fill="#de8c62">
+    <circle cx="120" cy="450" r="10"/><circle cx="420" cy="230" r="10"/><circle cx="760" cy="610" r="15"/><circle cx="1070" cy="250" r="10"/><circle cx="1480" cy="450" r="10"/>
+  </g>
+  <g font-family="Arial, sans-serif" font-size="17" fill="#73867f">
+    <text x="92" y="790">ONE MATERIAL + LIGHTING GRAMMAR</text>
+    <text x="620" y="790">EXHIBIT-SPECIFIC VISUAL LANGUAGES</text>
+    <text x="1190" y="790">LABELS SUBORDINATE TO ART</text>
+    <text x="92" y="830" fill="#a6bdb4">search deep-link → authored approach anchor  /  inactive rooms sleep  /  mobile preserves composition</text>
+  </g>
+</svg>
