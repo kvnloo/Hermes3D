@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { EventEmitter } from "node:events";
+import { execFileSync } from "node:child_process";
 import { PassThrough } from "node:stream";
 import { chmod, lstat, mkdtemp, mkdir, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -27,15 +28,56 @@ const message = (id: string, text: string, name = "Viewer", extra = {}) => ({
 const deleted = (eventId: string, deletedMessageId = eventId) => ({ id: eventId, snippet: { type: "messageDeletedEvent", deletedMessageId }, authorDetails: { displayName: "mod" } });
 const config = (patch = {}) => ({ mode: "summary", summaryIntervalMs: 300_000, messagesPerMinute: 20, telegramSendsPerMinute: 6, queueLimit: 200, maxPendingBytes: 200_000, dailyQuotaUnits: 9_000, discoveryIntervalMs: 900_000, pollWhileOff: true, hybridTriggers: ["?", "@kvnloo"], ...patch });
 class TestConfigStore extends MemoryStore { async loadConfig() { return validateConfig(await this.load(config())); } }
+async function activate(relay: RelayEngine, stateStore: MemoryStore, mode = "continuous") {
+  await relay.transitionMode(mode);
+  relay.state.modeGeneration = 0;
+  await stateStore.save(relay.state);
+}
 async function engine(mode = "continuous", now = () => 0, patch = {}) {
   const stateStore = new MemoryStore();
   const configStore = new TestConfigStore(config({ mode, ...patch }));
   const sent: string[] = [];
   const relay = await new RelayEngine({ stateStore, configStore, send: async (text: string) => sent.push(text), now }).init();
+  if (mode !== "off") await activate(relay, stateStore, mode);
+  else { relay.state.modeGeneration = 0; await stateStore.save(relay.state); }
   return { relay, stateStore, configStore, sent };
 }
 
 describe("YouTube chat Telegram relay", () => {
+  it.each(["continuous", "summary", "hybrid"])("durably bootstraps absent state off despite static %s and stays off across restart", async (mode) => {
+    const root = await mkdtemp(join(tmpdir(), "relay-absent-")); const path = join(root, "state.json"); let sends = 0;
+    const first = await new RelayEngine({ stateStore: new JsonStore(path), configStore: new TestConfigStore(config({ mode })), send: async () => { sends += 1; }, now: () => 77 }).init();
+    expect(first.state).toMatchObject({ initialized: true, enabled: false, reason: "absent_state_bootstrap", config: { mode: "off" }, pending: [], inFlight: null });
+    expect(first.state.modeGeneration).toBeGreaterThan(0);
+    const second = await new RelayEngine({ stateStore: new JsonStore(path), configStore: new TestConfigStore(config({ mode })), send: async () => { sends += 1; }, now: () => 88 }).init();
+    expect(second.config.mode).toBe("off"); expect(second.state.modeGeneration).toBe(first.state.modeGeneration); expect(sends).toBe(0);
+    await rm(root, { recursive: true, force: true });
+  });
+
+  const bootstrapSteps = ["bootstrap:open", "bootstrap:write", "bootstrap:fsync", "bootstrap:close", "bootstrap:link", "bootstrap:dir-fsync"];
+  it.each(bootstrapSteps)("fails closed during absent-state %s", async (step) => {
+    const root = await mkdtemp(join(tmpdir(), "relay-bootstrap-fault-")); const path = join(root, "state.json"); let sends = 0;
+    const store = new JsonStore(path, { fault: async (at: string) => { if (at === step) throw new Error(`injected ${at}`); } });
+    await expect(new RelayEngine({ stateStore: store, configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; } }).init()).rejects.toThrow("safe-off bootstrap failed");
+    expect(sends).toBe(0); await rm(root, { recursive: true, force: true });
+  });
+
+  it.each(["valid-symlink", "dangling-symlink", "directory", "fifo"])("rejects non-regular canonical state path: %s", async (kind) => {
+    const root = await mkdtemp(join(tmpdir(), "relay-state-path-")); const path = join(root, "state.json"); const target = join(root, "target.json");
+    await writeFile(target, "target-must-not-change", { mode: 0o600 });
+    if (kind === "valid-symlink") await symlink(target, path); else if (kind === "dangling-symlink") await symlink(join(root, "missing"), path); else if (kind === "fifo") execFileSync("mkfifo", [path]); else await mkdir(path);
+    await expect(new RelayEngine({ stateStore: new JsonStore(path), configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { throw new Error("must not send"); } }).init()).rejects.toThrow("regular file");
+    expect(await readFile(target, "utf8")).toBe("target-must-not-change"); await rm(root, { recursive: true, force: true });
+  });
+
+  it("fails closed when a symlink is substituted between absent validation and atomic creation", async () => {
+    const root = await mkdtemp(join(tmpdir(), "relay-state-race-")); const path = join(root, "state.json"); const target = join(root, "external.json");
+    await writeFile(target, "external-must-not-change", { mode: 0o600 });
+    const store = new JsonStore(path, { fault: async (step: string) => { if (step === "bootstrap:link") await symlink(target, path); } });
+    await expect(new RelayEngine({ stateStore: store, configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { throw new Error("must not send"); } }).init()).rejects.toThrow("safe-off bootstrap failed");
+    expect(await readFile(target, "utf8")).toBe("external-must-not-change"); expect((await lstat(path)).isSymbolicLink()).toBe(true);
+    await rm(root, { recursive: true, force: true });
+  });
   it("sanitizes controls, bidi, credential URLs, mentions, and bounds text", () => {
     const value = sanitizeText("@everyone\u202e\u0000 https://user:pass@example.com/ " + "x".repeat(900), 100);
     expect(value).not.toMatch(/[\u202e\u0000]/u);
@@ -149,6 +191,7 @@ describe("YouTube chat Telegram relay", () => {
     const stateStore = new MemoryStore();
     const configStore = new TestConfigStore(config({ mode: "continuous" }));
     const relay = await new RelayEngine({ stateStore, configStore, send: async () => { throw new Error("offline"); }, now: () => 0 }).init();
+    await activate(relay, stateStore);
     await relay.ingest("chat", [message("prime", "prime")], "url");
     await expect(relay.ingest("chat", [message("a", "retained")], "url")).rejects.toThrow("offline");
     expect(relay.queue.map((item: { id: string }) => item.id)).toEqual(["a"]);
@@ -205,6 +248,7 @@ describe("YouTube chat Telegram relay", () => {
     const started = new Promise<void>((resolve) => { transportStarted = resolve; });
     const transport = new Promise<void>((resolve) => { releaseTransport = resolve; });
     const relay = await new RelayEngine({ stateStore, configStore, send: async () => { transportStarted(); await transport; }, now: () => 0 }).init();
+    await activate(relay, stateStore);
     await relay.ingest("chat", [message("prime", "prime")], "url");
     const delivery = relay.ingest("chat", [message("stale", "old-generation")], "url");
     await started;
@@ -224,6 +268,7 @@ describe("YouTube chat Telegram relay", () => {
     const events: string[] = []; let release!: () => void;
     const held = new Promise<void>((resolve) => { release = resolve; });
     const relay = await new RelayEngine({ stateStore, configStore, send: async () => { events.push("send:start"); await held; events.push("send:complete"); }, now: () => 10 }).init();
+    await activate(relay, stateStore);
     await relay.ingest("chat", [message("prime", "prime")], "url");
     relay.state.pending = [{ id: "old", name: "n", text: "old", kind: "continuous", generation: 0 }]; await stateStore.save(relay.state);
     const delivery = relay.deliver("old", ["old"], 1);
@@ -239,6 +284,7 @@ describe("YouTube chat Telegram relay", () => {
   it("persists transport rejection as uncertain and restart fails closed without replay", async () => {
     const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" })); let sends = 0;
     const relay = await new RelayEngine({ stateStore, configStore, send: async () => { sends += 1; throw new Error("transport rejected"); }, now: () => 20 }).init();
+    await activate(relay, stateStore);
     relay.state.pending = [{ id: "reject", name: "n", text: "secret", kind: "continuous", generation: 0 }]; await stateStore.save(relay.state);
     await expect(relay.deliver("secret", ["reject"], 1)).rejects.toThrow("transport rejected");
     expect(await stateStore.load(null)).toMatchObject({ config: { mode: "continuous" }, modeGeneration: 0, pending: [{ id: "reject" }], inFlight: { uncertain: true, sourceCount: 1 }, inFlightUncertain: 0 });
@@ -251,6 +297,7 @@ describe("YouTube chat Telegram relay", () => {
     const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" })); let release!: () => void;
     const held = new Promise<void>((resolve) => { release = resolve; });
     const relay = await new RelayEngine({ stateStore, configStore, send: async () => held, transitionTimeoutMs: 5 }).init();
+    await activate(relay, stateStore);
     relay.state.pending = [{ id: "hung", name: "n", text: "hung", kind: "continuous", generation: 0 }]; await stateStore.save(relay.state);
     const delivery = relay.deliver("hung", ["hung"], 1); await Promise.resolve();
     await expect(relay.transitionMode("off")).rejects.toThrow("in-flight transport did not settle");
@@ -263,6 +310,7 @@ describe("YouTube chat Telegram relay", () => {
     const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" }));
     const releases: Array<() => void> = []; const events: string[] = [];
     const relay = await new RelayEngine({ stateStore, configStore, send: async (text: string) => { events.push(`start:${text}`); await new Promise<void>((resolve) => releases.push(resolve)); events.push(`done:${text}`); } }).init();
+    await activate(relay, stateStore);
     relay.state.pending = ["a", "b"].map((id) => ({ id, name: "n", text: id, kind: "continuous", generation: 0 })); await stateStore.save(relay.state);
     const first = relay.deliver("a", ["a"], 1); while (releases.length < 1) await Promise.resolve();
     const second = relay.deliver("b", ["b"], 1); const off = relay.transitionMode("off"); const summary = relay.transitionMode("summary");

@@ -1,7 +1,8 @@
 #!/usr/bin/env node
-import { mkdir, open, readFile, rename, rm, writeFile } from "node:fs/promises";
+import { constants } from "node:fs";
+import { link, lstat, mkdir, open, readFile, realpath, rename, rm, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
@@ -71,8 +72,52 @@ export class JsonStore {
     this.fault = fault;
     this.suffix = suffix;
   }
+  async validateParent() {
+    const directoryPath = dirname(this.path);
+    await mkdir(directoryPath, { recursive: true, mode: 0o700 });
+    const parent = await lstat(directoryPath);
+    if (!parent.isDirectory() || parent.isSymbolicLink()) throw new Error("relay state parent must be a real directory");
+    if (await realpath(directoryPath) !== resolve(directoryPath)) throw new Error("relay state parent realpath substitution refused");
+    return directoryPath;
+  }
+  async assertRegularOrAbsent() {
+    try {
+      const entry = await lstat(this.path);
+      if (!entry.isFile() || entry.isSymbolicLink()) throw new Error("relay state path must be a regular file");
+      return entry;
+    } catch (error) {
+      if (error?.code === "ENOENT") return null;
+      throw error;
+    }
+  }
+  async createIfAbsent(value) {
+    const directoryPath = await this.validateParent();
+    if (await this.assertRegularOrAbsent()) return false;
+    const temp = `${this.path}.${this.suffix()}.bootstrap.tmp`;
+    let file;
+    try {
+      await this.fault("bootstrap:open"); file = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
+      await this.fault("bootstrap:write"); await file.writeFile(`${JSON.stringify(value, null, 2)}\n`);
+      await this.fault("bootstrap:fsync"); await file.sync();
+      await this.fault("bootstrap:close"); await file.close(); file = null;
+      await this.fault("bootstrap:link"); await link(temp, this.path);
+      await rm(temp);
+      const directory = await open(directoryPath, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
+      try { await this.fault("bootstrap:dir-fsync"); await directory.sync(); }
+      finally { await directory.close(); }
+      return true;
+    } catch (error) {
+      await file?.close().catch(() => {}); await rm(temp, { force: true });
+      throw new Error(`durable absent-state safe-off bootstrap failed: ${error.message}`);
+    }
+  }
   async load(fallback, { corruptFallback } = {}) {
-    try { return JSON.parse(await readFile(this.path, "utf8")); }
+    try {
+      await this.validateParent();
+      await this.assertRegularOrAbsent();
+      const file = await open(this.path, constants.O_RDONLY | constants.O_NOFOLLOW);
+      try { return JSON.parse(await file.readFile("utf8")); } finally { await file.close(); }
+    }
     catch (error) {
       if (error?.code === "ENOENT") return structuredClone(fallback);
       if (error instanceof SyntaxError && corruptFallback) {
@@ -83,8 +128,8 @@ export class JsonStore {
     }
   }
   async replaceCorrupt(sentinel) {
-    const directoryPath = dirname(this.path);
-    await mkdir(directoryPath, { recursive: true, mode: 0o700 });
+    const directoryPath = await this.validateParent();
+    await this.assertRegularOrAbsent();
     const suffix = this.suffix();
     const quarantine = `${this.path}.corrupt-${suffix}`;
     const temp = `${this.path}.${suffix}.tmp`;
@@ -101,6 +146,7 @@ export class JsonStore {
       await this.fault("safe-temp:fsync"); await sentinelFile.sync();
       await this.fault("safe-temp:close"); await sentinelFile.close(); sentinelFile = null;
       await this.fault("state:rename");
+      await this.assertRegularOrAbsent();
       await rename(temp, this.path);
       await this.fault("parent:open");
       const directory = await open(directoryPath, "r");
@@ -112,7 +158,8 @@ export class JsonStore {
     }
   }
   async save(value) {
-    await mkdir(dirname(this.path), { recursive: true, mode: 0o700 });
+    await this.validateParent();
+    await this.assertRegularOrAbsent();
     const lock = `${this.path}.lock`;
     let lockFile;
     for (let attempt = 0; attempt < 200; attempt += 1) {
@@ -125,6 +172,8 @@ export class JsonStore {
       if (current?.version === 3 && value?.version === 3 && current.modeGeneration > value.modeGeneration) throw new Error("stale relay generation write refused");
       const file = await open(temp, "w", 0o600);
       try { await file.writeFile(`${JSON.stringify(value, null, 2)}\n`); await file.sync(); } finally { await file.close(); }
+      await this.fault("save:before-rename");
+      await this.assertRegularOrAbsent();
       await rename(temp, this.path);
       const directory = await open(dirname(this.path), "r");
       try { await directory.sync(); } finally { await directory.close(); }
@@ -220,7 +269,7 @@ export function formatSummary(messages, videoUrl) {
 
 const DELIVERED_LIMIT = 5_000;
 const DELIVERED_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
-const initialState = (config, now) => ({ version: 3, initialized: true, config, modeGeneration: 0, seen: [], initializedChats: [], pageTokens: {}, pending: [], dropped: 0, droppedOnModeChange: { count: 0, bytes: 0 }, deletedAfterDelivery: 0, unknownDeletion: 0, deliveredSourceIds: [], summaryStartedAt: now, sourceSentAt: [], telegramSentAt: [], inFlight: null, inFlightUncertain: 0, live: null, quota: { day: "", used: 0 }, migrationReceipt: null });
+const initialState = (config, now) => ({ version: 3, initialized: true, enabled: config.mode !== "off", reason: null, config, modeGeneration: 0, seen: [], initializedChats: [], pageTokens: {}, pending: [], dropped: 0, droppedOnModeChange: { count: 0, bytes: 0 }, deletedAfterDelivery: 0, unknownDeletion: 0, deliveredSourceIds: [], summaryStartedAt: now, sourceSentAt: [], telegramSentAt: [], inFlight: null, inFlightUncertain: 0, live: null, quota: { day: "", used: 0 }, migrationReceipt: null });
 function validState(state) {
   if (!state || state.version !== 3 || !Number.isInteger(state.modeGeneration) || !Array.isArray(state.pending) || !Array.isArray(state.deliveredSourceIds)) return false;
   try { validateConfig(state.config); } catch { return false; }
@@ -244,7 +293,17 @@ export class RelayEngine {
     safeOff.modeGeneration = 1;
     safeOff.migrationReceipt = { corruptStateQuarantined: true, at: this.now() };
     let state = await this.stateStore.load(null, { corruptFallback: safeOff });
-    if (state === null) state = initialState(defaults, this.now());
+    if (state === null) {
+      state = initialState({ ...defaults, mode: "off" }, this.now());
+      state.modeGeneration = Math.max(1, Math.trunc(this.now()) || 1);
+      state.enabled = false;
+      state.reason = "absent_state_bootstrap";
+      state.migrationReceipt = { reason: "absent_state_bootstrap", at: this.now() };
+      if (this.stateStore.createIfAbsent) {
+        await this.stateStore.createIfAbsent(state);
+        state = await this.stateStore.load(null);
+      } else await this.stateStore.save(state);
+    }
     else if (state?.version === 2 && MODES.has(state.mode) && Array.isArray(state.pending)) {
       const pending = state.pending;
       state = { ...initialState({ ...defaults, mode: state.mode }, this.now()), modeGeneration: Number.isInteger(state.modeGeneration) ? state.modeGeneration : 0, seen: state.seen ?? [], initializedChats: state.initializedChats ?? [], pageTokens: state.pageTokens ?? {}, live: state.live ?? null, quota: state.quota ?? { day: "", used: 0 }, droppedOnModeChange: { count: pending.length, bytes: Buffer.byteLength(JSON.stringify(pending)) }, migrationReceipt: { fromVersion: 2, pendingDiscarded: pending.length, at: this.now() } };
@@ -275,6 +334,7 @@ export class RelayEngine {
       await this.reloadConfig();
       if (this.state.inFlight) this.state.inFlightUncertain = (this.state.inFlightUncertain ?? 0) + 1;
       this.discardPending(); this.state.config.mode = mode; this.state.modeGeneration += 1;
+      this.state.enabled = mode !== "off"; this.state.reason = null;
       this.state.summaryStartedAt = this.now(); this.state.sourceSentAt = []; this.state.telegramSentAt = []; this.state.inFlight = null;
       await this.stateStore.save(this.state); this.config = this.state.config; return this.state;
     }, this.transitionTimeoutMs);
