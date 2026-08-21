@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "kind": "individual-or-set",
+  "sourceManifestSha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "devBaseSha": "0000000000000000000000000000000000000000",
+  "features": [{"slug": "replace-me", "pullRequest": 1, "headSha": "0000000000000000000000000000000000000000"}],
+  "candidateTreeSha": "0000000000000000000000000000000000000000",
+  "artifactSubjects": [],
+  "publicReceipts": ["prv_replace_me"],
+  "captainGate": "G1_G2_REQUIRED"
+}
