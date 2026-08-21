@@ -9,6 +9,7 @@ import { fileURLToPath } from "node:url";
 export const DESTINATION = "telegram:1083429746";
 export const CHANNEL_LIVE_URL = "https://www.youtube.com/@kvnloo/live";
 export const MODES = new Set(["continuous", "summary", "hybrid", "off"]);
+export const CREATE_OUTCOME = Object.freeze({ CREATED: "CREATED", EXISTS: "EXISTS", UNSAFE_PATH: "UNSAFE_PATH", ERROR: "ERROR" });
 const BIDI = /[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/gu;
 const CONTROLS = /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f-\u009f]/gu;
 const MENTION = /(^|\s)@([\p{L}\p{N}_]{2,})/gu;
@@ -91,24 +92,31 @@ export class JsonStore {
     }
   }
   async createIfAbsent(value) {
-    const directoryPath = await this.validateParent();
-    if (await this.assertRegularOrAbsent()) return false;
+    let directoryPath;
     const temp = `${this.path}.${this.suffix()}.bootstrap.tmp`;
     let file;
     try {
+      directoryPath = await this.validateParent();
       await this.fault("bootstrap:open"); file = await open(temp, constants.O_WRONLY | constants.O_CREAT | constants.O_EXCL | constants.O_NOFOLLOW, 0o600);
       await this.fault("bootstrap:write"); await file.writeFile(`${JSON.stringify(value, null, 2)}\n`);
       await this.fault("bootstrap:fsync"); await file.sync();
       await this.fault("bootstrap:close"); await file.close(); file = null;
-      await this.fault("bootstrap:link"); await link(temp, this.path);
+      await this.fault("bootstrap:link");
+      try { await link(temp, this.path); }
+      catch (error) {
+        if (error?.code === "EEXIST") return { outcome: CREATE_OUTCOME.EXISTS };
+        if (["ELOOP", "ENOTDIR", "EPERM"].includes(error?.code)) return { outcome: CREATE_OUTCOME.UNSAFE_PATH, error };
+        throw error;
+      }
       await rm(temp);
       const directory = await open(directoryPath, constants.O_RDONLY | constants.O_DIRECTORY | constants.O_NOFOLLOW);
       try { await this.fault("bootstrap:dir-fsync"); await directory.sync(); }
       finally { await directory.close(); }
-      return true;
+      return { outcome: CREATE_OUTCOME.CREATED };
     } catch (error) {
+      return { outcome: CREATE_OUTCOME.ERROR, error };
+    } finally {
       await file?.close().catch(() => {}); await rm(temp, { force: true });
-      throw new Error(`durable absent-state safe-off bootstrap failed: ${error.message}`);
     }
   }
   async load(fallback, { corruptFallback } = {}) {
@@ -300,8 +308,13 @@ export class RelayEngine {
       state.reason = "absent_state_bootstrap";
       state.migrationReceipt = { reason: "absent_state_bootstrap", at: this.now() };
       if (this.stateStore.createIfAbsent) {
-        await this.stateStore.createIfAbsent(state);
-        state = await this.stateStore.load(null);
+        const creation = await this.stateStore.createIfAbsent(state);
+        if (creation?.outcome !== CREATE_OUTCOME.CREATED) {
+          this.state = state;
+          this.config = state.config;
+          const detail = creation?.outcome === CREATE_OUTCOME.EXISTS ? "bootstrap_race" : creation?.outcome?.toLowerCase?.() ?? "error";
+          throw new Error(`durable absent-state safe-off bootstrap failed: ${detail}${creation?.error?.message ? `: ${creation.error.message}` : ""}`);
+        }
       } else await this.stateStore.save(state);
     }
     else if (state?.version === 2 && MODES.has(state.mode) && Array.isArray(state.pending)) {

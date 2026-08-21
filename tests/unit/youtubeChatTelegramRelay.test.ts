@@ -7,6 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   ConfigStore,
+  CREATE_OUTCOME,
   DESTINATION,
   JsonStore,
   MemoryStore,
@@ -76,6 +77,45 @@ describe("YouTube chat Telegram relay", () => {
     const store = new JsonStore(path, { fault: async (step: string) => { if (step === "bootstrap:link") await symlink(target, path); } });
     await expect(new RelayEngine({ stateStore: store, configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { throw new Error("must not send"); } }).init()).rejects.toThrow("safe-off bootstrap failed");
     expect(await readFile(target, "utf8")).toBe("external-must-not-change"); expect((await lstat(path)).isSymbolicLink()).toBe(true);
+    await rm(root, { recursive: true, force: true });
+  });
+
+  it("refuses an active regular state substituted immediately before exclusive bootstrap creation", async () => {
+    const root = await mkdtemp(join(tmpdir(), "relay-active-race-")); const path = join(root, "state.json"); let sends = 0;
+    const activeStore = new MemoryStore();
+    const active = await new RelayEngine({ stateStore: activeStore, configStore: new TestConfigStore(config()), send: async () => {} }).init();
+    await active.transitionMode("continuous");
+    const activeBytes = `${JSON.stringify(active.state, null, 2)}\n`;
+    const store = new JsonStore(path, { fault: async (step: string) => { if (step === "bootstrap:link") await writeFile(path, activeBytes, { flag: "wx", mode: 0o600 }); } });
+    const relay = new RelayEngine({ stateStore: store, configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; } });
+    await expect(relay.init()).rejects.toThrow("bootstrap_race");
+    expect(relay.state).toMatchObject({ enabled: false, reason: "absent_state_bootstrap", config: { mode: "off" } });
+    expect(relay.config.mode).toBe("off"); expect(sends).toBe(0); expect(await readFile(path, "utf8")).toBe(activeBytes);
+    const fresh = await new RelayEngine({ stateStore: new JsonStore(path), configStore: new TestConfigStore(config({ mode: "off" })), send: async () => { sends += 1; } }).init();
+    expect(fresh.config.mode).toBe("continuous"); expect(sends).toBe(0);
+    await rm(root, { recursive: true, force: true });
+  });
+
+  it("allows exactly one of two concurrent absent-state bootstraps to create safe-off", async () => {
+    const root = await mkdtemp(join(tmpdir(), "relay-concurrent-bootstrap-")); const path = join(root, "state.json"); let sends = 0;
+    let absentReads = 0; let releaseAbsentReads!: () => void;
+    const bothReadAbsent = new Promise<void>((resolve) => { releaseAbsentReads = resolve; });
+    class SynchronizedBootstrapStore extends JsonStore {
+      async load(fallback: unknown, options?: object) {
+        const value = await super.load(fallback, options);
+        if (value === null && ++absentReads === 2) releaseAbsentReads();
+        if (value === null) await bothReadAbsent;
+        return value;
+      }
+    }
+    const make = () => new RelayEngine({ stateStore: new SynchronizedBootstrapStore(path), configStore: new TestConfigStore(config({ mode: "continuous" })), send: async () => { sends += 1; }, now: () => 91 });
+    const first = make(); const second = make();
+    const results = await Promise.allSettled([first.init(), second.init()]);
+    expect(results.filter((result) => result.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((result) => result.status === "rejected" && String(result.reason).includes("bootstrap_race"))).toHaveLength(1);
+    expect([first, second].every((relay) => relay.config?.mode === "off" && relay.state?.enabled === false)).toBe(true);
+    expect(JSON.parse(await readFile(path, "utf8"))).toMatchObject({ enabled: false, reason: "absent_state_bootstrap", config: { mode: "off" } });
+    expect(sends).toBe(0); expect(CREATE_OUTCOME.EXISTS).toBe("EXISTS");
     await rm(root, { recursive: true, force: true });
   });
   it("sanitizes controls, bidi, credential URLs, mentions, and bounds text", () => {
