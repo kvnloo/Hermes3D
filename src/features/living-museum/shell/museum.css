@@ -1,0 +1,33 @@
+.museum-shell { --museum-ink: #f0eee7; --museum-muted: #b9b6ad; --museum-accent: #c77945; position: relative; min-height: 100dvh; overflow: hidden; background: #0d1112; color: var(--museum-ink); isolation: isolate; }
+.museum-scene { position: absolute; inset: 0; }
+.museum-scene canvas { display: block; }
+.museum-header { position: absolute; inset: 0 0 auto; z-index: 2; display: flex; height: 72px; align-items: center; justify-content: space-between; padding: 0 32px; border-bottom: 1px solid rgb(240 238 231 / .14); background: linear-gradient(180deg, rgb(13 17 18 / .76), transparent); }
+.museum-wordmark { color: inherit; font-family: var(--font-display); font-size: 1.35rem; letter-spacing: .04em; text-decoration: none; }
+.museum-search-trigger { display: flex; min-height: 44px; align-items: center; gap: 18px; border: 1px solid rgb(240 238 231 / .24); border-radius: 999px; background: rgb(13 17 18 / .58); color: var(--museum-ink); padding: 0 16px; backdrop-filter: blur(12px); }
+.museum-search-trigger:active, .museum-intro button:active { transform: translateY(1px); }
+.museum-search-trigger kbd { color: var(--museum-muted); font: 500 .75rem var(--font-mono); }
+.museum-intro { position: absolute; z-index: 1; left: clamp(20px, 7vw, 108px); bottom: clamp(64px, 12vh, 128px); width: min(620px, calc(100vw - 40px)); text-shadow: 0 2px 28px rgb(0 0 0 / .55); }
+.museum-kicker { margin: 0 0 14px; color: #e6b18b; font: 600 .72rem var(--font-mono); letter-spacing: .15em; text-transform: uppercase; }
+.museum-intro h1 { max-width: 14ch; margin: 0; font-family: var(--font-display); font-size: clamp(3rem, 6.2vw, 6.5rem); font-weight: 400; letter-spacing: -.015em; line-height: .92; }
+.museum-intro > p:not(.museum-kicker) { max-width: 46ch; margin: 20px 0 0; color: var(--museum-muted); font-size: clamp(.95rem, 1.4vw, 1.12rem); line-height: 1.55; }
+.museum-intro button { margin-top: 24px; min-height: 46px; border: 0; border-radius: 999px; background: var(--museum-accent); color: #17110e; padding: 0 20px; font-weight: 700; transition: transform 160ms ease, background 160ms ease; }
+.museum-intro button:hover { background: #db8c55; }
+.museum-quiet { display: block; margin-top: 24px; color: var(--museum-muted); }
+.museum-footer { position: absolute; right: 32px; bottom: 24px; z-index: 1; display: flex; gap: 24px; color: rgb(240 238 231 / .58); font: 500 .68rem var(--font-mono); text-transform: uppercase; letter-spacing: .09em; }
+.museum-search-backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: start center; padding: min(14vh, 120px) 20px 20px; background: rgb(5 7 8 / .76); backdrop-filter: blur(9px); }
+.museum-search { width: min(680px, 100%); max-height: min(680px, 78dvh); overflow: auto; border: 1px solid rgb(240 238 231 / .24); border-radius: 16px; background: #171c1d; padding: 22px; box-shadow: 0 30px 80px rgb(0 0 0 / .46); }
+.museum-search label { display: block; margin-bottom: 10px; color: var(--museum-muted); font-size: .82rem; }
+.museum-search input { width: 100%; min-height: 52px; border: 1px solid rgb(240 238 231 / .26); border-radius: 10px; background: #0f1415; color: var(--museum-ink); padding: 0 15px; font-size: 1rem; outline: none; }
+.museum-search input::placeholder { color: #8e918c; }
+.museum-search input:focus { border-color: var(--museum-accent); box-shadow: 0 0 0 3px rgb(199 121 69 / .22); }
+.museum-search [role="listbox"] { margin-top: 14px; }
+.museum-search [role="option"] { display: grid; width: 100%; min-height: 64px; gap: 4px; border: 0; border-radius: 10px; background: transparent; color: inherit; padding: 11px 13px; text-align: left; }
+.museum-search [role="option"][aria-selected="true"] { background: #29302f; }
+.museum-search [role="option"] small { color: var(--museum-muted); line-height: 1.35; }
+.museum-search-empty { color: var(--museum-muted); padding: 22px 12px; }
+.museum-search-close { min-height: 44px; margin-top: 10px; border: 1px solid rgb(240 238 231 / .24); border-radius: 999px; background: transparent; color: inherit; padding: 0 18px; }
+.museum-static-fallback { position: absolute; inset: 0; display: grid; place-items: center; background: radial-gradient(circle at 50% 42%, #343532 0 12%, #171c1d 38%, #0d1112 72%); }
+.museum-static-fallback div { width: min(44vw, 420px); aspect-ratio: 1; border: clamp(18px, 4vw, 48px) solid #c77945; border-radius: 38% 62% 46% 54%; transform: rotate(28deg); box-shadow: inset 30px -24px 80px rgb(0 0 0 / .38); }
+@media (max-width: 767px) { .museum-header { height: 64px; padding: 0 16px; } .museum-search-trigger span { display: none; } .museum-search-trigger { gap: 0; padding: 0 16px; } .museum-intro { left: 20px; bottom: 76px; } .museum-intro h1 { max-width: 12ch; font-size: clamp(2.8rem, 14vw, 4.4rem); } .museum-footer { left: 20px; right: auto; bottom: 20px; gap: 14px; } }
+@media (prefers-reduced-motion: reduce) { .museum-shell *, .museum-shell *::before, .museum-shell *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; } }
+@media (prefers-reduced-transparency: reduce) { .museum-search-trigger, .museum-search-backdrop { backdrop-filter: none; } .museum-search-trigger { background: #171c1d; } }
