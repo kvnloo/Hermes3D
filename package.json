@@ -17,6 +17,8 @@
     "smoke:dev-server": "node scripts/smoke-dev-server.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
+    "test:gitops": "node --test tests/gitops-policy.test.mjs",
+    "gitops:validate": "node scripts/gitops-policy.mjs validate-nightly && node scripts/gitops-policy.mjs scan",
     "e2e": "playwright test"
   },
   "dependencies": {
