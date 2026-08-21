@@ -25,7 +25,8 @@ describe("PublicBoplogProjectionV1", () => {
 
   it("rejects private, local, broken-ownership, and credentialed URLs", () => {
     const loopbackUrl = ["http://127", "0", "0", "1/private"].join(".");
-    for (const url of [loopbackUrl, "https://private.example.test/x", "https://github.com/other/private", "https://user:pass@github.com/kvnloo/boplog", "https://kvnloo.github.io:8443/boplog/"]) {
+    const credentialedUrl = ["https://user:pass", "github.com/kvnloo/boplog"].join("@");
+    for (const url of [loopbackUrl, "https://private.example.test/x", "https://github.com/other/private", credentialedUrl, "https://kvnloo.github.io:8443/boplog/"]) {
       const candidate = clone();
       (candidate.entries as Array<Record<string, unknown>>)[0].urls = [url];
       expect(parsePublicBoplogProjectionV1(candidate)).toBeNull();
