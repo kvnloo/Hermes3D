@@ -67,15 +67,37 @@ export function validateConfig(candidate) {
 
 export class JsonStore {
   constructor(path) { this.path = path; }
-  async load(fallback) {
+  async load(fallback, { corruptFallback } = {}) {
     try { return JSON.parse(await readFile(this.path, "utf8")); }
     catch (error) {
       if (error?.code === "ENOENT") return structuredClone(fallback);
-      if (error instanceof SyntaxError) {
-        await rename(this.path, `${this.path}.corrupt-${Date.now()}`);
-        throw new Error("relay state corrupt; quarantined and failed closed");
+      if (error instanceof SyntaxError && corruptFallback) {
+        await this.replaceCorrupt(structuredClone(corruptFallback));
+        return structuredClone(corruptFallback);
       }
       throw error;
+    }
+  }
+  async replaceCorrupt(sentinel) {
+    const directoryPath = dirname(this.path);
+    await mkdir(directoryPath, { recursive: true, mode: 0o700 });
+    const suffix = `${Date.now()}-${process.pid}-${Math.random().toString(16).slice(2)}`;
+    const quarantine = `${this.path}.corrupt-${suffix}`;
+    const temp = `${this.path}.${suffix}.tmp`;
+    const invalid = await readFile(this.path);
+    let quarantineFile;
+    let sentinelFile;
+    try {
+      quarantineFile = await open(quarantine, "wx", 0o600);
+      await quarantineFile.writeFile(invalid); await quarantineFile.sync(); await quarantineFile.close(); quarantineFile = null;
+      sentinelFile = await open(temp, "wx", 0o600);
+      await sentinelFile.writeFile(`${JSON.stringify(sentinel, null, 2)}\n`); await sentinelFile.sync(); await sentinelFile.close(); sentinelFile = null;
+      await rename(temp, this.path);
+      const directory = await open(directoryPath, "r");
+      try { await directory.sync(); } finally { await directory.close(); }
+    } catch (error) {
+      await quarantineFile?.close(); await sentinelFile?.close(); await rm(temp, { force: true });
+      throw new Error(`relay state corrupt and durable safe-off replacement failed: ${error.message}`);
     }
   }
   async save(value) {
@@ -118,6 +140,26 @@ export class MemoryStore {
   async save(value) { this.value = structuredClone(value); }
   async quarantine() { this.quarantined = structuredClone(this.value); this.value = {}; }
 }
+
+class AsyncMutex {
+  constructor() { this.tail = Promise.resolve(); }
+  async runExclusive(operation, timeoutMs = 30_000) {
+    let release;
+    let acquired = false;
+    const predecessor = this.tail;
+    this.tail = new Promise((resolve) => { release = resolve; });
+    let timer;
+    try {
+      await Promise.race([predecessor, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error("relay transition pending; in-flight transport did not settle")), timeoutMs); })]);
+      acquired = true; clearTimeout(timer);
+      return await operation();
+    } finally {
+      clearTimeout(timer);
+      if (acquired) release(); else predecessor.finally(release);
+    }
+  }
+}
+const transitionSendMutex = new AsyncMutex();
 
 function eventType(item) { return item?.snippet?.type ?? ""; }
 function isDeliverable(item) {
@@ -167,7 +209,7 @@ export function formatSummary(messages, videoUrl) {
 
 const DELIVERED_LIMIT = 5_000;
 const DELIVERED_RETENTION_MS = 7 * 24 * 60 * 60 * 1000;
-const initialState = (config, now) => ({ version: 3, config, modeGeneration: 0, seen: [], initializedChats: [], pageTokens: {}, pending: [], dropped: 0, droppedOnModeChange: { count: 0, bytes: 0 }, deletedAfterDelivery: 0, unknownDeletion: 0, deliveredSourceIds: [], summaryStartedAt: now, sourceSentAt: [], telegramSentAt: [], inFlight: null, live: null, quota: { day: "", used: 0 }, migrationReceipt: null });
+const initialState = (config, now) => ({ version: 3, initialized: true, config, modeGeneration: 0, seen: [], initializedChats: [], pageTokens: {}, pending: [], dropped: 0, droppedOnModeChange: { count: 0, bytes: 0 }, deletedAfterDelivery: 0, unknownDeletion: 0, deliveredSourceIds: [], summaryStartedAt: now, sourceSentAt: [], telegramSentAt: [], inFlight: null, inFlightUncertain: 0, live: null, quota: { day: "", used: 0 }, migrationReceipt: null });
 function validState(state) {
   if (!state || state.version !== 3 || !Number.isInteger(state.modeGeneration) || !Array.isArray(state.pending) || !Array.isArray(state.deliveredSourceIds)) return false;
   try { validateConfig(state.config); } catch { return false; }
@@ -186,21 +228,24 @@ export class RelayEngine {
   }
   async init() {
     const defaults = await this.configStore.loadConfig();
-    let state = await this.stateStore.load(null);
+    const safeOff = initialState({ ...defaults, mode: "off" }, this.now());
+    safeOff.modeGeneration = 1;
+    safeOff.migrationReceipt = { corruptStateQuarantined: true, at: this.now() };
+    let state = await this.stateStore.load(null, { corruptFallback: safeOff });
     if (state === null) state = initialState(defaults, this.now());
     else if (state?.version === 2 && MODES.has(state.mode) && Array.isArray(state.pending)) {
       const pending = state.pending;
       state = { ...initialState({ ...defaults, mode: state.mode }, this.now()), modeGeneration: Number.isInteger(state.modeGeneration) ? state.modeGeneration : 0, seen: state.seen ?? [], initializedChats: state.initializedChats ?? [], pageTokens: state.pageTokens ?? {}, live: state.live ?? null, quota: state.quota ?? { day: "", used: 0 }, droppedOnModeChange: { count: pending.length, bytes: Buffer.byteLength(JSON.stringify(pending)) }, migrationReceipt: { fromVersion: 2, pendingDiscarded: pending.length, at: this.now() } };
     } else if (!validState(state)) {
-      await this.stateStore.quarantine?.();
       state = initialState({ ...defaults, mode: "off" }, this.now());
       state.migrationReceipt = { corruptStateQuarantined: true, at: this.now() };
-      await this.stateStore.save(state);
+      if (this.stateStore.replaceCorrupt) await this.stateStore.replaceCorrupt(state);
+      else { await this.stateStore.quarantine?.(); await this.stateStore.save(state); }
       throw new Error("relay state incomplete or unsupported; quarantined and failed closed off");
     }
     this.state = state; this.config = state.config; this.pruneDelivered(); this.purgeStale();
     if (state.inFlight) {
-      this.recordDelivered(state.inFlight.ids ?? [], state.inFlight.generation ?? state.modeGeneration);
+      state.inFlightUncertain = (state.inFlightUncertain ?? 0) + 1;
       this.discardPending(); state.config.mode = "off"; state.modeGeneration += 1; state.inFlight = null;
       state.migrationReceipt = { ambiguousDeliveryFailedClosed: true, at: this.now() };
     }
@@ -214,9 +259,13 @@ export class RelayEngine {
   async transitionMode(mode, actorUid = process.getuid?.()) {
     if (actorUid !== process.getuid?.()) throw new Error("owner-only mode change refused");
     if (!MODES.has(mode)) throw new Error("invalid relay mode");
-    await this.reloadConfig(); this.discardPending(); this.state.config.mode = mode; this.state.modeGeneration += 1;
-    this.state.summaryStartedAt = this.now(); this.state.sourceSentAt = []; this.state.telegramSentAt = []; this.state.inFlight = null;
-    await this.stateStore.save(this.state); this.config = this.state.config; return this.state;
+    return transitionSendMutex.runExclusive(async () => {
+      await this.reloadConfig();
+      if (this.state.inFlight) this.state.inFlightUncertain = (this.state.inFlightUncertain ?? 0) + 1;
+      this.discardPending(); this.state.config.mode = mode; this.state.modeGeneration += 1;
+      this.state.summaryStartedAt = this.now(); this.state.sourceSentAt = []; this.state.telegramSentAt = []; this.state.inFlight = null;
+      await this.stateStore.save(this.state); this.config = this.state.config; return this.state;
+    });
   }
   discardPending() {
     this.state.droppedOnModeChange.count += this.state.pending.length;
@@ -298,25 +347,34 @@ export class RelayEngine {
     }
   }
   async deliver(text, ids, sourceCount) {
-    const generation = this.state.modeGeneration;
-    if (ids.length && !ids.every((id) => this.state.pending.some((item) => item.id === id && item.generation === generation))) return false;
-    this.state.inFlight = { ids, sourceCount, generation, createdAt: this.now() };
-    await this.stateStore.save(this.state);
-    await this.beforeSend();
-    const canonical = await this.stateStore.load(null);
-    if (!validState(canonical) || canonical.modeGeneration !== generation || canonical.config.mode === "off") {
-      this.state = canonical; this.config = canonical?.config; return false;
-    }
-    try { await this.send(text); }
-    catch (error) { this.state.inFlight = null; await this.stateStore.save(this.state); throw error; }
-    const delivered = new Set(ids);
-    this.state.pending = this.state.pending.filter((message) => !delivered.has(message.id));
-    this.state.sourceSentAt.push(...Array(sourceCount).fill(this.now()));
-    this.state.telegramSentAt.push(this.now());
-    this.recordDelivered(ids, generation);
-    this.state.inFlight = null;
-    await this.stateStore.save(this.state);
-    return true;
+    return transitionSendMutex.runExclusive(async () => {
+      await this.reloadConfig();
+      const generation = this.state.modeGeneration;
+      if (this.config.mode === "off" || (ids.length && !ids.every((id) => this.state.pending.some((item) => item.id === id && item.generation === generation)))) return false;
+      const operationId = `${process.pid}:${generation}:${this.now()}:${Math.random().toString(16).slice(2)}`;
+      this.state.inFlight = { ids, sourceCount, generation, operationId, createdAt: this.now() };
+      await this.stateStore.save(this.state);
+      await this.beforeSend();
+      const canonical = await this.stateStore.load(null);
+      if (!validState(canonical) || canonical.modeGeneration !== generation || canonical.config.mode === "off" || canonical.inFlight?.operationId !== operationId) { this.state = canonical; this.config = canonical?.config; return false; }
+      try { await this.send(text); }
+      catch (error) {
+        const failed = await this.stateStore.load(null);
+        if (validState(failed) && failed.inFlight?.operationId === operationId) {
+          failed.inFlight = { generation, operationId, sourceCount, uncertain: true, createdAt: this.now() };
+          await this.stateStore.save(failed); this.state = failed; this.config = failed.config;
+        }
+        throw error;
+      }
+      const acknowledged = await this.stateStore.load(null);
+      if (!validState(acknowledged) || acknowledged.modeGeneration !== generation || acknowledged.inFlight?.operationId !== operationId) throw new Error("transport completed but canonical acknowledgement is uncertain");
+      this.state = acknowledged; this.config = acknowledged.config;
+      const delivered = new Set(ids);
+      this.state.pending = this.state.pending.filter((message) => !delivered.has(message.id));
+      this.state.sourceSentAt.push(...Array(sourceCount).fill(this.now())); this.state.telegramSentAt.push(this.now());
+      this.recordDelivered(ids, generation); this.state.inFlight = null;
+      await this.stateStore.save(this.state); return true;
+    });
   }
   async maybeSummarize(videoUrl) {
     this.purgeStale();

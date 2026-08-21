@@ -194,14 +194,25 @@ describe("YouTube chat Telegram relay", () => {
     expect(relay.state.deliveredSourceIds).toEqual([]);
   });
 
-  it("rechecks canonical generation immediately before send", async () => {
-    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" })); const sent: string[] = [];
-    const relay: RelayEngine = await new RelayEngine({ stateStore, configStore, send: async (text: string) => sent.push(text), now: () => 0,
-      beforeSend: async () => { await relay.transitionMode("off"); } }).init();
+  it("does not commit or acknowledge off until an in-flight transport settles", async () => {
+    const stateStore = new MemoryStore(); const configStore = new TestConfigStore(config({ mode: "continuous" }));
+    let releaseTransport!: () => void;
+    let transportStarted!: () => void;
+    const started = new Promise<void>((resolve) => { transportStarted = resolve; });
+    const transport = new Promise<void>((resolve) => { releaseTransport = resolve; });
+    const relay = await new RelayEngine({ stateStore, configStore, send: async () => { transportStarted(); await transport; }, now: () => 0 }).init();
     await relay.ingest("chat", [message("prime", "prime")], "url");
-    await relay.ingest("chat", [message("stale", "must-never-send")], "url");
-    expect(sent).toEqual([]);
-    expect(relay.config.mode).toBe("off");
+    const delivery = relay.ingest("chat", [message("stale", "old-generation")], "url");
+    await started;
+    let offAcknowledged = false;
+    const off = relay.transitionMode("off").then(() => { offAcknowledged = true; });
+    await Promise.resolve();
+    expect(offAcknowledged).toBe(false);
+    expect((await stateStore.load(null)).config.mode).toBe("continuous");
+    releaseTransport();
+    await delivery; await off;
+    expect(offAcknowledged).toBe(true);
+    expect((await stateStore.load(null))).toMatchObject({ config: { mode: "off" }, modeGeneration: 1, pending: [], inFlight: null });
   });
 
   it("migrates v2 once using persisted mode and purges legacy content", async () => {
