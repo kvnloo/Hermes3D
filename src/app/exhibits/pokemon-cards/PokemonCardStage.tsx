@@ -1,12 +1,29 @@
 "use client";
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { RoundedBox } from "@react-three/drei";
 import { Suspense, useEffect, useMemo, useRef, type MutableRefObject } from "react";
 import * as THREE from "three";
 import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 import { resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
 
 type ContractRefs = MutableRefObject<Array<HTMLSpanElement | null>>;
+
+function MuseumLighting({ reduced }: { reduced: boolean }) {
+  const rim = useRef<THREE.PointLight>(null);
+  useFrame(({ clock }) => {
+    if (!rim.current || reduced) return;
+    const sweep = clock.getElapsedTime() * 0.42;
+    rim.current.position.x = Math.sin(sweep) * 3.2;
+    rim.current.position.y = 2.2 + Math.cos(sweep * 0.8) * 0.5;
+  });
+  return <>
+    <ambientLight intensity={0.72} />
+    <directionalLight position={[-3.8, 4.6, 5.5]} intensity={2.15} color="#fff1d4" />
+    <directionalLight position={[4, 0.8, 4]} intensity={0.72} color="#8fc9c1" />
+    <pointLight ref={rim} position={[2.8, 2.4, 2.5]} intensity={reduced ? 1.05 : 1.5} distance={9} color="#ffd29a" />
+  </>;
+}
 
 function ResponsiveCamera({ view }: { view: "gallery" | "macro" | "side" }) {
   const { camera, size } = useThree();
@@ -64,7 +81,7 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
     root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, cardTilt.rotateX, reduced ? 1 : 0.09);
     root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, cardTilt.rotateY, reduced ? 1 : 0.09);
     card.layers.forEach((layer, index) => {
-      const mesh = root.current?.children[index + 1];
+      const mesh = root.current?.children[index + 3];
       if (!mesh) return;
       const parallax = resolveCardTwinTilt(input, layer.depthMm, reduced);
       const spread = exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0;
@@ -76,6 +93,12 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
   });
 
   return <group ref={root}>
+    <RoundedBox args={[2.25, 3.1, 0.11]} radius={0.055} smoothness={6} position-z={-0.075}>
+      <meshStandardMaterial color="#d8d0bf" roughness={0.46} metalness={0.08} />
+    </RoundedBox>
+    <RoundedBox args={[2.2, 3.05, 0.018]} radius={0.045} smoothness={5} position-z={0.003}>
+      <meshPhysicalMaterial color={card.accent} roughness={0.2} metalness={0.58} clearcoat={0.42} clearcoatRoughness={0.32} iridescence={0.32} iridescenceIOR={1.32} />
+    </RoundedBox>
     <mesh position-z={-0.006} visible={!exploded}>
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial map={textures[0]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
@@ -88,6 +111,16 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
     </mesh>)}
+    <group position={[0, -1.72, -0.1]}>
+      <mesh rotation-x={-0.16}>
+        <boxGeometry args={[1.22, 0.14, 0.72]} />
+        <meshStandardMaterial color="#382b20" roughness={0.56} metalness={0.08} />
+      </mesh>
+      <mesh position={[0, -0.14, -0.1]}>
+        <cylinderGeometry args={[0.66, 0.78, 0.18, 48]} />
+        <meshStandardMaterial color="#171918" roughness={0.38} metalness={0.3} />
+      </mesh>
+    </group>
   </group>;
 }
 
@@ -111,6 +144,12 @@ export function PokemonCardStage({ card, reduced, view, texturesReady, onTexture
     data-camera-anchor={view === "gallery" ? "gallery" : `${card.id}-inspection`}
     data-camera-transition={reduced ? "instant" : view === "gallery" ? "idle" : "settled"}
     data-camera-framing={view === "macro" ? "inspection-fit" : undefined}
+    data-card-shell="beveled-physical-slab"
+    data-display-furniture="museum-plinth"
+    data-lighting-rig="key-fill-rim"
+    data-foil-response="restrained-iridescent"
+    data-foil-motion={reduced ? "disabled" : "sweeping-rim"}
+    data-static-composition={reduced ? "assembled-readable" : undefined}
     className="webgl-stage"
     aria-label={`Exact ${card.name} ${card.printing} layered CardTwin construction`}
   >
@@ -127,7 +166,7 @@ export function PokemonCardStage({ card, reduced, view, texturesReady, onTexture
     </div>
     <Canvas orthographic dpr={[1, 2]} camera={{ position: [0, 0, 10], zoom: 138, near: 0.08, far: 30 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
       <color attach="background" args={["#14211f"]} />
-      <ambientLight intensity={1.1} />
+      <MuseumLighting reduced={reduced} />
       <ResponsiveCamera view={view} />
       <Suspense fallback={null}>
         <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} contracts={contracts} onReady={onTexturesReady} />

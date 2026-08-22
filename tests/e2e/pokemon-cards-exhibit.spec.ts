@@ -140,6 +140,19 @@ test("hero construction is real WebGL geometry with semantic layer depth", async
     nodes.map((node) => Number(node.getAttribute("data-layer-depth"))),
   );
   expect(depths).toEqual([0, 1.5, 2.6, 3.8]);
+  await expect(stage).toHaveAttribute("data-card-shell", "beveled-physical-slab");
+  await expect(stage).toHaveAttribute("data-display-furniture", "museum-plinth");
+  await expect(stage).toHaveAttribute("data-lighting-rig", "key-fill-rim");
+  await expect(stage).toHaveAttribute("data-foil-response", "restrained-iridescent");
+});
+
+test("reduced motion preserves the assembled inspection composition", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto(`${exhibitUrl}&view=macro`, { waitUntil: "domcontentloaded" });
+  const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
+  await expect(stage).toHaveAttribute("data-static-composition", "assembled-readable");
+  await expect(stage).toHaveAttribute("data-camera-transition", "instant");
+  await expect(stage).toHaveAttribute("data-foil-motion", "disabled");
 });
 
 test("macro and side evidence modes isolate the deep construction", async ({ page }) => {
