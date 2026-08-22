@@ -3,6 +3,7 @@ const https = require("node:https");
 const next = require("next");
 
 const { createAccessGate } = require("./access-gate");
+const { createBuildEventHandler } = require("./build-events");
 const { createGatewayProxy } = require("./gateway-proxy");
 const { assertPublicHostAllowed, resolveHosts } = require("./network-policy");
 const { loadUpstreamGatewaySettings } = require("./studio-settings");
@@ -87,6 +88,10 @@ async function main() {
   const accessGate = createAccessGate({
     token: process.env.STUDIO_ACCESS_TOKEN,
   });
+  const handleBuildEvents = createBuildEventHandler({
+    dev,
+    syntheticEnabled: process.env.HERMES3D_SYNTHETIC_BUILD_EVENTS === "true",
+  });
 
   const proxy = createGatewayProxy({
     loadUpstreamSettings: async () => {
@@ -118,10 +123,12 @@ async function main() {
     useHttps
       ? https.createServer(httpsCert, (req, res) => {
           if (accessGate.handleHttp(req, res)) return;
+          if (handleBuildEvents(req, res)) return;
           handle(req, res);
         })
       : http.createServer((req, res) => {
           if (accessGate.handleHttp(req, res)) return;
+          if (handleBuildEvents(req, res)) return;
           handle(req, res);
         });
 

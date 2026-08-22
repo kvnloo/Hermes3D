@@ -27,6 +27,8 @@ import {
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import { BuildProvenance, ConstructionSite } from "@/features/building/ConstructionSite";
+import { useBuildSceneState } from "@/features/building/useBuildSceneState";
 import { SettingsPanel } from "@/features/office/components/panels/SettingsPanel";
 import { AtmImmersiveScreen } from "@/features/office/screens/AtmImmersiveScreen";
 import { GithubImmersiveScreen } from "@/features/office/screens/GithubImmersiveScreen";
@@ -2779,6 +2781,7 @@ export function RetroOffice3D({
   onTaskBoardDeleteCard?: (cardId: string) => void;
   onTaskBoardRefreshCronJobs?: () => void;
 }) {
+  const buildSceneState = useBuildSceneState();
   const resolvedCleaningCues = animationState?.cleaningCues ?? cleaningCues;
   const resolvedDanceUntilByAgentId =
     animationState?.danceUntilByAgentId ?? EMPTY_NUMBER_RECORD;
@@ -5868,6 +5871,7 @@ export function RetroOffice3D({
 
             {/* Floor + walls — always visible, no async loading. */}
             <SceneFloorAndWalls showRemoteOffice={remoteOfficeEnabled} />
+            <ConstructionSite state={buildSceneState} />
 
             {/* Wall pictures — procedural, no async loading. */}
             <SceneWallPictures showRemoteOffice={remoteOfficeEnabled} />
@@ -6431,6 +6435,7 @@ export function RetroOffice3D({
           </Canvas>
           </SceneErrorBoundary>
         ) : null}
+        <BuildProvenance state={buildSceneState} />
       </div>
 
       {/* New Idea 2: Camera preset buttons — top left. */}
