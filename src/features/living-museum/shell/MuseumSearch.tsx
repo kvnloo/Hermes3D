@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { searchMuseum, type MuseumSearchFilter, type MuseumSearchRecordV1 } from "../core/MuseumSearchV1";
 
-export function MuseumSearch({ records }: { records: readonly MuseumSearchRecordV1[] }) {
-  const router = useRouter();
+export function MuseumSearch({ records, onNavigate }: { records: readonly MuseumSearchRecordV1[]; onNavigate?: (result: MuseumSearchRecordV1) => void }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   const listId = useId();
@@ -44,7 +42,8 @@ export function MuseumSearch({ records }: { records: readonly MuseumSearchRecord
   const navigate = (result: MuseumSearchRecordV1 | undefined) => {
     if (!result) return;
     close();
-    router.push(result.href);
+    if (onNavigate) onNavigate(result);
+    else window.location.assign(result.href);
   };
 
   return (
