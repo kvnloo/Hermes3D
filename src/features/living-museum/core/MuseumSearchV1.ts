@@ -56,7 +56,7 @@ export function parseMuseumSearchRecordV1(value: unknown): MuseumSearchRecordV1 
   if (exhibitSlug !== undefined && !MUSEUM_EXHIBIT_SLUGS.includes(exhibitSlug)) throw new Error("Search exhibitSlug is invalid");
   if (record.destinationAnchor !== undefined && record.destinationAnchor !== "approach") throw new Error("Search destinationAnchor is invalid");
   if ((exhibitSlug === undefined) !== (record.destinationAnchor === undefined)) throw new Error("Exhibit destination fields must be paired");
-  if (exhibitSlug && href !== `/museum?exhibit=${exhibitSlug}&anchor=approach`) throw new Error("Exhibit href must target its authored approach anchor");
+  if (exhibitSlug && href !== `/office?room=museum&exhibit=${exhibitSlug}`) throw new Error("Exhibit href must target its office gallery room");
 
   return { id, type: record.type as MuseumSearchType, title, summary, keywords: [...record.keywords] as string[], filters: [...record.filters] as MuseumSearchFilter[], href, ...(exhibitSlug ? { exhibitSlug, destinationAnchor: "approach" as const } : {}) };
 }
@@ -68,7 +68,7 @@ export const exhibitToSearchRecord = (exhibit: MuseumExhibitV1): MuseumSearchRec
   summary: exhibit.search.summary,
   keywords: exhibit.search.keywords,
   filters: exhibit.search.filters,
-  href: `/museum?exhibit=${exhibit.slug}&anchor=approach`,
+  href: `/office?room=museum&exhibit=${exhibit.slug}`,
   exhibitSlug: exhibit.slug,
   destinationAnchor: "approach",
 });

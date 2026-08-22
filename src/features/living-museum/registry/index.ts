@@ -1,9 +1,10 @@
 import { exhibitToSearchRecord, parseMuseumSearchRecordV1, type MuseumSearchRecordV1 } from "../core/MuseumSearchV1";
 import { validateMuseumExhibitV1 } from "../core/MuseumExhibitV1";
 import { museumExhibits } from "./generated";
+import { museumOfficeHref } from "../core/MuseumRuntimeV1";
 
 const commands: readonly MuseumSearchRecordV1[] = [
-  { id: "command:arrival", type: "command", title: "Museum arrival", summary: "Return to the opening view and curatorial thesis.", keywords: ["home", "entrance", "orientation"], filters: ["command"], href: "/museum" },
+  { id: "command:arrival", type: "command", title: "Museum arrival", summary: "Return to the opening view and curatorial thesis.", keywords: ["home", "entrance", "orientation"], filters: ["command"], href: museumOfficeHref(null) },
 ];
 
 const ids = new Set<string>();
@@ -17,6 +18,6 @@ export const validatedMuseumExhibits = museumExhibits.map((entry) => {
 });
 
 export const museumSearchCorpus: readonly MuseumSearchRecordV1[] = [
-  ...validatedMuseumExhibits.map(({ manifest }) => exhibitToSearchRecord(manifest)),
+  ...validatedMuseumExhibits.map(({ manifest }) => ({ ...exhibitToSearchRecord(manifest), href: museumOfficeHref(manifest.slug) })),
   ...commands.map(parseMuseumSearchRecordV1),
 ];

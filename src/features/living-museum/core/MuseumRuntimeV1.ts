@@ -8,11 +8,20 @@ export const MUSEUM_ARRIVAL_ANCHOR: MuseumCameraAnchorV1 = {
   position: [0, 4.8, 15], target: [0, 1.8, 0], fov: 48, minDwellMs: 900,
 };
 
+export function museumRendererProfile(active: boolean): { exposure: number; renderOfficePostFx: boolean } {
+  return active
+    ? { exposure: 2, renderOfficePostFx: false }
+    : { exposure: 1, renderOfficePostFx: true };
+}
+
+export function museumOfficeHref(slug: MuseumExhibitSlug | null): string {
+  return slug ? `/office?room=museum&exhibit=${encodeURIComponent(slug)}` : "/office?room=museum";
+}
+
 export function resolveMuseumDeepLink(params: Pick<URLSearchParams, "get">, exhibits: readonly MuseumExhibitV1[]): MuseumNavigation {
   const slug = params.get("exhibit");
-  const anchor = params.get("anchor");
   const exhibit = exhibits.find((item) => item.slug === slug);
-  if (!exhibit || anchor !== "approach") return { exhibitSlug: null, anchor: "establishing", requestId: 0 };
+  if (!exhibit) return { exhibitSlug: null, anchor: "establishing", requestId: 0 };
   return { exhibitSlug: exhibit.slug, anchor: "approach", requestId: 1 };
 }
 

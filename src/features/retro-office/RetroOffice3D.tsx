@@ -27,7 +27,18 @@ import {
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
+import dynamic from "next/dynamic";
+import type { MuseumExhibitSlug } from "@/features/living-museum/core/MuseumExhibitV1";
+import { MUSEUM_ARRIVAL_ANCHOR, museumRendererProfile, resolveMuseumDeepLink } from "@/features/living-museum/core/MuseumRuntimeV1";
+import { validatedMuseumExhibits } from "@/features/living-museum/registry";
+import { OFFICE_MUSEUM_ORIGIN, OfficeMuseumRoom } from "@/features/living-museum/shell/OfficeMuseumRoom";
+
 import { SettingsPanel } from "@/features/office/components/panels/SettingsPanel";
+
+const OfficeMuseumOverlay = dynamic(
+  () => import("@/features/living-museum/shell/OfficeMuseumOverlay").then((module) => module.OfficeMuseumOverlay),
+  { ssr: false },
+);
 import { AtmImmersiveScreen } from "@/features/office/screens/AtmImmersiveScreen";
 import { GithubImmersiveScreen } from "@/features/office/screens/GithubImmersiveScreen";
 import { KanbanImmersiveScreen } from "@/features/office/screens/KanbanImmersiveScreen";
@@ -3125,6 +3136,10 @@ export function RetroOffice3D({
     target: [number, number, number];
     zoom?: number;
   } | null>(null);
+  const [museumActive, setMuseumActive] = useState(false);
+  const [museumSlug, setMuseumSlug] = useState<MuseumExhibitSlug | null>(null);
+  const [museumReducedMotion, setMuseumReducedMotion] = useState(false);
+  const museumRendering = museumRendererProfile(museumActive);
   const LOCAL_CAMERA_TARGET = useMemo(
     () =>
       toWorld(LOCAL_OFFICE_CANVAS_WIDTH / 2, LOCAL_OFFICE_CANVAS_HEIGHT / 2),
@@ -3142,6 +3157,32 @@ export function RetroOffice3D({
     () => ({ pos: CAM_POS, target: cameraTarget, zoom: cameraZoom }),
     [CAM_POS, cameraTarget, cameraZoom]
   );
+  const applyMuseumNavigation = useCallback((slug: MuseumExhibitSlug | null) => {
+    setMuseumActive(true);
+    setMuseumSlug(slug);
+    const manifest = validatedMuseumExhibits.find((entry) => entry.manifest.slug === slug)?.manifest;
+    const anchor = manifest?.cameraAnchors.approach ?? MUSEUM_ARRIVAL_ANCHOR;
+    cameraPresetRef.current = {
+      pos: anchor.position.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
+      target: anchor.target.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
+    };
+  }, []);
+  useEffect(() => {
+    const syncFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("room") !== "museum") return;
+      const navigation = resolveMuseumDeepLink(params, validatedMuseumExhibits.map(({ manifest }) => manifest));
+      applyMuseumNavigation(navigation.exhibitSlug);
+    };
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotion = () => setMuseumReducedMotion(media.matches);
+
+    syncMotion();
+    syncFromUrl();
+    window.addEventListener("popstate", syncFromUrl);
+    media.addEventListener("change", syncMotion);
+    return () => { window.removeEventListener("popstate", syncFromUrl); media.removeEventListener("change", syncMotion); };
+  }, [applyMuseumNavigation]);
   const canvasResetKey = useMemo(
     () =>
       [
@@ -5748,14 +5789,16 @@ export function RetroOffice3D({
   const lastOfficeCenterSignalRef = useRef(officeCenterSignal);
 
   useEffect(() => {
+    if (museumActive) return;
     cameraPresetRef.current = overviewPreset;
-  }, [overviewPreset]);
+  }, [museumActive, overviewPreset]);
 
   useEffect(() => {
+    if (museumActive) return;
     if (officeCenterSignal === lastOfficeCenterSignalRef.current) return;
     lastOfficeCenterSignalRef.current = officeCenterSignal;
     cameraPresetRef.current = overviewPreset;
-  }, [officeCenterSignal, overviewPreset]);
+  }, [museumActive, officeCenterSignal, overviewPreset]);
 
   return (
     <div className="relative w-full h-full bg-[#1a1008] font-mono text-white overflow-hidden">
@@ -5796,7 +5839,7 @@ export function RetroOffice3D({
               antialias: graphicsQualityConfig.antialias,
               powerPreference: "high-performance",
               toneMapping: THREE.ACESFilmicToneMapping,
-              toneMappingExposure: 1.0,
+              toneMappingExposure: museumRendering.exposure,
             }}
             style={{ width: "100%", height: "100%" }}
             onCreated={handleCanvasCreated}
@@ -5861,14 +5904,17 @@ export function RetroOffice3D({
             />
 
             {/* Post-processing: AO, bloom, vignette, filmic tone mapping. */}
-            <ScenePostFx
-              config={graphicsQualityConfig}
-              followActive={followAgentId !== null}
-              followFocusPointRef={followFocusPointRef}
-            />
+            {museumRendering.renderOfficePostFx ? (
+              <ScenePostFx
+                config={graphicsQualityConfig}
+                followActive={followAgentId !== null}
+                followFocusPointRef={followFocusPointRef}
+              />
+            ) : null}
 
             {/* Floor + walls — always visible, no async loading. */}
             <SceneFloorAndWalls showRemoteOffice={remoteOfficeEnabled} />
+            <OfficeMuseumRoom activeSlug={museumSlug} reducedMotion={museumReducedMotion} />
 
             {/* Wall pictures — procedural, no async loading. */}
             <SceneWallPictures showRemoteOffice={remoteOfficeEnabled} />
@@ -6433,6 +6479,19 @@ export function RetroOffice3D({
           </SceneErrorBoundary>
         ) : null}
       </div>
+
+      {museumActive ? (
+        <OfficeMuseumOverlay
+          activeSlug={museumSlug}
+          onSelect={applyMuseumNavigation}
+          onExit={() => {
+            window.history.pushState({}, "", "/office");
+            setMuseumActive(false);
+            setMuseumSlug(null);
+            cameraPresetRef.current = overviewPreset;
+          }}
+        />
+      ) : null}
 
       {/* New Idea 2: Camera preset buttons — top left. */}
       {!readOnly && !immersiveOverlayActive ? (

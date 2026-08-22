@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "status": "captain-unapproved",
+  "base": "558803cee784e3c49435b87d4a73cc4c848844ff",
+  "preservedCandidate": "64e57a7ad30bb3eceaef0f6a7a9124203b199877",
+  "integratedFeatures": [
+    {"ref":"feature/t_d1b3961e-public-directory","head":"3aa99773171969357f26b5afd7aa6dfe4b193d9d","evidence":"git-cherry-patch-equivalent"},
+    {"ref":"perf/adaptive-mobile-t_24f370d9","head":"9a4373458342666f6f5837a536ef8725a86f6391","evidence":"superseded-by-integrated-adaptive-quality"},
+    {"ref":"preview/t_37b076b4-orbit","head":"5b9e4be02abb1478381ec81a8057535ff4b84277","evidence":"git-cherry-patch-equivalent"},
+    {"ref":"repair/museum-shell-provenance","head":"44a8811e82cdf87e77d1c733ec9393de9493bdf6","evidence":"superseded-by-office-annex-root-cause-repair"}
+  ],
+  "museum": {"route":"/office?room=museum","rendererOwner":"RetroOffice3D","cameraOwner":"office-camera-arbiter","exhibits":["pokemon-game","star-wars-game","pokemon-cards","call-of-duty","halo","obsidian-vault"]},
+  "promotion": "none"
+}
