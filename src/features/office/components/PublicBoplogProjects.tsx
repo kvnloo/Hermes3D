@@ -27,7 +27,7 @@ export function PublicBoplogProjects({ projection, kanbanProjection }: { project
   const kanbanById = new Map(kanbanProjection?.entries.map((entry) => [entry.publicId, entry]) ?? []);
 
   return (
-    <aside aria-label="Published public Boplog projects" className="fixed right-3 top-20 z-20 w-[min(22rem,calc(100vw-1.5rem))] rounded-lg border border-cyan-400/25 bg-[#05090d]/88 px-3 py-2.5 font-mono text-white shadow-2xl backdrop-blur-md sm:right-4 sm:top-4 sm:px-4 sm:py-3">
+    <aside aria-label="Published public Boplog projects" className="fixed right-3 top-20 z-20 hidden w-[min(22rem,calc(100vw-1.5rem))] rounded-lg border border-cyan-400/25 bg-[#05090d]/88 px-3 py-2.5 font-mono text-white shadow-2xl backdrop-blur-md sm:right-4 sm:top-4 sm:block sm:px-4 sm:py-3">
       <div className="flex items-start justify-between gap-3 border-b border-cyan-300/15 pb-2">
         <div>
           <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-cyan-200/75">Public projects</p>
