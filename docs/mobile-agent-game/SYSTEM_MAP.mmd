@@ -1,0 +1,14 @@
+flowchart LR
+  K[Hermes Kanban<br/>execution authority] -->|versioned snapshot| A[Truth adapter]
+  G[Git revisions + evidence<br/>acceptance authority] --> A
+  A --> C[Framework-independent coordinator]
+  C --> W[World stack]
+  C --> AG[Agents stack]
+  C --> B[Build stack]
+  C --> R[Review stack]
+  W & AG & B & R --> V[React view adapter]
+  V --> X[One Canvas / rAF owner]
+  V --> U[Safe-area shell + one inspector]
+  U -->|explicit intent + durable ID| A
+  A -. prototype .-> F[Synthetic fixture journal]
+  A -. separate approval .-> K

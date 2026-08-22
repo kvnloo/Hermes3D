@@ -1,0 +1,86 @@
+[
+  {
+    "width": 320,
+    "height": 720,
+    "file": "docs/mobile-agent-game/evidence/game-320x720.png",
+    "errors": [],
+    "metrics": {
+      "title": "Settlement prototype · Hermes3D",
+      "canvasCount": 1,
+      "scrollWidth": 320,
+      "innerWidth": 320,
+      "shellHeight": 720,
+      "minTarget": 53.75
+    }
+  },
+  {
+    "width": 360,
+    "height": 800,
+    "file": "docs/mobile-agent-game/evidence/game-360x800.png",
+    "errors": [],
+    "metrics": {
+      "title": "Settlement prototype · Hermes3D",
+      "canvasCount": 1,
+      "scrollWidth": 360,
+      "innerWidth": 360,
+      "shellHeight": 800,
+      "minTarget": 53.75
+    }
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "file": "docs/mobile-agent-game/evidence/game-390x844.png",
+    "errors": [],
+    "metrics": {
+      "title": "Settlement prototype · Hermes3D",
+      "canvasCount": 1,
+      "scrollWidth": 390,
+      "innerWidth": 390,
+      "shellHeight": 844,
+      "minTarget": 53.75
+    }
+  },
+  {
+    "width": 412,
+    "height": 915,
+    "file": "docs/mobile-agent-game/evidence/game-412x915.png",
+    "errors": [],
+    "metrics": {
+      "title": "Settlement prototype · Hermes3D",
+      "canvasCount": 1,
+      "scrollWidth": 412,
+      "innerWidth": 412,
+      "shellHeight": 915,
+      "minTarget": 53.75
+    }
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "file": "docs/mobile-agent-game/evidence/game-844x390.png",
+    "errors": [],
+    "metrics": {
+      "title": "Settlement prototype · Hermes3D",
+      "canvasCount": 1,
+      "scrollWidth": 844,
+      "innerWidth": 844,
+      "shellHeight": 390,
+      "minTarget": 53.75
+    }
+  },
+  {
+    "width": 1440,
+    "height": 900,
+    "file": "docs/mobile-agent-game/evidence/game-1440x900.png",
+    "errors": [],
+    "metrics": {
+      "title": "Settlement prototype · Hermes3D",
+      "canvasCount": 1,
+      "scrollWidth": 1440,
+      "innerWidth": 1440,
+      "shellHeight": 900,
+      "minTarget": 53.74993896484375
+    }
+  }
+]
