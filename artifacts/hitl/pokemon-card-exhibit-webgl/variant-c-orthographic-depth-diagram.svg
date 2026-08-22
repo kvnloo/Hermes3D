@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800">
+<rect width="1400" height="800" fill="#090e0d"/><text x="70" y="75" fill="#f2ddb0" font-family="Georgia" font-size="36">EMBERWING SANCTUARY · ORTHOGRAPHIC DEPTH CONTRACT</text>
+<text x="70" y="112" fill="#9eac9c" font-family="sans-serif" font-size="16" letter-spacing="3">RIGHTS-SAFE SYNTHETIC CONSTRUCTION · 14 DIE-CUT LAYERS · 23.4 MM CAVITY</text>
+<line x1="120" y1="620" x2="1260" y2="620" stroke="#806f4c"/><text x="116" y="660" fill="#b9aa87" font-family="sans-serif" font-size="15">REAR SLAB</text><text x="1160" y="660" fill="#b9aa87" font-family="sans-serif" font-size="15">FOIL FRAME / VIEWER</text>
+<g font-family="sans-serif" font-size="13">
+<rect x="120" y="195" width="26" height="425" rx="6" fill="#342518" stroke="#d4b467" stroke-width="3"/><text x="105" y="175" fill="#dac89c">0 mm</text>
+<g stroke="#d79d55" stroke-width="2">
+<path d="M180 570V245H825V570Z" fill="#24110c"/><path d="M225 550V265H850V550Z" fill="#37160e"/><path d="M270 530V285H875V530Z" fill="#4b1c0f"/><path d="M315 510V305H900V510Z" fill="#5f2410"/><path d="M360 490V325H925V490Z" fill="#762d11"/><path d="M405 475V340H950V475Z" fill="#8e3612"/><path d="M450 460V355H975V460Z" fill="#a94115"/><path d="M495 448V367H1000V448Z" fill="#be4b19"/><path d="M540 438V377H1025V438Z" fill="#ce5b1e"/><path d="M585 430V385H1050V430Z" fill="#de6c25"/><path d="M630 424V391H1075V424Z" fill="#e8812e"/><path d="M675 419V396H1100V419Z" fill="#efa03b"/><path d="M720 415V400H1125V415Z" fill="#f2ba59"/><path d="M765 412V403H1150V412Z" fill="#f5d180"/>
+</g>
+<g fill="#eadbb8"><text x="170" y="705">FOREST-DEEP · L01–L03</text><text x="445" y="705">FOREST-MID · L04–L07</text><text x="735" y="705">EMBER BODY · L08–L11</text><text x="1025" y="705">EMBER WINGS · L12–L14</text></g>
+<line x1="120" y1="755" x2="1150" y2="755" stroke="#f0c875" stroke-width="2"/><path d="M120 745v20M1150 745v20" stroke="#f0c875" stroke-width="2"/><text x="555" y="785" fill="#f0c875" font-size="18">23.4 MM CAVITY · 1.8 MM NOMINAL LAYER PITCH</text>
+</g></svg>

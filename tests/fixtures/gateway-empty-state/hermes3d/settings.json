@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "gateway": {
+    "url": "ws://localhost:18789",
+    "token": "",
+    "adapterType": "hermes",
+    "profiles": {
+      "hermes": {
+        "url": "ws://localhost:18789",
+        "token": ""
+      },
+      "demo": {
+        "url": "ws://localhost:18789",
+        "token": ""
+      },
+      "local": {
+        "url": "http://localhost:7770",
+        "token": ""
+      },
+      "hermes3d": {
+        "url": "http://localhost:3000/api/runtime/custom",
+        "token": ""
+      },
+      "custom": {
+        "url": "http://localhost:7770",
+        "token": ""
+      }
+    }
+  },
+  "activeFloorId": "hermes",
+  "officeFloors": {
+    "hermes": {
+      "floorId": "hermes",
+      "provider": "hermes",
+      "runtimeProfileId": "hermes-default",
+      "gatewayUrl": null,
+      "status": "connecting",
+      "lastKnownGoodAt": null,
+      "lastErrorCode": null,
+      "lastErrorMessage": null
+    }
+  },
+  "focused": {},
+  "avatars": {},
+  "deskAssignments": {},
+  "analytics": {},
+  "voiceReplies": {},
+  "office": {},
+  "standup": {},
+  "taskBoard": {
+    "ws://localhost:18789": {
+      "cards": [],
+      "selectedCardId": null
+    }
+  }
+}
