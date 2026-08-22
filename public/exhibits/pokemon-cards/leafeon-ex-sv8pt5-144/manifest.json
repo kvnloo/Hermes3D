@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 3,
+  "ontologyVersion": "cardtwin-semantic-layers/v3",
+  "printing": {
+    "name": "Leafeon ex",
+    "setCode": "PRE/SV8.5",
+    "number": "144/131",
+    "source": "source/leafeon-ex-sv8pt5-144.png",
+    "sourceSha256": "f00547340035daf54ba086ee1f4c6d907476ae2772030517b68605a9ebd9842f",
+    "width": 733,
+    "height": 1024
+  },
+  "segmentation": {
+    "implementation": "Meta SAM 2.1 image predictor",
+    "revision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+    "checkpoint": "sam2.1_hiera_tiny.pt",
+    "checkpointSha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+    "promptMetadata": "framework/prompts/leafeon-ex-sv8pt5-144.json",
+    "promptMetadataSha256": "88c54516793bfc5bea068a21868d027488822b180fe21286e9041cb5a24a8682",
+    "prompt": {
+      "box": [
+        180,
+        255,
+        620,
+        665
+      ],
+      "positivePoints": [
+        [
+          337,
+          348
+        ],
+        [
+          303,
+          301
+        ],
+        [
+          420,
+          309
+        ],
+        [
+          337,
+          431
+        ],
+        [
+          278,
+          500
+        ],
+        [
+          408,
+          520
+        ],
+        [
+          490,
+          442
+        ],
+        [
+          555,
+          410
+        ]
+      ],
+      "negativePoints": [
+        [
+          350,
+          235
+        ],
+        [
+          250,
+          245
+        ],
+        [
+          485,
+          245
+        ],
+        [
+          165,
+          390
+        ],
+        [
+          630,
+          390
+        ],
+        [
+          330,
+          620
+        ],
+        [
+          560,
+          610
+        ]
+      ]
+    },
+    "manualRefinement": {
+      "version": 2,
+      "artBox": [
+        42,
+        215,
+        691,
+        748
+      ],
+      "rasterization": "opencv-fillPoly-integer-even-odd",
+      "operations": [
+        {
+          "op": "clip-to-polygon",
+          "vertices": [
+            [
+              180,
+              255
+            ],
+            [
+              620,
+              255
+            ],
+            [
+              620,
+              665
+            ],
+            [
+              180,
+              665
+            ]
+          ]
+        },
+        {
+          "op": "keep-largest-component"
+        },
+        {
+          "op": "morph-close",
+          "kernelPx": 3
+        },
+        {
+          "op": "fill-holes",
+          "maxAreaPx": "all"
+        }
+      ],
+      "method": "checked-in printing-specific refinement; identity-bearing UI outside the art window remains intact"
+    }
+  },
+  "layers": [
+    {
+      "id": "far-background",
+      "semantic": "far-background",
+      "depthMm": 0.0,
+      "mask": "layers/far-background-mask.png",
+      "texture": "layers/far-background.png",
+      "maskSha256": "490538a74b5cc6312be9dbd9c41ec35c9eb3d9f659e5b594aed37b6a88bc9923",
+      "textureSha256": "5fa45af3e89a91031a22acc9fe2a5adac917ed65362eff7aa7fdf187a8e4b063",
+      "pixelCount": 305816,
+      "alphaCoverage": 0.407433,
+      "edgePixelCount": 11081,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    },
+    {
+      "id": "hero",
+      "semantic": "character/hero",
+      "depthMm": 1.5,
+      "mask": "layers/hero-mask.png",
+      "texture": "layers/hero.png",
+      "maskSha256": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9",
+      "textureSha256": "b59f6de9726312ff852369b15722c8d701777fadadc0a1ddc9810418b0929ed3",
+      "pixelCount": 40101,
+      "alphaCoverage": 0.053426,
+      "edgePixelCount": 6353,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    },
+    {
+      "id": "outer-frame-text",
+      "semantic": "outer-card/frame-text",
+      "depthMm": 3.8,
+      "mask": "layers/outer-frame-text-mask.png",
+      "texture": "layers/outer-frame-text.png",
+      "maskSha256": "47a361cc3d7933c4183aec6a5fd54911d3c6094801e16b67ac27319d6ff8848f",
+      "textureSha256": "e75ed45f9ec439872054d36878d97a606370bd12987e417a01fac97557c90b9d",
+      "pixelCount": 404675,
+      "alphaCoverage": 0.539141,
+      "edgePixelCount": 4728,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    }
+  ],
+  "invariants": {
+    "overlapPixelCount": 0,
+    "uncoveredPixelCount": 0,
+    "maxHoleAreaPx": 0,
+    "edgeFringePx": 0,
+    "borderAndTextPreserved": true,
+    "recompositionMaxChannelDifference": 0
+  },
+  "inpainting": {
+    "used": true,
+    "scope": "hidden-background-only",
+    "provenance": "inpainted-hidden-fill",
+    "method": "OpenCV Telea radius 7",
+    "overwritesCanonicalVisiblePixels": false,
+    "output": "layers/hidden-background-fill.png",
+    "fillMask": "layers/hidden-background-fill-mask.png",
+    "fillMaskSha256": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9"
+  },
+  "evidence": {
+    "contactSheet": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/contact-sheet.png",
+    "heroEdgeQuality": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/hero-edge-quality.png",
+    "overlapLabelMap": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/overlap-label-map.png",
+    "occlusionGapMap": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/occlusion-gap-map.png",
+    "recompositionHeatmap": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/recomposition-difference-heatmap.png"
+  },
+  "artifactSha256": {
+    "assembled-exact.png": "895d36788902583ddc5f4427349285fe0ff4291f88a86d27e718cde3fe137bb4",
+    "contact-sheet.png": "a5d8699ee83f1389e4a826f031c1b617f7aedfb64cf92a06d72d948d306c0ae1",
+    "hero-edge-quality.png": "f6ce7986531cfeffb0751bd3e9c4020fa5ba4d049015f8ce11bd22f8d6a1feb9",
+    "occlusion-gap-map.png": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9",
+    "overlap-label-map.png": "7251dde254ebc83612e1f8f539c81727bd1cd6352fc861f0143d637a42b7aeba",
+    "recomposition-difference-heatmap.png": "7789a2177bc0ede47689999e660a2787de8c4708acc02fe41caa8bd76b8a4ebe",
+    "far-background-mask.png": "490538a74b5cc6312be9dbd9c41ec35c9eb3d9f659e5b594aed37b6a88bc9923",
+    "far-background.png": "5fa45af3e89a91031a22acc9fe2a5adac917ed65362eff7aa7fdf187a8e4b063",
+    "hero-mask.png": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9",
+    "hero.png": "b59f6de9726312ff852369b15722c8d701777fadadc0a1ddc9810418b0929ed3",
+    "hidden-background-fill-mask.png": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9",
+    "hidden-background-fill.png": "b5853647844c61e851c54df0795fe0480dae219fbd1e6626cd48fa1e16267d06",
+    "outer-frame-text-mask.png": "47a361cc3d7933c4183aec6a5fd54911d3c6094801e16b67ac27319d6ff8848f",
+    "outer-frame-text.png": "e75ed45f9ec439872054d36878d97a606370bd12987e417a01fac97557c90b9d"
+  },
+  "superResolution": {
+    "used": false
+  }
+}

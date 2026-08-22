@@ -1,0 +1,70 @@
+npm notice run hermes3d@1.0.0 test
+npm notice run vitest --run tests/unit/cardTwinCuttingFramework.test.ts tests/unit/cardTwinSemanticLayers.test.ts
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90m/mnt/zer0models/zer0-worktrees/hermes3d-live/pokemon-card-exhibit-preview[39m
+
+(node:50148) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:50180) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:50179) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [31m❯[39m tests/unit/cardTwinSemanticLayers.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 10[2mms[22m[39m
+[31m     [31m×[31m arcanine-sm1-22 preserves identity, alignment, partition and deterministic masks[39m[32m 6[2mms[22m[39m
+[31m     [31m×[31m umbreon-vmax-swsh7-215 preserves identity, alignment, partition and deterministic masks[39m[32m 1[2mms[22m[39m
+[31m     [31m×[31m leafeon-ex-sv8pt5-144 preserves identity, alignment, partition and deterministic masks[39m[32m 1[2mms[22m[39m
+ [31m❯[39m tests/unit/cardTwinCuttingFramework.test.ts [2m([22m[2m3 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[33m 9125[2mms[22m[39m
+     [32m✓[39m versions a complete semantic ontology with ordering and provenance rules[32m 2[2mms[22m[39m
+[31m     [31m×[31m checks in normalized prompts and deterministic refinement metadata for every canonical card[39m[32m 6[2mms[22m[39m
+     [33m[2m✓[22m[39m fails closed unless canonical identity and pinned SAM2 inputs match [33m 9116[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 4 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/unit/cardTwinCuttingFramework.test.ts[2m > [22mCardTwin cutting framework contract[2m > [22mchecks in normalized prompts and deterministic refinement metadata for every canonical card
+[31m[1mAssertionError[22m: expected 2 to be 1 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 1[39m
+[31m+ 2[39m
+
+[36m [2m❯[22m tests/unit/cardTwinCuttingFramework.test.ts:[2m49:36[22m[39m
+    [90m 47| [39m        layers: Array<{ semantic: string; sam2: { boxes: number[][]; p…
+    [90m 48| [39m      }[33m;[39m
+    [90m 49| [39m      [34mexpect[39m(prompt[33m.[39mschemaVersion)[33m.[39m[34mtoBe[39m([34m1[39m)[33m;[39m
+    [90m   | [39m                                   [31m^[39m
+    [90m 50| [39m      [34mexpect[39m(prompt[33m.[39mcardId)[33m.[39m[34mtoBe[39m(id)[33m;[39m
+    [90m 51| [39m      expect(prompt.coordinateSpace).toEqual(expect.objectContaining({…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/unit/cardTwinSemanticLayers.test.ts[2m > [22mCardTwin deterministic semantic layer contract[2m > [22marcanine-sm1-22 preserves identity, alignment, partition and deterministic masks
+[41m[1m FAIL [22m[49m tests/unit/cardTwinSemanticLayers.test.ts[2m > [22mCardTwin deterministic semantic layer contract[2m > [22mumbreon-vmax-swsh7-215 preserves identity, alignment, partition and deterministic masks
+[41m[1m FAIL [22m[49m tests/unit/cardTwinSemanticLayers.test.ts[2m > [22mCardTwin deterministic semantic layer contract[2m > [22mleafeon-ex-sv8pt5-144 preserves identity, alignment, partition and deterministic masks
+[31m[1mAssertionError[22m: expected 3 to be 2 // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 2[39m
+[31m+ 3[39m
+
+[36m [2m❯[22m tests/unit/cardTwinSemanticLayers.test.ts:[2m29:38[22m[39m
+    [90m 27| [39m      [35mconst[39m cardRoot [33m=[39m [34mjoin[39m(root[33m,[39m id)[33m;[39m
+    [90m 28| [39m      const manifest = JSON.parse(readFileSync(join(cardRoot, "manifes…
+    [90m 29| [39m      [34mexpect[39m(manifest[33m.[39mschemaVersion)[33m.[39m[34mtoBe[39m([34m2[39m)[33m;[39m
+    [90m   | [39m                                     [31m^[39m
+    [90m 30| [39m      expect(manifest.ontologyVersion).toBe("cardtwin-semantic-layers/…
+    [90m 31| [39m      expect(manifest.printing).toEqual(expect.objectContaining({ sour…
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 15:26:18
+[2m   Duration [22m 9.69s[2m (transform 76ms, setup 146ms, import 40ms, tests 9.13s, environment 720ms)[22m
+
+
+RED_EXIT_CODE=1

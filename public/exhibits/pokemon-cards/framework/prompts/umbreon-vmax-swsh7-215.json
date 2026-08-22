@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 2,
+  "cardId": "umbreon-vmax-swsh7-215",
+  "source": "umbreon-vmax-swsh7-215.png",
+  "sourceSha256": "0588afac1c3dee4c8a039d5ff9d0cff2ec4abfbcadedbb62b573750b8f772d92",
+  "printing": { "name": "Umbreon VMAX", "setCode": "SWSH7", "number": "215/203" },
+  "coordinateSpace": { "origin": "top-left", "units": "canonical-pixels", "width": 734, "height": 1024 },
+  "artWindow": [30, 195, 704, 660],
+  "foregroundY": 625,
+  "layers": [
+    {
+      "semantic": "character/hero",
+      "sam2": {
+        "checkpoint": "sam2.1_hiera_small.pt",
+        "candidateIndex": 1,
+        "boxes": [[250, 205, 680, 690]],
+        "points": [
+          {"x":377,"y":275,"label":1},{"x":432,"y":310,"label":1},{"x":333,"y":340,"label":1},
+          {"x":392,"y":410,"label":1},{"x":315,"y":430,"label":1},{"x":462,"y":470,"label":1},
+          {"x":590,"y":475,"label":1},{"x":470,"y":565,"label":1},{"x":600,"y":590,"label":1},
+          {"x":240,"y":250,"label":0},{"x":520,"y":245,"label":0},{"x":530,"y":360,"label":0},
+          {"x":490,"y":500,"label":0},{"x":410,"y":610,"label":0},{"x":690,"y":460,"label":0},
+          {"x":640,"y":700,"label":0},{"x":250,"y":600,"label":0}
+        ]
+      },
+      "refinement": {
+        "rasterization": "opencv-fillPoly-integer-even-odd",
+        "operations": [
+          {"op":"clip-to-polygon","vertices":[[30,195],[704,195],[704,660],[30,660]]},
+          {"op":"subtract-semantic","semantic":"foreground-effects/foliage/architecture"},
+          {"op":"subtract-polygons","reason":"remove cyan sky fragment connected below the raised left foreleg","vertices":[[[272,407],[326,407],[326,445],[272,445]]]},
+          {"op":"retain-positive-components"},
+          {"op":"morph-close","kernelPx":3}
+        ]
+      }
+    },
+    {
+      "semantic": "foreground-effects/foliage/architecture",
+      "sam2": {
+        "checkpoint": "sam2.1_hiera_small.pt",
+        "candidateIndex": 1,
+        "segments": [
+          {"box":[45,330,225,660],"points":[{"x":137,"y":430,"label":1},{"x":130,"y":535,"label":1},{"x":110,"y":615,"label":1},{"x":70,"y":420,"label":0},{"x":245,"y":500,"label":0}]},
+          {"box":[365,275,625,660],"points":[{"x":526,"y":350,"label":1},{"x":500,"y":470,"label":1},{"x":465,"y":590,"label":1},{"x":405,"y":420,"label":0},{"x":620,"y":480,"label":0},{"x":600,"y":620,"label":0}]}
+        ]
+      },
+      "refinement": {
+        "rasterization": "opencv-fillPoly-integer-even-odd",
+        "operations": [
+          {"op":"clip-to-polygons","vertices":[[[45,330],[225,330],[225,660],[45,660]],[[365,275],[625,275],[625,660],[365,660]]]},
+          {"op":"retain-positive-components"},
+          {"op":"morph-close","kernelPx":3}
+        ]
+      }
+    }
+  ]
+}

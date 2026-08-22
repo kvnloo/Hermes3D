@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 3,
+  "ontologyVersion": "cardtwin-semantic-layers/v3",
+  "printing": {
+    "name": "Umbreon VMAX",
+    "setCode": "SWSH7",
+    "number": "215/203",
+    "source": "source/umbreon-vmax-swsh7-215.png",
+    "sourceSha256": "0588afac1c3dee4c8a039d5ff9d0cff2ec4abfbcadedbb62b573750b8f772d92",
+    "width": 734,
+    "height": 1024
+  },
+  "segmentation": {
+    "implementation": "Meta SAM 2.1 image predictor",
+    "repositoryRevision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+    "checkpoint": "sam2.1_hiera_small.pt",
+    "checkpointSha256": "6d1aa6f30de5c92224f8172114de081d104bbd23dd9dc5c58996f0cad5dc4d38",
+    "checkpointBytes": 184416285,
+    "device": "cuda",
+    "promptMetadata": "framework/prompts/umbreon-vmax-swsh7-215.json",
+    "promptMetadataSha256": "629749367242a2fd7a948f2af7e365c969bb55d97249f38c169c89f274154165",
+    "heroCandidateIndex": 1,
+    "heroCandidateScores": [
+      0.691819429397583,
+      0.6955950856208801,
+      0.5537717342376709
+    ],
+    "heroCandidatePromptFits": [
+      11,
+      15,
+      15
+    ],
+    "architectureCandidates": [
+      {
+        "scores": [
+          0.9030830264091492,
+          0.9697604179382324,
+          0.946136474609375
+        ],
+        "promptFits": [
+          4,
+          5,
+          5
+        ]
+      },
+      {
+        "scores": [
+          0.7825105786323547,
+          0.8304595351219177,
+          0.7324095964431763
+        ],
+        "promptFits": [
+          6,
+          6,
+          4
+        ]
+      }
+    ],
+    "manualRefinement": {
+      "rasterization": "opencv-fillPoly-integer-even-odd",
+      "operations": [
+        {
+          "op": "clip-to-polygon",
+          "vertices": [
+            [
+              30,
+              195
+            ],
+            [
+              704,
+              195
+            ],
+            [
+              704,
+              660
+            ],
+            [
+              30,
+              660
+            ]
+          ]
+        },
+        {
+          "op": "subtract-semantic",
+          "semantic": "foreground-effects/foliage/architecture"
+        },
+        {
+          "op": "subtract-polygons",
+          "reason": "remove cyan sky fragment connected below the raised left foreleg",
+          "vertices": [
+            [
+              [
+                272,
+                407
+              ],
+              [
+                326,
+                407
+              ],
+              [
+                326,
+                445
+              ],
+              [
+                272,
+                445
+              ]
+            ]
+          ]
+        },
+        {
+          "op": "retain-positive-components"
+        },
+        {
+          "op": "morph-close",
+          "kernelPx": 3
+        }
+      ]
+    },
+    "architectureRefinement": {
+      "rasterization": "opencv-fillPoly-integer-even-odd",
+      "operations": [
+        {
+          "op": "clip-to-polygons",
+          "vertices": [
+            [
+              [
+                45,
+                330
+              ],
+              [
+                225,
+                330
+              ],
+              [
+                225,
+                660
+              ],
+              [
+                45,
+                660
+              ]
+            ],
+            [
+              [
+                365,
+                275
+              ],
+              [
+                625,
+                275
+              ],
+              [
+                625,
+                660
+              ],
+              [
+                365,
+                660
+              ]
+            ]
+          ]
+        },
+        {
+          "op": "retain-positive-components"
+        },
+        {
+          "op": "morph-close",
+          "kernelPx": 3
+        }
+      ]
+    },
+    "peakGpuMemoryBytes": 653696512
+  },
+  "layers": [
+    {
+      "id": "far-background",
+      "semantic": "far-background",
+      "depthMm": 0.0,
+      "mask": "layers/far-background-mask.png",
+      "texture": "layers/far-background.png",
+      "maskSha256": "3220e88dcf9d9973d17ce364bea756e9de8e961232c9ebb3dc76b3285e594b32",
+      "textureSha256": "8accaf4cac02ad3bb9979d9b9fa841333188b87c58bf550365a043fbf161cf43",
+      "dimensions": {
+        "width": 734,
+        "height": 1024
+      },
+      "coveragePixels": 201030,
+      "alphaCoverage": 0.267464,
+      "edgePixelCount": 12719,
+      "holePixelCount": 13,
+      "edgeFringePx": 0,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true,
+      "provenance": "canonical-visible"
+    },
+    {
+      "id": "hero",
+      "semantic": "character/hero",
+      "depthMm": 1.8,
+      "mask": "layers/hero-mask.png",
+      "texture": "layers/hero.png",
+      "maskSha256": "5d93e7aeebe13d4717aedb2b8a000ef1c2ca57edf15d09e87714bacc48d34630",
+      "textureSha256": "1a0ad79343a75052f6528533c092a50372578d40622939d7b8ae0c05e930ac3a",
+      "dimensions": {
+        "width": 734,
+        "height": 1024
+      },
+      "coveragePixels": 63040,
+      "alphaCoverage": 0.083873,
+      "edgePixelCount": 7274,
+      "holePixelCount": 0,
+      "edgeFringePx": 0,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true,
+      "provenance": "canonical-visible"
+    },
+    {
+      "id": "foreground-architecture",
+      "semantic": "foreground-effects/foliage/architecture",
+      "depthMm": 3.0,
+      "mask": "layers/foreground-architecture-mask.png",
+      "texture": "layers/foreground-architecture.png",
+      "maskSha256": "d056b94aca17043105fabdd875bc97f023b220f9eb037d05ef8a43b9d0f24255",
+      "textureSha256": "420e28fe69383d17d44c81ec9affe306a0a5977f87fad642a028f15256b5fd6d",
+      "dimensions": {
+        "width": 734,
+        "height": 1024
+      },
+      "coveragePixels": 49340,
+      "alphaCoverage": 0.065645,
+      "edgePixelCount": 4797,
+      "holePixelCount": 567,
+      "edgeFringePx": 0,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true,
+      "provenance": "canonical-visible"
+    },
+    {
+      "id": "outer-card-frame",
+      "semantic": "outer-card/frame",
+      "depthMm": 4.2,
+      "mask": "layers/outer-card-frame-mask.png",
+      "texture": "layers/outer-card-frame.png",
+      "maskSha256": "17f2ae22cb271290c57cae1e19bc013e88104722d8d83ef3e95317ed7abf358b",
+      "textureSha256": "e1f9265d837b7661dbcd100ea58f1ec1db3fe0b30e08d73a4605ca4fdd568308",
+      "dimensions": {
+        "width": 734,
+        "height": 1024
+      },
+      "coveragePixels": 438206,
+      "alphaCoverage": 0.583018,
+      "edgePixelCount": 4556,
+      "holePixelCount": 313410,
+      "edgeFringePx": 0,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true,
+      "provenance": "canonical-visible"
+    }
+  ],
+  "invariants": {
+    "overlapPixelCount": 0,
+    "uncoveredPixelCount": 0,
+    "maxHoleAreaPx": 0,
+    "edgeFringePx": 0,
+    "borderAndTextPreserved": true,
+    "recompositionMaxChannelDifference": 0
+  },
+  "inpainting": {
+    "used": true,
+    "scope": "hidden-background-only",
+    "provenance": "inpainted-hidden-fill",
+    "method": "OpenCV Telea radius 7",
+    "overwritesCanonicalVisiblePixels": false,
+    "output": "layers/hidden-background-fill.png",
+    "outputSha256": "9179c1b69b1f813f03e67ade05152f0b6fd2d62dc5e57e407dd828e580587ea5",
+    "fillMask": "layers/hidden-background-fill-mask.png",
+    "fillMaskSha256": "90826d26cfcd984254f52c867cc80f2ab74093dca52a03d76270d1b4f3c71e1a"
+  },
+  "evidence": {
+    "assembledExact": {
+      "path": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/assembled-exact.png",
+      "sha256": "5ce1c1dc3b540adc5da4834bad06eab13b0e45bf7927da308bdf80a47500499c"
+    },
+    "contactSheet": {
+      "path": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/contact-sheet.png",
+      "sha256": "20ee26d7b7197dbb8ecf58f4de5d1ea3efd732e8b3b8c82d54de45efbd9fa9ee"
+    },
+    "edgeQualitySheet": {
+      "path": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/edge-quality-sheet.png",
+      "sha256": "09727e0de1cd142c4ef32e9fffe7583fa97cc6539d066ffe58a829aca925871f"
+    },
+    "overlapLabelMap": {
+      "path": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/overlap-label-map.png",
+      "sha256": "f7311ae3ade8ff694d5f9d9f484f79817efb5da9dbfad39a8fb7bd02546efdba"
+    },
+    "occlusionGapMap": {
+      "path": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/occlusion-gap-map.png",
+      "sha256": "90826d26cfcd984254f52c867cc80f2ab74093dca52a03d76270d1b4f3c71e1a"
+    },
+    "recompositionHeatmap": {
+      "path": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/recomposition-difference-heatmap.png",
+      "sha256": "76eb854039e23ed7d0c12f3ded8ecfcd973bd9eddb1dba79a3882eb38b41021d"
+    }
+  },
+  "artifactSha256": {
+    "far-background-mask.png": "3220e88dcf9d9973d17ce364bea756e9de8e961232c9ebb3dc76b3285e594b32",
+    "far-background.png": "8accaf4cac02ad3bb9979d9b9fa841333188b87c58bf550365a043fbf161cf43",
+    "foreground-architecture-mask.png": "d056b94aca17043105fabdd875bc97f023b220f9eb037d05ef8a43b9d0f24255",
+    "foreground-architecture.png": "420e28fe69383d17d44c81ec9affe306a0a5977f87fad642a028f15256b5fd6d",
+    "hero-mask.png": "5d93e7aeebe13d4717aedb2b8a000ef1c2ca57edf15d09e87714bacc48d34630",
+    "hero.png": "1a0ad79343a75052f6528533c092a50372578d40622939d7b8ae0c05e930ac3a",
+    "hidden-background-fill-mask.png": "90826d26cfcd984254f52c867cc80f2ab74093dca52a03d76270d1b4f3c71e1a",
+    "hidden-background-fill.png": "9179c1b69b1f813f03e67ade05152f0b6fd2d62dc5e57e407dd828e580587ea5",
+    "outer-card-frame-mask.png": "17f2ae22cb271290c57cae1e19bc013e88104722d8d83ef3e95317ed7abf358b",
+    "outer-card-frame.png": "e1f9265d837b7661dbcd100ea58f1ec1db3fe0b30e08d73a4605ca4fdd568308"
+  },
+  "superResolution": {
+    "used": false
+  }
+}

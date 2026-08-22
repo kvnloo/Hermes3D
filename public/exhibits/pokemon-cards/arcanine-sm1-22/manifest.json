@@ -1,0 +1,576 @@
+{
+  "schemaVersion": 3,
+  "ontologyVersion": "cardtwin-semantic-layers/v3",
+  "printing": {
+    "name": "Arcanine",
+    "setCode": "SM1",
+    "number": "22/149",
+    "source": "source/arcanine-sm1-22.png",
+    "sourceSha256": "763abeb960a5c5e362bf49b6e4e1210b8b3d6a483384a85de372d19ea848ed1c",
+    "width": 734,
+    "height": 1024
+  },
+  "segmentation": {
+    "implementation": "Meta SAM 2.1 image predictor",
+    "revision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+    "checkpoint": "sam2.1_hiera_tiny.pt",
+    "checkpointSha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+    "promptMetadata": "framework/prompts/arcanine-sm1-22.json",
+    "promptMetadataSha256": "0a282af958fbbea6ceae5dbe66f7664382172ac42aa7fb27878f346da7923444",
+    "prompt": {
+      "box": [
+        125,
+        210,
+        620,
+        545
+      ],
+      "positivePoints": [
+        [
+          390,
+          245
+        ],
+        [
+          455,
+          260
+        ],
+        [
+          520,
+          320
+        ],
+        [
+          455,
+          365
+        ],
+        [
+          345,
+          405
+        ],
+        [
+          235,
+          370
+        ],
+        [
+          270,
+          500
+        ],
+        [
+          430,
+          505
+        ],
+        [
+          540,
+          475
+        ]
+      ],
+      "negativePoints": [
+        [
+          95,
+          210
+        ],
+        [
+          650,
+          220
+        ],
+        [
+          95,
+          565
+        ],
+        [
+          350,
+          575
+        ],
+        [
+          635,
+          565
+        ]
+      ]
+    },
+    "manualRefinement": {
+      "version": 2,
+      "artBox": [
+        58,
+        96,
+        678,
+        485
+      ],
+      "rasterization": "opencv-fillPoly-integer-even-odd",
+      "operations": [
+        {
+          "op": "grabcut-fence",
+          "iterations": 8,
+          "vertices": [
+            [
+              70,
+              230
+            ],
+            [
+              82,
+              201
+            ],
+            [
+              108,
+              183
+            ],
+            [
+              130,
+              165
+            ],
+            [
+              164,
+              151
+            ],
+            [
+              207,
+              143
+            ],
+            [
+              251,
+              149
+            ],
+            [
+              291,
+              166
+            ],
+            [
+              322,
+              180
+            ],
+            [
+              343,
+              165
+            ],
+            [
+              360,
+              139
+            ],
+            [
+              383,
+              126
+            ],
+            [
+              416,
+              132
+            ],
+            [
+              443,
+              148
+            ],
+            [
+              474,
+              154
+            ],
+            [
+              501,
+              170
+            ],
+            [
+              518,
+              190
+            ],
+            [
+              515,
+              211
+            ],
+            [
+              494,
+              225
+            ],
+            [
+              468,
+              230
+            ],
+            [
+              450,
+              248
+            ],
+            [
+              440,
+              274
+            ],
+            [
+              424,
+              294
+            ],
+            [
+              430,
+              319
+            ],
+            [
+              452,
+              334
+            ],
+            [
+              471,
+              350
+            ],
+            [
+              480,
+              373
+            ],
+            [
+              469,
+              389
+            ],
+            [
+              447,
+              400
+            ],
+            [
+              425,
+              399
+            ],
+            [
+              411,
+              387
+            ],
+            [
+              405,
+              367
+            ],
+            [
+              387,
+              351
+            ],
+            [
+              375,
+              374
+            ],
+            [
+              390,
+              400
+            ],
+            [
+              421,
+              421
+            ],
+            [
+              431,
+              445
+            ],
+            [
+              420,
+              463
+            ],
+            [
+              395,
+              470
+            ],
+            [
+              372,
+              461
+            ],
+            [
+              356,
+              441
+            ],
+            [
+              338,
+              420
+            ],
+            [
+              319,
+              420
+            ],
+            [
+              305,
+              432
+            ],
+            [
+              285,
+              433
+            ],
+            [
+              262,
+              422
+            ],
+            [
+              245,
+              407
+            ],
+            [
+              224,
+              409
+            ],
+            [
+              209,
+              400
+            ],
+            [
+              194,
+              389
+            ],
+            [
+              174,
+              385
+            ],
+            [
+              159,
+              374
+            ],
+            [
+              150,
+              352
+            ],
+            [
+              151,
+              330
+            ],
+            [
+              140,
+              310
+            ],
+            [
+              127,
+              296
+            ],
+            [
+              111,
+              283
+            ],
+            [
+              90,
+              276
+            ],
+            [
+              74,
+              259
+            ]
+          ],
+          "foregroundSeeds": [
+            [
+              150,
+              190
+            ],
+            [
+              220,
+              190
+            ],
+            [
+              275,
+              210
+            ],
+            [
+              380,
+              170
+            ],
+            [
+              445,
+              190
+            ],
+            [
+              390,
+              255
+            ],
+            [
+              330,
+              315
+            ],
+            [
+              235,
+              335
+            ],
+            [
+              180,
+              340
+            ],
+            [
+              175,
+              380
+            ],
+            [
+              265,
+              400
+            ],
+            [
+              315,
+              420
+            ],
+            [
+              370,
+              435
+            ],
+            [
+              400,
+              445
+            ],
+            [
+              425,
+              375
+            ]
+          ],
+          "backgroundSeeds": [
+            [
+              75,
+              180
+            ],
+            [
+              325,
+              135
+            ],
+            [
+              530,
+              210
+            ],
+            [
+              500,
+              270
+            ],
+            [
+              470,
+              300
+            ],
+            [
+              490,
+              340
+            ],
+            [
+              470,
+              450
+            ],
+            [
+              440,
+              470
+            ],
+            [
+              330,
+              475
+            ],
+            [
+              250,
+              450
+            ],
+            [
+              150,
+              430
+            ],
+            [
+              95,
+              350
+            ],
+            [
+              100,
+              300
+            ]
+          ],
+          "seedRadiusPx": 7
+        },
+        {
+          "op": "keep-largest-component"
+        },
+        {
+          "op": "morph-close",
+          "kernelPx": 3
+        },
+        {
+          "op": "fill-holes",
+          "maxAreaPx": "all"
+        }
+      ],
+      "method": "checked-in printing-specific refinement; identity-bearing UI outside the art window remains intact"
+    }
+  },
+  "layers": [
+    {
+      "id": "far-background",
+      "semantic": "far-background",
+      "depthMm": 0.0,
+      "mask": "layers/far-background-mask.png",
+      "texture": "layers/far-background.png",
+      "maskSha256": "8627b9707ed577036a6950f2f60f0aab7cade34ae43f14fe1078c35737346848",
+      "textureSha256": "3ef5d67ba8a1a310055528e15f9a2e6bd1c36da18d0cb8129c337685539d4a09",
+      "pixelCount": 106037,
+      "alphaCoverage": 0.141079,
+      "edgePixelCount": 6885,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    },
+    {
+      "id": "hero",
+      "semantic": "character/hero",
+      "depthMm": 1.5,
+      "mask": "layers/hero-mask.png",
+      "texture": "layers/hero.png",
+      "maskSha256": "e80f9b57f9483e084b93b53941e90177d02d02529a92c79605a155b0d9f81fca",
+      "textureSha256": "e669daaf16f0ab5769f7a9a65a7abb548a647140437ccaf8da58e178de267582",
+      "pixelCount": 82550,
+      "alphaCoverage": 0.10983,
+      "edgePixelCount": 4154,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    },
+    {
+      "id": "foreground-effects",
+      "semantic": "foreground-effects",
+      "depthMm": 2.6,
+      "mask": "layers/foreground-effects-mask.png",
+      "texture": "layers/foreground-effects.png",
+      "maskSha256": "476ddbd2067920ca16f2b3b09466fc1665ab271619e62c44534cca5e4df89fbd",
+      "textureSha256": "09662605b6d386b835ab0564ad50bc2898d60f7b739a4df5e0b31006b9fc36a6",
+      "pixelCount": 52593,
+      "alphaCoverage": 0.069973,
+      "edgePixelCount": 3606,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    },
+    {
+      "id": "outer-frame-text",
+      "semantic": "outer-card/frame-text",
+      "depthMm": 3.8,
+      "mask": "layers/outer-frame-text-mask.png",
+      "texture": "layers/outer-frame-text.png",
+      "maskSha256": "6a5b1d4bed49cb92acfb32e3257892782dcce1d19ff6c251208b97e17b2e1fcc",
+      "textureSha256": "c7341bb6f3dd28dfc3b489ddc455a99c40148527e27dba9d3650e0870cb34c20",
+      "pixelCount": 510436,
+      "alphaCoverage": 0.679118,
+      "edgePixelCount": 4036,
+      "sourcePixelsOnly": true,
+      "textureAlphaMatchesMask": true
+    }
+  ],
+  "invariants": {
+    "overlapPixelCount": 0,
+    "uncoveredPixelCount": 0,
+    "maxHoleAreaPx": 0,
+    "edgeFringePx": 0,
+    "borderAndTextPreserved": true,
+    "recompositionMaxChannelDifference": 0
+  },
+  "inpainting": {
+    "used": true,
+    "scope": "hidden-background-only",
+    "provenance": "inpainted-hidden-fill",
+    "method": "OpenCV Telea radius 7",
+    "overwritesCanonicalVisiblePixels": false,
+    "output": "layers/hidden-background-fill.png",
+    "fillMask": "layers/hidden-background-fill-mask.png",
+    "fillMaskSha256": "468ffa40ca19eff7d7d5a9fac3624a5a26f6ecb606aeb85c47bac0a3dabb4e23"
+  },
+  "evidence": {
+    "contactSheet": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/contact-sheet.png",
+    "heroEdgeQuality": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/hero-edge-quality.png",
+    "overlapLabelMap": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/overlap-label-map.png",
+    "occlusionGapMap": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/occlusion-gap-map.png",
+    "recompositionHeatmap": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/recomposition-difference-heatmap.png"
+  },
+  "artifactSha256": {
+    "assembled-exact.png": "a34c8687a1c671eca6c3779b49dcc271f2469151278b223a8e38b4306ee9dfba",
+    "contact-sheet.png": "5f06f394d1c67285a8e21261e7690042bb7089292be1982b52ef64b53debf234",
+    "hero-edge-quality.png": "fb22f8842818b83a3f5c6df8c81f5450e8cc48499eec10018b3ae0ebbddc9d5a",
+    "occlusion-gap-map.png": "468ffa40ca19eff7d7d5a9fac3624a5a26f6ecb606aeb85c47bac0a3dabb4e23",
+    "overlap-label-map.png": "74fdaff361f944d9fad0f5ac495f11b94709b597d556553366c45117b4d4dd14",
+    "recomposition-difference-heatmap.png": "76eb854039e23ed7d0c12f3ded8ecfcd973bd9eddb1dba79a3882eb38b41021d",
+    "far-background-mask.png": "8627b9707ed577036a6950f2f60f0aab7cade34ae43f14fe1078c35737346848",
+    "far-background.png": "3ef5d67ba8a1a310055528e15f9a2e6bd1c36da18d0cb8129c337685539d4a09",
+    "foreground-effects-mask.png": "476ddbd2067920ca16f2b3b09466fc1665ab271619e62c44534cca5e4df89fbd",
+    "foreground-effects.png": "09662605b6d386b835ab0564ad50bc2898d60f7b739a4df5e0b31006b9fc36a6",
+    "hero-mask.png": "e80f9b57f9483e084b93b53941e90177d02d02529a92c79605a155b0d9f81fca",
+    "hero.png": "e669daaf16f0ab5769f7a9a65a7abb548a647140437ccaf8da58e178de267582",
+    "hidden-background-fill-mask.png": "468ffa40ca19eff7d7d5a9fac3624a5a26f6ecb606aeb85c47bac0a3dabb4e23",
+    "hidden-background-fill.png": "b42a0b051973251ce6102e69b7190ef660a9f703ad08d8c58e07e736043c9121",
+    "outer-frame-text-mask.png": "6a5b1d4bed49cb92acfb32e3257892782dcce1d19ff6c251208b97e17b2e1fcc",
+    "outer-frame-text.png": "c7341bb6f3dd28dfc3b489ddc455a99c40148527e27dba9d3650e0870cb34c20"
+  },
+  "superResolution": {
+    "used": false
+  }
+}

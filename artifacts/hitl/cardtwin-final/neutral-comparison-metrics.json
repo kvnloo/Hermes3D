@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "cards": [
+    {
+      "card": "arcanine-sm1-22",
+      "browser_card_bounds": [
+        491,
+        34,
+        789,
+        445
+      ],
+      "comparison": "artifacts/hitl/cardtwin-final/arcanine-sm1-22/neutral-canonical-comparison.png",
+      "mean_absolute_rgb_difference": 14.7722,
+      "p99_absolute_rgb_difference": 143,
+      "canonical_visible_pixels_changed": false,
+      "note": "Browser scaling/filtering is measured only; source and visible RGBA layer bytes are unchanged."
+    },
+    {
+      "card": "umbreon-vmax-swsh7-215",
+      "browser_card_bounds": [
+        491,
+        34,
+        789,
+        445
+      ],
+      "comparison": "artifacts/hitl/cardtwin-final/umbreon-vmax-swsh7-215/neutral-canonical-comparison.png",
+      "mean_absolute_rgb_difference": 25.8058,
+      "p99_absolute_rgb_difference": 183,
+      "canonical_visible_pixels_changed": false,
+      "note": "Browser scaling/filtering is measured only; source and visible RGBA layer bytes are unchanged."
+    },
+    {
+      "card": "leafeon-ex-sv8pt5-144",
+      "browser_card_bounds": [
+        491,
+        34,
+        789,
+        445
+      ],
+      "comparison": "artifacts/hitl/cardtwin-final/leafeon-ex-sv8pt5-144/neutral-canonical-comparison.png",
+      "mean_absolute_rgb_difference": 33.704,
+      "p99_absolute_rgb_difference": 183,
+      "canonical_visible_pixels_changed": false,
+      "note": "Browser scaling/filtering is measured only; source and visible RGBA layer bytes are unchanged."
+    }
+  ]
+}

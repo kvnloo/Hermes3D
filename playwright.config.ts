@@ -4,6 +4,7 @@ const port = Number(process.env.PLAYWRIGHT_PORT ?? 3107);
 const loopbackHost = [127, 0, 0, 1].join(".");
 export default defineConfig({
   testDir: "./tests/e2e",
+  expect: { timeout: 20_000 },
   use: {
     baseURL: `http://${loopbackHost}:${port}`,
     launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH

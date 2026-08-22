@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "implementation": "Meta SAM 2.1 image predictor",
+  "repositoryPath": "/mnt/zer0models/repos/sam2",
+  "repositoryUrl": "https://github.com/facebookresearch/sam2.git",
+  "repositoryRevision": "2b90b9f5ceec907a1c18123530e92e794ad901a4",
+  "python": "/mnt/zer0models/project-envs/cardtwin-sam2/bin/python",
+  "checkpointPath": "/mnt/zer0models/models/sam2.1/sam2.1_hiera_tiny.pt",
+  "checkpointSha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+  "checkpointBytes": 156008466,
+  "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+  "determinism": { "seed": 0, "torchDeterministicAlgorithms": true, "cudnnBenchmark": false, "pngCompressionLevel": 9 }
+}

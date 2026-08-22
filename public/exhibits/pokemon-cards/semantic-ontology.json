@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "version": "cardtwin-semantic-layers/v3",
+  "normalVisiblePlaneCount": { "min": 3, "max": 5 },
+  "classes": [
+    { "id": "outer-card/frame", "required": true, "depthBand": 100, "description": "Identity-bearing printed card frame, border, title, rules, collector number, and all pixels outside the illustration cut window." },
+    { "id": "far-background", "required": true, "depthBand": 0, "description": "Deepest canonical illustration environment." },
+    { "id": "mid-background", "required": false, "depthBand": 20, "description": "Optional environment plane between far background and hero." },
+    { "id": "character/hero", "required": true, "depthBand": 40, "description": "Primary creature silhouette, complete and without unrelated connected scenery." },
+    { "id": "foreground-effects/foliage/architecture", "required": false, "depthBand": 60, "description": "Nearest canonical effects, foliage, ground, or architecture." },
+    { "id": "optional-text-overlay", "required": false, "depthBand": 110, "description": "Optional duplicate lift of canonical printed text; never replacement text." },
+    { "id": "optional-foil-overlay", "required": false, "depthBand": 120, "description": "Optional alpha-only foil treatment referencing canonical pixels; never invented visible art." }
+  ],
+  "depthRules": {
+    "ascendingBackToFront": true,
+    "strictlyIncreasing": true,
+    "classOrder": ["far-background", "mid-background", "character/hero", "foreground-effects/foliage/architecture", "outer-card/frame", "optional-text-overlay", "optional-foil-overlay"],
+    "selection": "Choose 3-5 visible planes from actual composition. Required classes are always present; optional classes are included only when visually meaningful."
+  },
+  "provenance": [
+    { "id": "canonical-visible", "mayAppearInVisibleTexture": true, "description": "RGB bytes sampled at the same aligned coordinates from the canonical source." },
+    { "id": "canonical-hidden-copy", "mayAppearInVisibleTexture": false, "description": "Canonical pixels copied into a separately disclosed behind-cutout fill asset." },
+    { "id": "inpainted-hidden-fill", "mayAppearInVisibleTexture": false, "description": "Generated pixels confined to a separate hidden fill asset and labeled by a fill mask." }
+  ],
+  "constraints": { "canonicalVisiblePixelsImmutable": true, "fillAssetsSeparate": true }
+}

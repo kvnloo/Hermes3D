@@ -1,0 +1,38 @@
+npm notice run hermes3d@1.0.0 npx
+npm notice run 'playwright' test tests/e2e/cardtwin-arcanine.spec.ts tests/e2e/pokemon-cards-exhibit.spec.ts --reporter=line
+(node:168808) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1A[2K[WebServer] npm notice run hermes3d@1.0.0 dev
+
+[1A[2K[WebServer] npm notice run node server/index.js --dev
+
+
+Running 17 tests using 2 workers
+
+[1A[2K(node:169068) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K(node:169067) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[1/17] tests/e2e/pokemon-cards-exhibit.spec.ts:48:5 › evidence route mounts the card exhibit without onboarding
+[1A[2K[2/17] tests/e2e/cardtwin-arcanine.spec.ts:15:7 › captures exact neutral, exploded, and mobile evidence for arcanine-sm1-22
+[1A[2K[WebServer] (node:168884) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[3/17] tests/e2e/pokemon-cards-exhibit.spec.ts:55:5 › hero composition exposes nine readable evidence objects without horizontal clipping
+[1A[2K[4/17] tests/e2e/pokemon-cards-exhibit.spec.ts:81:5 › rendered WebGL pixels reject blank white, black, and brown output
+[1A[2K[5/17] tests/e2e/pokemon-cards-exhibit.spec.ts:98:7 › desktop evidence framing keeps all nine cards in bounds
+[1A[2K[6/17] tests/e2e/pokemon-cards-exhibit.spec.ts:98:7 › mobile evidence framing keeps all nine cards in bounds
+[1A[2K[7/17] tests/e2e/pokemon-cards-exhibit.spec.ts:115:5 › reduced motion disables foil animation
+[1A[2K[8/17] tests/e2e/pokemon-cards-exhibit.spec.ts:122:5 › inspection camera advertises a deliberate transition and reduced motion disables it
+[1A[2K[9/17] tests/e2e/cardtwin-arcanine.spec.ts:46:7 › captures actual relative-plane tilt motion for arcanine-sm1-22
+[1A[2K[10/17] tests/e2e/pokemon-cards-exhibit.spec.ts:134:5 › hero construction is real WebGL geometry with semantic layer depth
+[1A[2K[11/17] tests/e2e/pokemon-cards-exhibit.spec.ts:145:5 › macro and side evidence modes isolate the deep construction
+[1A[2K[12/17] tests/e2e/cardtwin-arcanine.spec.ts:15:7 › captures exact neutral, exploded, and mobile evidence for umbreon-vmax-swsh7-215
+[1A[2K[13/17] tests/e2e/cardtwin-arcanine.spec.ts:46:7 › captures actual relative-plane tilt motion for umbreon-vmax-swsh7-215
+[1A[2K[14/17] tests/e2e/cardtwin-arcanine.spec.ts:15:7 › captures exact neutral, exploded, and mobile evidence for leafeon-ex-sv8pt5-144
+[1A[2K[15/17] tests/e2e/cardtwin-arcanine.spec.ts:46:7 › captures actual relative-plane tilt motion for leafeon-ex-sv8pt5-144
+[1A[2K[16/17] tests/e2e/cardtwin-arcanine.spec.ts:66:5 › all exact printings switch deterministically and expose real layer-relative parallax
+[1A[2K[17/17] tests/e2e/cardtwin-arcanine.spec.ts:87:5 › reveal communicates exact lookup pipeline and reduced motion settles immediately
+[1A[2K  17 passed (1.2m)

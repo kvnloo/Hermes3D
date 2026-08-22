@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "retrievedAt": "2026-08-22T00:14:44-05:00",
+  "purpose": "Private CardTwin prototype identity and segmentation inputs",
+  "superResolutionDerivatives": [],
+  "sources": [
+    {
+      "id": "arcanine-sm1-22",
+      "reference": {
+        "description": "Kevin-supplied finished physical shadowbox reference",
+        "sha256": "ed3ca84eb5cc6294db626f98a2c47c27578513ffb60c10f3ff8c4937803e7814",
+        "dimensions": {"width": 2560, "height": 1920},
+        "mimeType": "image/jpeg"
+      },
+      "printing": {
+        "name": "Arcanine",
+        "set": "Sun & Moon",
+        "setCode": "SM1",
+        "collectorNumber": "22/149",
+        "language": "English",
+        "edition": "standard modern printing; no 1st Edition designation",
+        "variant": "Rare Holo",
+        "finish": "Holofoil artwork window; physical reference is a hand-cut multi-copy shadowbox",
+        "year": 2017,
+        "illustrator": "kodama"
+      },
+      "canonicalImage": {
+        "path": "arcanine-sm1-22.png",
+        "sourceUrl": "https://images.pokemontcg.io/sm1/22_hires.png",
+        "identityUrl": "https://www.pokemon.com/us/pokemon-tcg/pokemon-cards/series/sm1/22/",
+        "mimeType": "image/png",
+        "dimensions": {"width": 734, "height": 1024},
+        "byteCount": 681465,
+        "sha256": "763abeb960a5c5e362bf49b6e4e1210b8b3d6a483384a85de372d19ea848ed1c",
+        "bytesPreservedUnchanged": true
+      },
+      "identityEvidence": [
+        "Reference visibly reads Arcanine, HP 130 and English attack text.",
+        "Reference artwork, Growlithe evolution badge, Searing Flame 60 and Firestorm 190 match the flat image.",
+        "Collector number 22/149 and 2017 copyright line match; official Pokémon card database classifies it as Rare Holo."
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "umbreon-vmax-swsh7-215",
+      "reference": {
+        "description": "Kevin-supplied finished physical shadowbox reference",
+        "sha256": "673a0f29cd3d3a7326ac15bd43918a60c48d7d619c07d8dbc920ffef929da03a",
+        "dimensions": {"width": 1920, "height": 2560},
+        "mimeType": "image/jpeg"
+      },
+      "printing": {
+        "name": "Umbreon VMAX",
+        "set": "Sword & Shield—Evolving Skies",
+        "setCode": "SWSH7",
+        "collectorNumber": "215/203",
+        "language": "English",
+        "edition": "standard modern printing; no 1st Edition designation",
+        "variant": "Alternate Art Secret / Special Full Art",
+        "finish": "textured Holofoil secret rare; physical reference is a hand-cut multi-copy shadowbox",
+        "year": 2021,
+        "illustrator": "KEIICHIRO ITO"
+      },
+      "canonicalImage": {
+        "path": "umbreon-vmax-swsh7-215.png",
+        "sourceUrl": "https://images.pokemontcg.io/swsh7/215_hires.png",
+        "identityUrl": "https://www.tcgplayer.com/product/246723/pokemon-swsh07-evolving-skies-umbreon-vmax-alternate-art-secret",
+        "mimeType": "image/png",
+        "dimensions": {"width": 734, "height": 1024},
+        "byteCount": 792631,
+        "sha256": "0588afac1c3dee4c8a039d5ff9d0cff2ec4abfbcadedbb62b573750b8f772d92",
+        "bytesPreservedUnchanged": true
+      },
+      "identityEvidence": [
+        "Reference visibly reads Umbreon VMAX, HP 310, English, Single Strike and Dark Signal.",
+        "Moon-and-tower KEIICHIRO ITO artwork and Max Darkness 160 match exactly.",
+        "Reference footer visibly reads 215/203; this excludes regular 095/203 and Japanese 095/069 printings."
+      ],
+      "confidence": "high"
+    },
+    {
+      "id": "leafeon-ex-sv8pt5-144",
+      "reference": {
+        "description": "Kevin-supplied finished physical shadowbox reference",
+        "sha256": "e78203ff7f362f5ae264ddc62da6e3b266797d0268f1c6ba446e4285f623b5fe",
+        "dimensions": {"width": 794, "height": 1059},
+        "mimeType": "image/jpeg"
+      },
+      "printing": {
+        "name": "Leafeon ex",
+        "set": "Scarlet & Violet—Prismatic Evolutions",
+        "setCode": "PRE / SV8.5",
+        "collectorNumber": "144/131",
+        "language": "English",
+        "edition": "standard modern printing; no 1st Edition designation",
+        "variant": "Special Illustration Rare, Tera Pokémon ex",
+        "finish": "textured Holofoil Special Illustration Rare; physical reference is a hand-cut multi-copy shadowbox",
+        "year": 2025,
+        "illustrator": "Jiro Sasumo"
+      },
+      "canonicalImage": {
+        "path": "leafeon-ex-sv8pt5-144.png",
+        "sourceUrl": "https://images.pokemontcg.io/sv8pt5/144_hires.png",
+        "identityUrl": "https://www.tcgplayer.com/product/610499/pokemon-sv-prismatic-evolutions-leafeon-ex-144-131",
+        "mimeType": "image/png",
+        "dimensions": {"width": 733, "height": 1024},
+        "byteCount": 780956,
+        "sha256": "f00547340035daf54ba086ee1f4c6d907476ae2772030517b68605a9ebd9842f",
+        "bytesPreservedUnchanged": true
+      },
+      "identityEvidence": [
+        "Reference visibly reads Leafeon ex, HP 270, Tera and English card text.",
+        "Crystalline Leafeon in foliage, Verdant Storm and Moss Agate match exactly.",
+        "Reference footer visibly reads PRE EN 144/131; this excludes Japanese Terastal Fest ex 200/187 and English 006/131."
+      ],
+      "confidence": "high"
+    }
+  ]
+}

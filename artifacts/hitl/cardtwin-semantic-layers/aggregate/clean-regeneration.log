@@ -1,0 +1,21 @@
+Pinned Python: Python 3.11.14
+
+[Arcanine clean regeneration]
+generated arcanine-sm1-22
+
+[Umbreon clean regeneration]
+{
+  "cardId": "umbreon-vmax-swsh7-215",
+  "maskHashes": {
+    "far-background": "3220e88dcf9d9973d17ce364bea756e9de8e961232c9ebb3dc76b3285e594b32",
+    "hero": "5d93e7aeebe13d4717aedb2b8a000ef1c2ca57edf15d09e87714bacc48d34630",
+    "foreground-architecture": "d056b94aca17043105fabdd875bc97f023b220f9eb037d05ef8a43b9d0f24255",
+    "outer-card-frame": "17f2ae22cb271290c57cae1e19bc013e88104722d8d83ef3e95317ed7abf358b"
+  },
+  "peakGpuMemoryBytes": 653696512
+}
+
+[Leafeon clean regeneration]
+generated leafeon-ex-sv8pt5-144
+
+CLEAN_REGEN_EXIT_CODE=0

@@ -1,38 +1,75 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 import { PokemonCardStage } from "./PokemonCardStage";
 
-const editions = [
-  { name: "Astral Archive", mark: "I", kind: "astral", note: "High-relief celestial observatory" },
-  { name: "Verdant Reliquary", mark: "II", kind: "verdant", note: "Recessed old-growth diorama" },
-  { name: "Emberwing Sanctuary", mark: "III", kind: "ember", note: "Fourteen-layer fire-bird shadowbox" },
-];
+const revealPhases = ["capture", "lookup", "canonical", "segment", "assemble", "ready"] as const;
+const revealLabels = ["Phone photo", "Exact printing lookup", "Canonical HD", "SAM 2.1 cut", "Layer assembly", "CardTwin ready"];
 
 export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | "macro" | "side" }) {
   const [reduced, setReduced] = useState(false);
+  const [cardIndex, setCardIndex] = useState(0);
+  const [phaseIndex, setPhaseIndex] = useState(0);
+  const [texturesReady, setTexturesReady] = useState(false);
+  const card = CARD_TWIN_CARDS[cardIndex];
+
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(media.matches);
     update(); media.addEventListener("change", update);
     return () => media.removeEventListener("change", update);
   }, []);
+
+  useEffect(() => {
+    if (reduced) return;
+    if (phaseIndex >= revealPhases.length - 1) return;
+    const timer = window.setTimeout(() => setPhaseIndex((value) => value + 1), phaseIndex === 0 ? 420 : 620);
+    return () => window.clearTimeout(timer);
+  }, [phaseIndex, reduced]);
+
+  const chooseCard = (index: number) => {
+    if (index === cardIndex) return;
+    setCardIndex(index);
+    setTexturesReady(false);
+    setPhaseIndex(reduced ? revealPhases.length - 1 : 0);
+  };
+  const handleReady = useCallback(() => setTexturesReady(true), []);
+
   return (
-    <main data-testid="pokemon-cards-exhibit-active" data-reduced-motion={String(reduced)} className="card-exhibit">
+    <main data-testid="pokemon-cards-exhibit-active" data-reduced-motion={String(reduced)} className="card-exhibit" style={{ "--card-accent": card.accent } as CSSProperties}>
       <div className="museum-haze" />
       <header data-testid="exhibit-hero" className="exhibit-title">
-        <span>Hermes Living Museum · Collector Study 07</span>
-        <strong>The Cabinet of Impossible Editions</strong>
-        <p>Three synthetic, rights-safe studies in foil, paper, depth and light.</p>
+        <span>CardTwin · Exact printing archive</span>
+        <strong>{card.name} · {card.printing}</strong>
+        <p>Canonical visible pixels, semantically cut into physical planes. Hidden-only fill disclosed; no SR or replacement art.</p>
       </header>
-      <div className="hero-cards">
-        <PokemonCardStage reduced={reduced} view={initialView} />
-        <div className="stage-card-hitboxes">{editions.map((edition) => <article key={edition.name} data-card-object="true" data-variant={edition.kind} className="stage-card-hitbox"><b>{edition.name}</b><span>{edition.note}</span></article>)}</div>
-      </div>
-      <section className="study-strip" aria-label="Supporting card studies">
-        {Array.from({ length: 6 }, (_, index) => <article data-card-object="true" className="study-card" key={index}><span>FIELD STUDY</span><b>0{index + 4}</b><i /></article>)}
+      <nav className="printing-switcher" aria-label="Exact printing selection">
+        {CARD_TWIN_CARDS.map((choice, index) => <button
+          key={choice.id}
+          type="button"
+          aria-label={`View exact printing ${choice.name} ${choice.printing}`}
+          aria-pressed={index === cardIndex}
+          onClick={() => chooseCard(index)}
+        ><span>0{index + 1}</span><b>{choice.name}</b><small>{choice.set} · {choice.printing}</small></button>)}
+      </nav>
+      <section data-testid="cardtwin-reveal" data-phase={reduced ? "ready" : revealPhases[phaseIndex]} className="reveal-console">
+        <ol data-testid="cardtwin-pipeline">{revealLabels.map((label, index) => <li key={label} data-active={index <= phaseIndex}><i>{index + 1}</i>{label}</li>)}</ol>
+        <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
-      <footer data-testid="exhibit-controls"><span>Move pointer to inspect foil and parallax</span><b>SCROLL · TILT · DWELL</b></footer>
+      <div className="hero-cards">
+        <PokemonCardStage card={card} reduced={reduced} view={initialView} texturesReady={texturesReady} onTexturesReady={handleReady} />
+        <div className="layer-ledger" aria-label={`${card.name} semantic layer ledger`}>
+          {card.layers.map((layer) => <article key={layer.id} data-card-object="true"><b>{layer.label}</b><span>{layer.depthMm.toFixed(1)} mm · exact RGBA</span></article>)}
+        </div>
+        <span className="texture-contract" data-textures-ready={String(texturesReady)} aria-hidden="true" />
+      </div>
+      <section className="study-strip" aria-label="Canonical CardTwin printings">
+        {CARD_TWIN_CARDS.map((choice, index) => <button key={choice.id} type="button" onClick={() => chooseCard(index)} data-card-object="true" data-selected={index === cardIndex} className="study-card"><span>EXACT PRINTING</span><b>0{index + 1}</b><small>{choice.name}</small></button>)}
+        <article data-card-object="true" className="study-card"><span>PROVENANCE</span><b>HD</b><small>Canonical source</small></article>
+        <article data-card-object="true" className="study-card"><span>SEGMENTATION</span><b>2.1</b><small>Meta SAM</small></article>
+      </section>
+      <footer data-testid="exhibit-controls"><span>Pointer or phone tilt moves each semantic plane by depth</span><b>{initialView === "side" ? "EXPLODED LAYERS" : "ASSEMBLED FRONT"} · REDUCED MOTION SAFE</b></footer>
     </main>
   );
 }

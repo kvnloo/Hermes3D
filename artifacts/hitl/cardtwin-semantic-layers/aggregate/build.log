@@ -1,0 +1,64 @@
+npm notice run hermes3d@1.0.0 build
+npm notice run next build
+▲ Next.js 16.1.7 (Turbopack)
+
+  Creating an optimized production build ...
+(node:98332) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:98422) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:98548) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+✓ Compiled successfully in 17.2s
+  Running TypeScript ...
+  Collecting page data using 19 workers ...
+  Generating static pages using 19 workers (0/34) ...
+  Generating static pages using 19 workers (8/34) 
+  Generating static pages using 19 workers (16/34) 
+  Generating static pages using 19 workers (25/34) 
+(node:102494) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✓ Generating static pages using 19 workers (34/34) in 647.0ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /[...invalid]
+├ ○ /agents
+├ ƒ /agents/[agentId]/settings
+├ ƒ /api/files/[file]
+├ ƒ /api/files/upload
+├ ƒ /api/gateway/agent-state
+├ ƒ /api/gateway/media
+├ ƒ /api/gateway/skills/remove
+├ ƒ /api/health
+├ ƒ /api/office
+├ ƒ /api/office/browser-preview
+├ ƒ /api/office/call
+├ ƒ /api/office/github
+├ ƒ /api/office/layout
+├ ƒ /api/office/presence
+├ ƒ /api/office/publish
+├ ƒ /api/office/remote-handoff
+├ ƒ /api/office/remote-message
+├ ƒ /api/office/standup/config
+├ ƒ /api/office/standup/meeting
+├ ƒ /api/office/standup/run
+├ ƒ /api/office/text
+├ ƒ /api/office/voice/reply
+├ ƒ /api/office/voice/transcribe
+├ ƒ /api/path-suggestions
+├ ƒ /api/runtime/custom
+├ ƒ /api/studio
+├ ƒ /api/task-store
+├ ƒ /exhibits/pokemon-cards
+├ ƒ /museum
+├ ○ /office
+├ ○ /office/builder
+└ ○ /spotify/callback
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

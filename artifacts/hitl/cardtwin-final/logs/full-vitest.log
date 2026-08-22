@@ -1,0 +1,703 @@
+npm notice run hermes3d@1.0.0 test
+npm notice run vitest --run --retry 2
+(node:164448) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1m[46m RUN [49m[22m [36mv4.0.18 [39m[90m/mnt/zer0models/zer0-worktrees/hermes3d-live/pokemon-card-exhibit-preview[39m
+
+ [32m✓[39m tests/unit/gatewayProxy.test.ts [2m([22m[2m12 tests[22m[2m)[22m[33m 549[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayMediaRoute.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 669[2mms[22m[39m
+(node:164517) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164530) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164518) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164531) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164544) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164519) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164555) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164542) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164516) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164577) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164626) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164563) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164589) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164570) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164549) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164618) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164596) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164781) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:164771) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/themeToggle.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 530[2mms[22m[39m
+     [33m[2m✓[22m[39m applies and persists theme when toggled [33m 461[2mms[22m[39m
+ [32m✓[39m tests/unit/youtubeChatTelegramRelay.test.ts [2m([22m[2m21 tests[22m[2m)[22m[33m 478[2mms[22m[39m
+ [32m✓[39m tests/unit/useRuntimeConnection.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1432[2mms[22m[39m
+     [33m[2m✓[22m[39m selects the hermes provider from the active adapter type [33m 1306[2mms[22m[39m
+ [32m✓[39m tests/unit/useGatewayConfigSyncController.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 460[2mms[22m[39m
+ [32m✓[39m tests/unit/taskBoardView.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1029[2mms[22m[39m
+     [33m[2m✓[22m[39m routes task edits through callbacks [33m 1020[2mms[22m[39m
+ [32m✓[39m tests/unit/agentSettingsPanel-header.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 321[2mms[22m[39m
+     [33m[2m✓[22m[39m uses inspect header style with agent title [33m 316[2mms[22m[39m
+ [32m✓[39m tests/unit/agentChatPanel-markdown-rendering.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 836[2mms[22m[39m
+     [33m[2m✓[22m[39m renders assistant markdown separately from tool detail cards [33m 534[2mms[22m[39m
+ [32m✓[39m tests/unit/agentChatPanel-composer-autoresize.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 1142[2mms[22m[39m
+     [33m[2m✓[22m[39m resets_textarea_height_after_send_when_draft_is_cleared [33m 1136[2mms[22m[39m
+ [32m✓[39m tests/unit/agentCreateModal.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 1538[2mms[22m[39m
+     [33m[2m✓[22m[39m submits simple payload with name and avatar seed [33m 776[2mms[22m[39m
+ [32m✓[39m tests/unit/agentChatPanel-scroll.test.ts [2m([22m[2m2 tests[22m[2m)[22m[33m 1394[2mms[22m[39m
+     [33m[2m✓[22m[39m shows jump-to-latest when unpinned and new output arrives, and jumps on click [33m 1285[2mms[22m[39m
+[90mstderr[2m | tests/unit/customRuntimeRoute.test.ts[2m > [22m[2m/api/runtime/custom route[2m > [22m[2mblocks custom runtime proxying in production when no allowlist is configured
+[22m[39m[runtime/custom] Proxy request failed. Error: runtimeUrl is not in the allowed hosts list.
+    at normalizeRuntimeUrl [90m(/mnt/zer0models/zer0-worktrees/hermes3d-live/pokemon-card-exhibit-preview/[39msrc/app/api/runtime/custom/route.ts:51:11[90m)[39m
+    at POST [90m(/mnt/zer0models/zer0-worktrees/hermes3d-live/pokemon-card-exhibit-preview/[39msrc/app/api/runtime/custom/route.ts:84:24[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at [90m/mnt/zer0models/zer0-worktrees/hermes3d-live/pokemon-card-exhibit-preview/[39mtests/unit/customRuntimeRoute.test.ts:19:22
+    at [90mfile:///mnt/zer0models/zer0-worktrees/hermes3d-live/pokemon-card-exhibit-preview/[39mnode_modules/[4m@vitest/runner[24m/dist/index.js:915:20
+
+[90mstderr[2m | tests/unit/customRuntimeRoute.test.ts[2m > [22m[2m/api/runtime/custom route[2m > [22m[2mreturns 400 for malformed JSON request bodies
+[22m[39m[runtime/custom] Invalid JSON request body. SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+    at JSON.parse (<anonymous>)
+[90m    at parseJSONFromBytes (node:internal/deps/undici/undici:4311:19)[39m
+[90m    at successSteps (node:internal/deps/undici/undici:6949:27)[39m
+[90m    at readAllBytes (node:internal/deps/undici/undici:5773:13)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+
+ [32m✓[39m tests/unit/customRuntimeRoute.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 449[2mms[22m[39m
+     [33m[2m✓[22m[39m blocks custom runtime proxying in production when no allowlist is configured [33m 415[2mms[22m[39m
+ [32m✓[39m tests/unit/agentChatPanel-approvals.test.ts [2m([22m[2m4 tests[22m[2m)[22m[33m 1817[2mms[22m[39m
+     [33m[2m✓[22m[39m renders pending approval card with metadata [33m 441[2mms[22m[39m
+     [33m[2m✓[22m[39m invokes resolve callback for all approval decisions [33m 913[2mms[22m[39m
+     [33m[2m✓[22m[39m disables actions while approval is resolving [33m 311[2mms[22m[39m
+[90mstderr[2m | tests/unit/useAgentSettingsMutationController.test.ts[2m > [22m[2museAgentSettingsMutationController[2m > [22m[2mrejects_empty_selected_skills_allowlist_before_gateway_call
+[22m[39mCannot set selected skills mode: choose at least one skill.
+
+[90mstderr[2m | tests/unit/useAgentSettingsMutationController.test.ts[2m > [22m[2museAgentSettingsMutationController[2m > [22m[2mpreserves_api_key_draft_and_sets_error_message_when_save_fails
+[22m[39minvalid key
+
+ [32m✓[39m tests/unit/useAgentSettingsMutationController.test.ts [2m([22m[2m22 tests[22m[2m)[22m[33m 1803[2mms[22m[39m
+     [33m[2m✓[22m[39m exposes_restart_block_state_and_timeout_completion_handlers [33m 1117[2mms[22m[39m[33m (retry x1)[39m
+(node:165133) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165153) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/hermesAgentBridge.test.ts [2m([22m[2m29 tests[22m[2m)[22m[33m 789[2mms[22m[39m
+(node:165164) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayEnvDefaults.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 162[2mms[22m[39m
+ [32m✓[39m tests/unit/agentBrainPanel.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 2148[2mms[22m[39m
+     [33m[2m✓[22m[39m renders_behavior_sections_and_loads_agent_files [33m 1272[2mms[22m[39m
+ [32m✓[39m tests/unit/cardTwinSemanticLayers.test.ts [2m([22m[2m1 test[22m[2m)[22m[33m 4344[2mms[22m[39m
+     [33m[2m✓[22m[39m verifies all three ontology-v3 manifests and pixels with the pinned image environment [33m 4341[2mms[22m[39m
+ [32m✓[39m tests/unit/agentChatPanel-controls.test.ts [2m([22m[2m18 tests[22m[2m)[22m[33m 2832[2mms[22m[39m
+     [33m[2m✓[22m[39m renders_runtime_controls_in_agent_header_and_no_inline_name_editor [33m 388[2mms[22m[39m
+     [33m[2m✓[22m[39m shows_stop_button_while_running_and_invokes_stop_handler [33m 489[2mms[22m[39m
+(node:165237) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165238) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/fleetSidebar-create.test.ts [2m([22m[2m6 tests[22m[2m)[22m[33m 301[2mms[22m[39m
+ [32m✓[39m tests/unit/useGatewayConnection.test.ts [2m([22m[2m17 tests[22m[2m)[22m[33m 4457[2mms[22m[39m
+     [33m[2m✓[22m[39m defaults_to_env_url_when_set [33m 1151[2mms[22m[39m
+     [33m[2m✓[22m[39m connects_via_studio_proxy_ws_and_does_not_pass_token [33m 937[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps_control_ui_identity_for_remote_connections [33m 955[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps_control_ui_identity_for_local_hermes_connections [33m 963[2mms[22m[39m
+(node:165264) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayConnectScreen-urlFindings.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 242[2mms[22m[39m
+ [32m✓[39m tests/unit/pathSuggestionsRoute.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 200[2mms[22m[39m
+(node:165272) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165285) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165292) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentEditorModal.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 3906[2mms[22m[39m
+     [33m[2m✓[22m[39m saves avatar changes from the avatar section [33m 2874[2mms[22m[39m
+     [33m[2m✓[22m[39m switches to another file section [33m 978[2mms[22m[39m
+ [32m✓[39m tests/unit/serverNetworkPolicy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+(node:165320) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/connectionPanel-close.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 266[2mms[22m[39m
+ [32m✓[39m tests/unit/useSettingsRouteController.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 204[2mms[22m[39m
+(node:165335) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165351) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/officePathfinding.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 136[2mms[22m[39m
+ [32m✓[39m tests/unit/useChatInteractionController.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 240[2mms[22m[39m
+ [32m✓[39m tests/unit/cardTwinUmbreonAssets.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 108[2mms[22m[39m
+(node:165390) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165375) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165394) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/useRuntimeSyncController.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 213[2mms[22m[39m
+ [32m✓[39m tests/unit/useOfficeFloorRuntimePersistence.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 121[2mms[22m[39m
+ [32m✓[39m tests/unit/headerBar-brain-toggle.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 244[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayAgentFiles.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:165427) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayRuntimeEventHandler.agent.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 116[2mms[22m[39m
+(node:165450) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayRuntimeEventHandler.chat.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 148[2mms[22m[39m
+ [32m✓[39m tests/unit/accessGate.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 124[2mms[22m[39m
+(node:165451) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/chatSendOperation.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 60[2mms[22m[39m
+ [32m✓[39m tests/unit/museumShellSearch.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+ [32m✓[39m tests/unit/officeConversations.test.ts [2m([22m[2m29 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+(node:165476) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/onboardingState.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 108[2mms[22m[39m
+ [32m✓[39m tests/unit/sharedTaskStore.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 60[2mms[22m[39m
+(node:165504) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/studioSetupPaths.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+ [32m✓[39m tests/unit/cronCreatePayloadBuilder.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 81[2mms[22m[39m
+(node:165516) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165526) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165542) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/runtimeEventBridge.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+(node:165543) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165550) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/runtimeAgentEventWorkflow.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 56[2mms[22m[39m
+ [32m✓[39m tests/unit/taskStoreRoute.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 93[2mms[22m[39m
+ [32m✓[39m tests/unit/officeEventTriggers.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 65[2mms[22m[39m
+(node:165587) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentStateRoute.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+(node:165601) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165599) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsRemoveGateway.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+ [32m✓[39m tests/unit/cardTwinArcanineAssets.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 71[2mms[22m[39m
+ [32m✓[39m tests/unit/messageExtract.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+(node:165651) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165653) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/cronGatewayClient.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+ [32m✓[39m tests/unit/studioSettingsRoute.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+(node:165715) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165717) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165731) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/cronCreateFlowState.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 43[2mms[22m[39m
+(node:165758) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayRuntimeEventHandler.policyDelegation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 51[2mms[22m[39m
+(node:165781) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165767) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsInstallGateway.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+ [32m✓[39m tests/unit/agentSettingsPanel.test.ts [2m([22m[2m33 tests[22m[2m)[22m[33m 8438[2mms[22m[39m
+     [33m[2m✓[22m[39m does_not_render_name_editor_in_capabilities_mode [33m 872[2mms[22m[39m
+     [33m[2m✓[22m[39m autosaves_updated_permissions_draft [33m 783[2mms[22m[39m
+     [33m[2m✓[22m[39m preserves_pending_permissions_toggles_during_props_refresh [33m 422[2mms[22m[39m
+     [33m[2m✓[22m[39m runs_system_setup_actions_from_modal [33m 605[2mms[22m[39m
+     [33m[2m✓[22m[39m prompts_before_removing_skill_files_and_confirms_action [33m 417[2mms[22m[39m
+     [33m[2m✓[22m[39m updates_template_defaults_when_switching_templates [33m 937[2mms[22m[39m
+     [33m[2m✓[22m[39m submits_modal_with_agent_scoped_draft [33m 790[2mms[22m[39m
+     [33m[2m✓[22m[39m keeps_modal_open_and_shows_error_when_create_fails [33m 701[2mms[22m[39m
+(node:165787) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165805) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/sessionSettingsMutations.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 41[2mms[22m[39m
+ [32m✓[39m tests/unit/navigation.astarFallback.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m tests/unit/voiceTranscribe.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32m✓[39m tests/unit/specialLatestUpdateOperation.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+(node:165847) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/execApprovalRunControlOperation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+(node:165886) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[90mstdout[2m | tests/unit/gatewayBrowserClient.test.ts[2m > [22m[2mGatewayBrowserClient[2m > [22m[2msends connect when connect.challenge arrives
+[22m[39m[gateway-browser] start {
+  url: [32m'ws://example.com'[39m,
+  authScopeKey: [1mnull[22m,
+  disableDeviceAuth: [33mfalse[39m,
+  clientName: [1mnull[22m,
+  mode: [1mnull[22m
+}
+[gateway-browser] connect:open-socket { url: [32m'ws://example.com'[39m }
+[gateway-browser] socket:open
+[gateway-browser] queue-connect { delayMs: [33m75[39m }
+[gateway-browser] connect-challenge
+[gateway-browser] send-connect {
+  url: [32m'ws://example.com'[39m,
+  disableDeviceAuth: [33mfalse[39m,
+  hasNonce: [33mtrue[39m,
+  isSecureContext: [33mfalse[39m
+}
+[gateway-browser] connect-params {
+  clientId: [32m'hermes3d-control-ui'[39m,
+  clientMode: [32m'webchat'[39m,
+  disableDeviceAuth: [90mundefined[39m,
+  isSecureContext: [33mfalse[39m,
+  hasToken: [33mfalse[39m,
+  hasDeviceIdentity: [33mfalse[39m
+}
+
+(node:165897) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+[90mstdout[2m | tests/unit/gatewayBrowserClient.test.ts[2m > [22m[2mGatewayBrowserClient[2m > [22m[2mtruncates connect-failed close reason to websocket limit
+[22m[39m[gateway-browser] start {
+  url: [32m'ws://example.com'[39m,
+  authScopeKey: [1mnull[22m,
+  disableDeviceAuth: [33mfalse[39m,
+  clientName: [1mnull[22m,
+  mode: [1mnull[22m
+}
+[gateway-browser] connect:open-socket { url: [32m'ws://example.com'[39m }
+[gateway-browser] socket:open
+[gateway-browser] queue-connect { delayMs: [33m75[39m }
+[gateway-browser] send-connect {
+  url: [32m'ws://example.com'[39m,
+  disableDeviceAuth: [33mfalse[39m,
+  hasNonce: [33mfalse[39m,
+  isSecureContext: [33mfalse[39m
+}
+[gateway-browser] connect-params {
+  clientId: [32m'hermes3d-control-ui'[39m,
+  clientMode: [32m'webchat'[39m,
+  disableDeviceAuth: [90mundefined[39m,
+  isSecureContext: [33mfalse[39m,
+  hasToken: [33mtrue[39m,
+  hasDeviceIdentity: [33mfalse[39m
+}
+
+[90mstdout[2m | tests/unit/gatewayBrowserClient.test.ts[2m > [22m[2mGatewayBrowserClient[2m > [22m[2mtruncates connect-failed close reason to websocket limit
+[22m[39m[gateway-browser] connect-failed {
+  message: [32m'invalid config xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'[39m
+}
+[gateway-browser] socket:close {
+  code: [33m4008[39m,
+  reason: [32m'connect failed: INVALID_REQUEST invalid config xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'[39m
+}
+[gateway-browser] schedule-reconnect { delay: [33m800[39m }
+
+[90mstdout[2m | tests/unit/gatewayBrowserClient.test.ts[2m > [22m[2mGatewayBrowserClient[2m > [22m[2mtruncates connect-failed close reason to websocket limit
+[22m[39m[gateway-browser] connect:open-socket { url: [32m'ws://example.com'[39m }
+
+ [32m✓[39m tests/unit/gatewayBrowserClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+(node:165908) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/cardTwinLeafeonAssets.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+ [32m✓[39m tests/unit/rafBatcher.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+(node:165932) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165931) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165938) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayAgentSkillsAllowlist.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m tests/unit/chatItems.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayEventIngressWorkflow.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m tests/unit/deleteAgentOperation.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 45[2mms[22m[39m
+(node:165965) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165966) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/studioSettings.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+ [32m✓[39m tests/unit/mutationLifecycleWorkflow.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+(node:166009) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:165996) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/navigation.navBlockers.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayConfigPatch.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 42[2mms[22m[39m
+(node:166020) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166062) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166026) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166063) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/studioSettingsCoordinator.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 76[2mms[22m[39m
+(node:166080) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166086) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentFleetHydration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+(node:166095) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166105) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/sessionSettings.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+(node:166103) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsRemoveRoute.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+ [32m✓[39m tests/unit/runtimeChatEventWorkflow.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+(node:166122) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsGatewayClient.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/hermes3doctor.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+(node:166143) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/companyBootstrapOperation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+(node:166151) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166152) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/execApprovalRuntimeCoordinator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/agentPermissionsOperation.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 32[2mms[22m[39m
+(node:166175) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/extractThinking.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayRuntimeEventHandler.summaryRefresh.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+ [32m✓[39m tests/unit/studioBootstrapOperation.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m tests/unit/execApprovalRunControlWorkflow.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+(node:166188) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166196) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/deskDirectives.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 46[2mms[22m[39m
+ [32m✓[39m tests/unit/historySyncOperation.integration.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 54[2mms[22m[39m
+(node:166236) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/companyBuilderPlanning.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 34[2mms[22m[39m
+(node:166244) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/publicBoplogProjectionV1.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+(node:166289) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166295) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/heartbeatGatewayClient.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+ [32m✓[39m tests/unit/historySyncOperation.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 50[2mms[22m[39m
+(node:166303) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166309) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/hermesAgentKanban.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+(node:166321) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166332) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166334) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/navigation.diagonalCorner.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m tests/unit/heartbeatAgentConfig.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+(node:166352) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166349) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/officeSpeechSubscriber.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 27[2mms[22m[39m
+(node:166350) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/upstreamUrlDiagnostics.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+ [32m✓[39m tests/unit/createAgentBootstrapOperation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/unit/agentStore.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/unit/mutationLifecycleWorkflow.lifecycle.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+(node:166397) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166382) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/eventTriggers.gymDirective.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 47[2mms[22m[39m
+(node:166410) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/pokemonCardConstructions.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:166417) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayReloadMode.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+ [32m✓[39m tests/unit/agentPermissionsRoleHelpers.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m tests/unit/pendingExecApprovalsStore.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 37[2mms[22m[39m
+(node:166451) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/officeSpeechTurns.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+ [32m✓[39m tests/unit/execApprovalResolveOperation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+(node:166486) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/deskMonitor.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+(node:166506) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/runtimeEventCoordinatorWorkflow.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:166536) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166535) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentStateExecutor.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 25[2mms[22m[39m
+(node:166562) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/mutationLifecycleWorkflow.integration.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/unit/cronSelectors.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+(node:166570) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166571) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166631) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/janitorActors.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+(node:166645) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentStateLocal.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:166632) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166638) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166651) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayAgentOverrides.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/unit/skillsRemoveClient.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:166681) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsPresentation.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/companyDirectoryV1.test.ts [2m([22m[2m33 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+(node:166688) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayClient.reconnect-recovery.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+(node:166687) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/onboardingTypes.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/unit/runtimeTerminalWorkflow.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:166695) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166726) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillTriggers.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+(node:166729) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/publicDemoState.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/unit/transcript.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+(node:166754) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/taskGatewayClient.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/historyLifecycleWorkflow.integration.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+(node:166765) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/locomotionPreview.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+(node:166802) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166822) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/settingsRouteWorkflow.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:166819) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/runtimeEventPolicy.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/execApprovalControlLoopWorkflow.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:166835) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166842) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/studioUpstreamGatewaySettings.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+(node:166855) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166856) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentSettingsMutationWorkflow.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/personalityBuilder.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+(node:166873) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166870) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166879) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/latestUpdateWorkflow.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m tests/unit/execApprovalEvents.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+(node:166894) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/store.transcript-upsert.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+(node:166901) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsRemoveExecutor.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/unit/agentFleetHydrationDerivation.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:166920) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166917) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:166908) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/agentReconcileOperation.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m tests/unit/studioBootstrapWorkflow.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 19[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayConfigSyncWorkflow.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+(node:166941) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayExecApprovals.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/mutationLifecycleWorkflow.create.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+(node:166951) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/publicKanbanProjectionV1.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+(node:166984) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewaySshTarget.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:167060) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/createAgentBootstrapWorkflow.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+(node:167073) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167083) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/standupStore.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayClient.gap.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
+(node:167106) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167092) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167104) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/janitorReset.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m tests/unit/studioDeskAssignments.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m tests/unit/chatInteractionWorkflow.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+(node:167128) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167158) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/officeFloors.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m tests/unit/agentFilesBootstrap.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:167137) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167160) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167166) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167184) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167190) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/fetchJson.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/fleetLifecycleWorkflow.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+(node:167191) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/packagedSkills.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+ [32m✓[39m tests/unit/execApprovalLifecycleWorkflow.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+(node:167220) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167205) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/mediaMarkdown.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/officeSpeech.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m tests/unit/taskBoardController.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 29[2mms[22m[39m
+ [32m✓[39m tests/unit/streamCameraModes.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:167233) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/packageManifest.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m tests/unit/lifecycleControllerWorkflow.integration.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/unit/runSshJson.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 8[2mms[22m[39m
+(node:167265) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/browserPreview.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+(node:167294) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/navigation.areaClearance.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+(node:167302) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/demoGatewayAdapter.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 15[2mms[22m[39m
+(node:167310) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/historyLifecycleWorkflow.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+(node:167320) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167332) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/multiavatar.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m tests/unit/voiceTranscription.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+(node:167330) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/livePatchQueue.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+(node:167369) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167368) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/runtimeSyncControlWorkflow.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:167409) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/fleetLifecycleWorkflow.integration.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:167400) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayModelsPolicy.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 20[2mms[22m[39m
+(node:167450) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167435) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167439) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167437) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/uuid.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m tests/unit/gatewayClient.connectErrors.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:167483) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/skillsRemoveLocal.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 30[2mms[22m[39m
+(node:167464) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/scrollNearBottom.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m tests/unit/graphicsQuality.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m tests/unit/sessionKey.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+(node:167473) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayConnectRetryPolicy.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m tests/unit/settingsSidebarTabs.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+(node:167495) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/execApprovalPausePolicy.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+(node:167533) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/cardTwinMotion.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+(node:167540) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/configMutationGatePolicy.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+(node:167554) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167548) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/cardTwinCatalog.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m tests/unit/colorSemanticsGuard.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 18[2mms[22m[39m
+(node:167570) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/colorSemantics.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+(node:167577) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/messageHelpers.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+(node:167615) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/worktreeHelpers.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+(node:167633) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:167625) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayRestartPolicy.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+(node:167643) ExperimentalWarning: localStorage is not available because --localstorage-file was not provided.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ [32m✓[39m tests/unit/gatewayFrames.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+[90mstderr[2m | tests/unit/streamOrbitController.test.ts
+[22m[39mTHREE.WARNING: Multiple instances of Three.js being imported.
+
+ [32m✓[39m tests/unit/streamOrbitController.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m tests/unit/cardTwinCuttingFramework.test.ts [2m([22m[2m3 tests[22m[2m)[22m[33m 29253[2mms[22m[39m
+     [33m[2m✓[22m[39m fails closed unless canonical identity and pinned SAM2 inputs match [33m 29239[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m197 passed[39m[22m[90m (197)[39m
+[2m      Tests [22m [1m[32m1336 passed[39m[22m[90m (1336)[39m
+[2m   Start at [22m 16:42:28
+[2m   Duration [22m 31.30s[2m (transform 30.41s, setup 32.32s, import 62.06s, tests 77.79s, environment 283.28s)[22m
+
