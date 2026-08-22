@@ -2,6 +2,7 @@ import type { MuseumCameraAnchorV1, MuseumExhibitSlug, MuseumExhibitV1 } from ".
 
 export type MuseumAnchorName = keyof MuseumExhibitV1["cameraAnchors"];
 export type MuseumNavigation = { exhibitSlug: MuseumExhibitSlug | null; anchor: MuseumAnchorName; requestId: number };
+export type MuseumRoute = MuseumNavigation & { active: boolean };
 export type MuseumActivation = { activeSlug: MuseumExhibitSlug | null; suppressedSpectacle: boolean };
 
 export const MUSEUM_ARRIVAL_ANCHOR: MuseumCameraAnchorV1 = {
@@ -10,7 +11,7 @@ export const MUSEUM_ARRIVAL_ANCHOR: MuseumCameraAnchorV1 = {
 
 export function museumRendererProfile(active: boolean): { exposure: number; renderOfficePostFx: boolean } {
   return active
-    ? { exposure: 2, renderOfficePostFx: false }
+    ? { exposure: 1.35, renderOfficePostFx: false }
     : { exposure: 1, renderOfficePostFx: true };
 }
 
@@ -23,6 +24,13 @@ export function resolveMuseumDeepLink(params: Pick<URLSearchParams, "get">, exhi
   const exhibit = exhibits.find((item) => item.slug === slug);
   if (!exhibit) return { exhibitSlug: null, anchor: "establishing", requestId: 0 };
   return { exhibitSlug: exhibit.slug, anchor: "approach", requestId: 1 };
+}
+
+export function resolveMuseumRoute(params: Pick<URLSearchParams, "get">, exhibits: readonly MuseumExhibitV1[]): MuseumRoute {
+  if (params.get("room") !== "museum") {
+    return { active: false, exhibitSlug: null, anchor: "establishing", requestId: 0 };
+  }
+  return { active: true, ...resolveMuseumDeepLink(params, exhibits) };
 }
 
 export function nextMuseumActivation(state: MuseumActivation, requestedSlug: MuseumExhibitSlug | null): MuseumActivation {

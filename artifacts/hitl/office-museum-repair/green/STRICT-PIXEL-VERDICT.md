@@ -1,7 +1,7 @@
 # Museum overlay fixture — strict pixel verdict
 
 Revision: 50391e74eb9de2bba21e48172a0f33dd0e507b8b
-Scope: deterministic production-component fixture only; integrated `/office` certification belongs to downstream task `t_b282dc7b` per Captain sequencing.
+Scope: deterministic production-component fixture only; integrated `/office` certification belongs to the downstream integration gate per Captain sequencing.
 
 ## 1920 × 1080 — PASS
 

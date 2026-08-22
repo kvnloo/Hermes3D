@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "gateway": {
+    "url": "ws://loopback.invalid:18789",
+    "token": "",
+    "adapterType": "hermes",
+    "profiles": {
+      "hermes": {
+        "url": "ws://loopback.invalid:18789",
+        "token": ""
+      },
+      "demo": {
+        "url": "ws://loopback.invalid:18789",
+        "token": ""
+      },
+      "local": {
+        "url": "http://loopback.invalid:7770",
+        "token": ""
+      },
+      "hermes3d": {
+        "url": "http://loopback.invalid:3000/api/runtime/custom",
+        "token": ""
+      },
+      "custom": {
+        "url": "http://loopback.invalid:7770",
+        "token": ""
+      }
+    }
+  },
+  "activeFloorId": "hermes",
+  "officeFloors": {
+    "hermes": {
+      "floorId": "hermes",
+      "provider": "hermes",
+      "runtimeProfileId": "hermes-default",
+      "gatewayUrl": null,
+      "status": "connecting",
+      "lastKnownGoodAt": null,
+      "lastErrorCode": null,
+      "lastErrorMessage": null
+    }
+  },
+  "focused": {},
+  "avatars": {},
+  "deskAssignments": {},
+  "analytics": {},
+  "voiceReplies": {},
+  "office": {},
+  "standup": {},
+  "taskBoard": {
+    "ws://loopback.invalid:18789": {
+      "cards": [],
+      "selectedCardId": null
+    }
+  }
+}

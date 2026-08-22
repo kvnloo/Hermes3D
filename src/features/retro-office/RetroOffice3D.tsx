@@ -29,7 +29,7 @@ import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import dynamic from "next/dynamic";
 import type { MuseumExhibitSlug } from "@/features/living-museum/core/MuseumExhibitV1";
-import { MUSEUM_ARRIVAL_ANCHOR, museumRendererProfile, resolveMuseumDeepLink } from "@/features/living-museum/core/MuseumRuntimeV1";
+import { MUSEUM_ARRIVAL_ANCHOR, museumRendererProfile, resolveMuseumRoute } from "@/features/living-museum/core/MuseumRuntimeV1";
 import { validatedMuseumExhibits } from "@/features/living-museum/registry";
 import { OFFICE_MUSEUM_ORIGIN, OfficeMuseumRoom } from "@/features/living-museum/shell/OfficeMuseumRoom";
 
@@ -3170,8 +3170,13 @@ export function RetroOffice3D({
   useEffect(() => {
     const syncFromUrl = () => {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("room") !== "museum") return;
-      const navigation = resolveMuseumDeepLink(params, validatedMuseumExhibits.map(({ manifest }) => manifest));
+      const navigation = resolveMuseumRoute(params, validatedMuseumExhibits.map(({ manifest }) => manifest));
+      if (!navigation.active) {
+        setMuseumActive(false);
+        setMuseumSlug(null);
+        cameraPresetRef.current = overviewPreset;
+        return;
+      }
       applyMuseumNavigation(navigation.exhibitSlug);
     };
     const media = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -3182,7 +3187,7 @@ export function RetroOffice3D({
     window.addEventListener("popstate", syncFromUrl);
     media.addEventListener("change", syncMotion);
     return () => { window.removeEventListener("popstate", syncFromUrl); media.removeEventListener("change", syncMotion); };
-  }, [applyMuseumNavigation]);
+  }, [applyMuseumNavigation, overviewPreset]);
   const canvasResetKey = useMemo(
     () =>
       [
@@ -5880,7 +5885,7 @@ export function RetroOffice3D({
               presetRef={cameraPresetRef}
               orbitRef={orbitRef}
             />
-            <StreamCameraController orbitRef={orbitRef} />
+            {!museumActive ? <StreamCameraController orbitRef={orbitRef} /> : null}
 
             {/* Follow cam: third-person perspective camera trailing the selected agent. */}
             <FollowCamSystem
@@ -5914,7 +5919,7 @@ export function RetroOffice3D({
 
             {/* Floor + walls — always visible, no async loading. */}
             <SceneFloorAndWalls showRemoteOffice={remoteOfficeEnabled} />
-            <OfficeMuseumRoom activeSlug={museumSlug} reducedMotion={museumReducedMotion} />
+            <OfficeMuseumRoom active={museumActive} activeSlug={museumSlug} reducedMotion={museumReducedMotion} />
 
             {/* Wall pictures — procedural, no async loading. */}
             <SceneWallPictures showRemoteOffice={remoteOfficeEnabled} />

@@ -1,0 +1,307 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - main [ref=e2]:
+    - main [ref=e3]:
+      - generic [ref=e6]:
+        - paragraph [ref=e10]: No local gateway found.
+        - generic [ref=e11]:
+          - generic [ref=e12]:
+            - paragraph [ref=e13]: Remote gateway (recommended)
+            - paragraph [ref=e14]: Choose a backend, then connect to its gateway URL.
+            - paragraph [ref=e15]: "Selected backend: hermes | Active backend: hermes"
+            - paragraph [ref=e16]: Each backend keeps its own saved URL and token.
+            - paragraph [ref=e17]: Hermes is the agent runtime path with its own provider/account flow behind the gateway.
+            - generic [ref=e18]:
+              - button "Demo backend" [ref=e19] [cursor=pointer]
+              - button "Hermes backend" [ref=e20] [cursor=pointer]
+              - button "Hermes Agent (direct)" [ref=e21] [cursor=pointer]
+              - button "Local runtime" [ref=e22] [cursor=pointer]
+              - button "Hermes3D runtime" [ref=e23] [cursor=pointer]
+              - button "Custom backend" [ref=e24] [cursor=pointer]
+          - generic [ref=e25]:
+            - generic [ref=e26]:
+              - text: Upstream URL
+              - textbox "Upstream URL" [ref=e27]:
+                - /placeholder: wss://your-gateway.example.com
+                - text: ws://loopback.invalid:18789
+            - generic [ref=e28]:
+              - paragraph [ref=e29]: Using a private network?
+              - paragraph [ref=e30]: "URL: wss://<your-private-network-host>"
+            - generic [ref=e31]:
+              - text: Upstream token (optional)
+              - generic [ref=e32]:
+                - textbox "Upstream token (optional) Show token" [ref=e33]:
+                  - /placeholder: optional token
+                - button "Show token" [ref=e34] [cursor=pointer]:
+                  - img [ref=e35]
+            - button "Connect" [ref=e38] [cursor=pointer]
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - paragraph [ref=e41]: Run locally (optional)
+            - paragraph [ref=e42]: Start a local gateway process on this machine, then connect.
+          - generic [ref=e43]:
+            - generic [ref=e44]:
+              - generic [ref=e45]:
+                - code [ref=e46]: HERMES_ADAPTER_PORT=18789 npm run hermes-adapter
+                - button "Copy local gateway command" [ref=e47] [cursor=pointer]:
+                  - img [ref=e48]
+              - paragraph [ref=e51]: In a source checkout, use HERMES_ADAPTER_PORT=18789 pnpm hermes-adapter.
+            - generic [ref=e52]:
+              - paragraph [ref=e53]: Just want to see the office?
+              - paragraph [ref=e54]: Run npm run demo-gateway to start a built-in mock gateway with demo agents. Then choose Demo backend and connect.
+            - generic [ref=e55]:
+              - paragraph [ref=e56]: Using Hermes locally?
+              - paragraph [ref=e57]: Run npm run hermes-adapter, then choose Hermes backend. The default local URL is ws://loopback.invalid:18789.
+            - generic [ref=e58]:
+              - paragraph [ref=e59]: Using a local or custom runtime?
+              - paragraph [ref=e60]: Choose Local runtime, Hermes3D runtime, or Custom backend and point the URL at your orchestrator or runtime boundary. These profiles already preserve separate saved URLs and tokens, but transport-specific chat handoff still needs a follow-up slice.
+            - generic [ref=e61]:
+              - paragraph [ref=e62]: Opening Hermes3D from another machine?
+              - paragraph [ref=e63]: Start Studio with an explicitly configured bind host and set STUDIO_ACCESS_TOKEN before private-network exposure. Gateway settings are stored on the Studio host, but device approval remains per browser/device.
+      - generic [ref=e65]:
+        - generic [ref=e71]:
+          - generic [ref=e72]:
+            - button "Overview" [ref=e73] [cursor=pointer]:
+              - img [ref=e74]
+            - button "Front desk" [ref=e79] [cursor=pointer]:
+              - img [ref=e80]
+            - button "Lounge" [ref=e82] [cursor=pointer]:
+              - img [ref=e83]
+          - button "Kanban board" [ref=e86] [cursor=pointer]:
+            - generic [ref=e87]: Kanban board
+        - generic:
+          - generic:
+            - generic: Luke Headquarters
+        - button "0 agents" [ref=e90] [cursor=pointer]:
+          - img [ref=e91]
+          - generic [ref=e96]: "0"
+          - generic [ref=e97]: agents
+        - generic [ref=e98]:
+          - button "Add" [ref=e99] [cursor=pointer]:
+            - img [ref=e100]
+            - generic [ref=e103]: Add
+          - 'generic "Runtime: hermes (disconnected)" [ref=e104]': hermes • disconnected
+          - button "Toggle heatmap" [ref=e105] [cursor=pointer]:
+            - img [ref=e106]
+          - button "Toggle trails" [ref=e108] [cursor=pointer]:
+            - img [ref=e109]
+          - button "Edit office" [ref=e114] [cursor=pointer]:
+            - img [ref=e115]
+          - button "Voice reply settings" [ref=e118] [cursor=pointer]:
+            - img [ref=e119]
+        - generic:
+          - generic:
+            - generic: 0 working
+            - generic: ·
+            - generic: 0 idle
+            - generic: ·
+            - generic: 0 error
+            - generic: ·
+            - generic: quiet
+            - generic: ·
+            - generic: drag · scroll · space+drag · dbl-click
+      - complementary "Public company directory":
+        - generic:
+          - generic:
+            - paragraph: Public directory preview
+            - heading "zer0" [level=1]
+          - paragraph: No live activity or private data
+        - generic:
+          - region "Governance roles":
+            - heading "Governance roles" [level=2]
+            - list:
+              - listitem:
+                - generic: Captain
+                - generic: Company authority
+              - listitem:
+                - generic: First Mate
+                - generic: Portfolio orchestration
+              - listitem:
+                - generic: Second Mates
+                - generic: Persistent project leadership
+              - listitem:
+                - generic: Crewmates
+                - generic: Task execution
+              - listitem:
+                - generic: Verifiers
+                - generic: Independent review
+          - region "Mesh topology preview":
+            - heading "Mesh topology preview" [level=2]
+            - paragraph: Static directory - no live connectivity data
+            - generic:
+              - generic: "0"
+              - generic: mbp
+              - generic: Telegram Gateway
+        - paragraph: "Mesh: transport | Kanban: lifecycle authority | Keel: authorization and evidence | Live backend: disconnected"
+      - status "Hermes Live demo. STREAM HEARTBEAT OFFLINE":
+        - generic:
+          - generic: HERMES LIVE
+          - generic: · DEMO
+        - paragraph: STREAM HEARTBEAT OFFLINE
+      - complementary "Published public Boplog projects" [ref=e122]:
+        - generic [ref=e123]:
+          - generic [ref=e124]:
+            - paragraph [ref=e125]: Public projects
+            - heading "From Boplog" [level=2] [ref=e126]
+          - paragraph [ref=e127]: Published public information only
+        - list [ref=e128]:
+          - listitem [ref=e129]:
+            - generic [ref=e130]:
+              - generic [ref=e131]: hermes-keel
+              - generic [ref=e132]: experiment
+            - paragraph [ref=e133]: A self-evolving, performance-based execution kernel for Hermes Agent.
+            - generic [ref=e134]:
+              - generic [ref=e135]: "Kanban: 17 completed / 20 total / 3 blocked"
+              - generic [ref=e136]: Published aggregate only
+            - link "Public link" [ref=e137] [cursor=pointer]:
+              - /url: https://kvnloo.github.io/hermes-keel/
+              - text: Public link
+              - img [ref=e138]
+          - listitem [ref=e142]:
+            - generic [ref=e143]:
+              - generic [ref=e144]: baseline-tennis
+              - generic [ref=e145]: experiment
+            - paragraph [ref=e146]: Interactive open-data tennis map, charts, and statistical query engine.
+            - generic [ref=e147]:
+              - generic [ref=e148]: "Kanban snapshot: Summary unavailable"
+              - generic [ref=e149]: Published aggregate only
+            - link "Public link" [ref=e150] [cursor=pointer]:
+              - /url: https://kvnloo.github.io/baseline-tennis/
+              - text: Public link
+              - img [ref=e151]
+          - listitem [ref=e155]:
+            - generic [ref=e156]:
+              - generic [ref=e157]: boplog
+              - generic [ref=e158]: product
+            - paragraph [ref=e159]: Static public build log with llms.txt and a JSON project manifest for agents.
+            - generic [ref=e160]:
+              - generic [ref=e161]: "Kanban: 0 completed / 0 total"
+              - generic [ref=e162]: Published aggregate only
+            - link "Public link" [ref=e163] [cursor=pointer]:
+              - /url: https://kvnloo.github.io/boplog/
+              - text: Public link
+              - img [ref=e164]
+          - listitem [ref=e168]:
+            - generic [ref=e169]:
+              - generic [ref=e170]: aliens-made-this
+              - generic [ref=e171]: experiment
+            - paragraph [ref=e172]: "Playful generative-art capability test: what can the aliens make?"
+            - generic [ref=e173]:
+              - generic [ref=e174]: "Kanban snapshot: Summary unavailable"
+              - generic [ref=e175]: Published aggregate only
+            - link "Public link" [ref=e176] [cursor=pointer]:
+              - /url: https://kvnloo.github.io/aliens-made-this/
+              - text: Public link
+              - img [ref=e177]
+        - generic [ref=e181]:
+          - generic [ref=e182]: 8 allowlisted entries
+          - generic [ref=e183]: Page 1 / 2
+      - complementary:
+        - generic [ref=e184]:
+          - button "Collapse headquarters sidebar" [expanded] [ref=e185] [cursor=pointer]:
+            - generic [ref=e186]: COLLAPSE HQ
+          - button "Open marketplace" [ref=e187] [cursor=pointer]:
+            - generic [ref=e188]: MARKETPLACE
+          - button "Open analytics sidebar" [ref=e189] [cursor=pointer]:
+            - generic [ref=e190]: ANALYTICS
+        - generic [ref=e191]:
+          - generic [ref=e192]:
+            - generic [ref=e193]: HEADQUARTERS
+            - generic [ref=e194]: Monitor outputs, runs, and schedules.
+            - button "Add Agent" [ref=e195] [cursor=pointer]
+            - button "Build Company" [ref=e196] [cursor=pointer]
+          - tablist "Headquarters panels" [ref=e197]:
+            - tab "Agents" [selected] [ref=e198] [cursor=pointer]:
+              - generic [ref=e199]: Agents
+            - tab "Inbox" [ref=e200] [cursor=pointer]:
+              - generic [ref=e201]: Inbox
+            - tab "History" [ref=e202] [cursor=pointer]:
+              - generic [ref=e203]: History
+            - tab "Kanban" [ref=e204] [cursor=pointer]:
+              - generic [ref=e205]: Kanban
+            - tab "Playbooks" [ref=e206] [cursor=pointer]:
+              - generic [ref=e207]: Playbooks
+          - tabpanel "Agents" [ref=e208]:
+            - region "Synthetic demo agent states" [ref=e209]:
+              - generic [ref=e210]:
+                - paragraph [ref=e211]: DEMO AGENT STATE
+                - paragraph [ref=e212]: Synthetic visualization. No live agent activity.
+              - list [ref=e213]:
+                - listitem [ref=e214]:
+                  - 'img "Captain: idle synthetic agent state" [ref=e216]'
+                  - generic [ref=e217]:
+                    - paragraph [ref=e218]: Captain
+                    - paragraph [ref=e219]: IDLE - SYNTHETIC
+                - listitem [ref=e220]:
+                  - 'img "First Mate: thinking synthetic agent state" [ref=e222]'
+                  - generic [ref=e223]:
+                    - paragraph [ref=e224]: First Mate
+                    - paragraph [ref=e225]: THINKING - SYNTHETIC
+                - listitem [ref=e226]:
+                  - 'img "Second Mates: waiting synthetic agent state" [ref=e228]'
+                  - generic [ref=e229]:
+                    - paragraph [ref=e230]: Second Mates
+                    - paragraph [ref=e231]: WAITING - SYNTHETIC
+                - listitem [ref=e232]:
+                  - 'img "Crewmates: offline synthetic agent state" [ref=e234]'
+                  - generic [ref=e235]:
+                    - paragraph [ref=e236]: Crewmates
+                    - paragraph [ref=e237]: OFFLINE - SYNTHETIC
+                - listitem [ref=e238]:
+                  - 'img "Verifiers: idle synthetic agent state" [ref=e240]'
+                  - generic [ref=e241]:
+                    - paragraph [ref=e242]: Verifiers
+                    - paragraph [ref=e243]: IDLE - SYNTHETIC
+              - paragraph [ref=e244]: Public role categories only. Mesh entities excluded.
+      - generic [ref=e246]:
+        - generic [ref=e247]:
+          - generic [ref=e248]:
+            - heading "Welcome to Hermes3D" [level=2] [ref=e249]
+            - paragraph [ref=e250]: Your AI office in 3D
+          - button "Close onboarding" [ref=e251] [cursor=pointer]:
+            - img [ref=e252]
+        - generic [ref=e263]:
+          - generic [ref=e264]:
+            - paragraph [ref=e265]: Hermes3D turns your AI automation into a visual workplace — an office where your AI agents collaborate, code, test, and execute tasks in a shared 3D environment.
+            - paragraph [ref=e266]: This wizard will help you connect to your runtime gateway and get started in about two minutes.
+          - generic [ref=e267]:
+            - generic [ref=e268]:
+              - generic [ref=e269]:
+                - img [ref=e270]
+                - generic [ref=e273]: Watch agents work
+              - paragraph [ref=e274]: See your AI agents in real time in a shared 3D office
+            - generic [ref=e275]:
+              - generic [ref=e276]:
+                - img [ref=e277]
+                - generic [ref=e282]: Manage your fleet
+              - paragraph [ref=e283]: Create, configure, and monitor agents from one place
+            - generic [ref=e284]:
+              - generic [ref=e285]:
+                - img [ref=e286]
+                - generic [ref=e288]: Chat and approve
+              - paragraph [ref=e289]: Talk to agents, approve exec commands, review their work
+            - generic [ref=e290]:
+              - generic [ref=e291]:
+                - img [ref=e292]
+                - generic [ref=e296]: Build your office
+              - paragraph [ref=e297]: Customize rooms, desks, and the whole office layout
+        - generic [ref=e299]:
+          - generic [ref=e300]: 1 / 6
+          - button "Next" [ref=e301] [cursor=pointer]:
+            - text: Next
+            - img [ref=e302]
+      - generic [ref=e305]:
+        - generic [ref=e306]: Agent Event Console
+        - generic [ref=e307]:
+          - generic [ref=e308]: agents 0 | events 0/0
+          - button "Copy JSON" [ref=e309] [cursor=pointer]
+          - button "Download JSON" [ref=e310] [cursor=pointer]
+          - button "Clear" [ref=e311] [cursor=pointer]
+          - button "Expand" [ref=e312] [cursor=pointer]
+      - button "CHAT" [ref=e314] [cursor=pointer]:
+        - img [ref=e315]
+        - generic [ref=e317]: CHAT
+  - alert [ref=e318]
+```

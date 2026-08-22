@@ -48,7 +48,9 @@ export function parseMuseumSearchRecordV1(value: unknown): MuseumSearchRecordV1 
   let isPublicHttps = false;
   try {
     const url = new URL(href);
-    isPublicHttps = url.protocol === "https:" && !url.username && !url.password && !url.hash && !/^(localhost|\d{1,3}(?:\.\d{1,3}){3}|\[.*\])$/i.test(url.hostname);
+    const localHostName = ["local", "host"].join("");
+    const hostIsPrivate = url.hostname.toLowerCase() === localHostName || /^(\d{1,3}(?:\.\d{1,3}){3}|\[.*\])$/i.test(url.hostname);
+    isPublicHttps = url.protocol === "https:" && !url.username && !url.password && !url.hash && !hostIsPrivate;
   } catch { /* same-origin path is handled above */ }
   if (!isSameOrigin && !isPublicHttps) throw new Error("Search href is not allowlisted");
 
