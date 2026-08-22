@@ -5,6 +5,10 @@
 .museum-wordmark { color: inherit; font-family: var(--font-display); font-size: 1.35rem; letter-spacing: .04em; text-decoration: none; }
 .museum-search-trigger { display: flex; min-height: 44px; align-items: center; gap: 18px; border: 1px solid rgb(240 238 231 / .24); border-radius: 999px; background: rgb(13 17 18 / .58); color: var(--museum-ink); padding: 0 16px; backdrop-filter: blur(12px); }
 .museum-office-overlay { z-index: 24; --museum-side-left: 336px; --museum-side-right: 352px; }
+body:has([data-museum-active="true"]) [aria-label="Public company directory"],
+body:has([data-museum-active="true"]) [aria-label="Published public Boplog projects"],
+body:has([data-museum-active="true"]) main > .z-50,
+body:has([data-museum-active="true"]) [aria-label="Connecting to runtime"] { display: none; }
 .museum-office-bar, .museum-office-arrival { position: absolute; z-index: 40; border: 1px solid rgb(255 255 255 / .15); border-radius: 16px; background: rgb(13 17 18 / .88); box-shadow: 0 16px 44px rgb(0 0 0 / .35); backdrop-filter: blur(16px); }
 .museum-office-bar { left: var(--museum-side-left); right: var(--museum-side-right); top: 16px; display: flex; min-height: 56px; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 12px 8px 16px; }
 .museum-office-title span { display: block; color: #fcd34d; font: 600 9px/1.2 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; }
@@ -43,6 +47,7 @@
 .museum-static-fallback div { width: min(44vw, 420px); aspect-ratio: 1; border: clamp(18px, 4vw, 48px) solid #c77945; border-radius: 38% 62% 46% 54%; transform: rotate(28deg); box-shadow: inset 30px -24px 80px rgb(0 0 0 / .38); }
 @media (max-width: 767px) { .museum-header { height: 64px; padding: 0 16px; } .museum-search-trigger span { display: none; } .museum-search-trigger { gap: 0; padding: 0 16px; } .museum-intro { left: 20px; bottom: 76px; } .museum-intro h1 { max-width: 12ch; font-size: clamp(2.8rem, 14vw, 4.4rem); } .museum-footer { left: 20px; right: auto; bottom: 20px; gap: 14px; } }
 @media (max-width: 767px) {
+  body:has([data-museum-active="true"]) aside:has([aria-label="Synthetic demo agent states"]) { display: none; }
   .museum-office-overlay { --museum-side-left: 8px; --museum-side-right: 88px; }
   .museum-office-bar { top: 8px; min-height: 48px; gap: 8px; padding: 4px 6px 4px 12px; }
   .museum-office-title span { display: none; }

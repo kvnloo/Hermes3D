@@ -23,6 +23,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
@@ -31,7 +32,8 @@ import dynamic from "next/dynamic";
 import type { MuseumExhibitSlug } from "@/features/living-museum/core/MuseumExhibitV1";
 import { MUSEUM_ARRIVAL_ANCHOR, museumRendererProfile, resolveMuseumRoute } from "@/features/living-museum/core/MuseumRuntimeV1";
 import { validatedMuseumExhibits } from "@/features/living-museum/registry";
-import { OFFICE_MUSEUM_ORIGIN, OfficeMuseumRoom } from "@/features/living-museum/shell/OfficeMuseumRoom";
+import { MUSEUM_CAMERA_TRAVEL, OFFICE_MUSEUM_ORIGIN, OfficeMuseumRoom } from "@/features/living-museum/shell/OfficeMuseumRoom";
+import "@/features/living-museum/shell/museum.css";
 
 import { SettingsPanel } from "@/features/office/components/panels/SettingsPanel";
 
@@ -3136,9 +3138,24 @@ export function RetroOffice3D({
     target: [number, number, number];
     zoom?: number;
   } | null>(null);
-  const [museumActive, setMuseumActive] = useState(false);
-  const [museumSlug, setMuseumSlug] = useState<MuseumExhibitSlug | null>(null);
+  const [museumActiveState, setMuseumActive] = useState(false);
+  const [museumSlugState, setMuseumSlug] = useState<MuseumExhibitSlug | null>(null);
+  const museumSearch = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener("popstate", onStoreChange);
+      return () => window.removeEventListener("popstate", onStoreChange);
+    },
+    () => window.location.search,
+    () => "",
+  );
+  const museumRoute = useMemo(
+    () => resolveMuseumRoute(new URLSearchParams(museumSearch), validatedMuseumExhibits.map(({ manifest }) => manifest)),
+    [museumSearch],
+  );
+  const museumActive = museumRoute.active || museumActiveState;
+  const museumSlug = museumRoute.active ? museumRoute.exhibitSlug : museumSlugState;
   const [museumReducedMotion, setMuseumReducedMotion] = useState(false);
+  const museumTravelTimersRef = useRef<number[]>([]);
   const museumRendering = museumRendererProfile(museumActive);
   const LOCAL_CAMERA_TARGET = useMemo(
     () =>
@@ -3162,15 +3179,37 @@ export function RetroOffice3D({
     setMuseumSlug(slug);
     const manifest = validatedMuseumExhibits.find((entry) => entry.manifest.slug === slug)?.manifest;
     const anchor = manifest?.cameraAnchors.approach ?? MUSEUM_ARRIVAL_ANCHOR;
-    cameraPresetRef.current = {
-      pos: anchor.position.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
-      target: anchor.target.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
-    };
+    for (const timer of museumTravelTimersRef.current) window.clearTimeout(timer);
+    museumTravelTimersRef.current = [];
+
+    let elapsedMs = 0;
+    for (const waypoint of MUSEUM_CAMERA_TRAVEL) {
+      const timer = window.setTimeout(() => {
+        cameraPresetRef.current = {
+          pos: waypoint.position.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
+          target: waypoint.target.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
+        };
+      }, elapsedMs);
+      museumTravelTimersRef.current.push(timer);
+      elapsedMs += waypoint.durationMs;
+    }
+    if (manifest) {
+      museumTravelTimersRef.current.push(window.setTimeout(() => {
+        cameraPresetRef.current = {
+          pos: anchor.position.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
+          target: anchor.target.map((value, index) => value + OFFICE_MUSEUM_ORIGIN[index]) as [number, number, number],
+        };
+      }, elapsedMs));
+    }
+  }, []);
+  useEffect(() => () => {
+    for (const timer of museumTravelTimersRef.current) window.clearTimeout(timer);
   }, []);
   useEffect(() => {
     const syncFromUrl = () => {
       const params = new URLSearchParams(window.location.search);
       const navigation = resolveMuseumRoute(params, validatedMuseumExhibits.map(({ manifest }) => manifest));
+
       if (!navigation.active) {
         setMuseumActive(false);
         setMuseumSlug(null);
@@ -5794,7 +5833,7 @@ export function RetroOffice3D({
   const lastOfficeCenterSignalRef = useRef(officeCenterSignal);
 
   useEffect(() => {
-    if (museumActive) return;
+    if (museumActive || new URLSearchParams(window.location.search).get("room") === "museum") return;
     cameraPresetRef.current = overviewPreset;
   }, [museumActive, overviewPreset]);
 
@@ -5806,7 +5845,11 @@ export function RetroOffice3D({
   }, [museumActive, officeCenterSignal, overviewPreset]);
 
   return (
-    <div className="relative w-full h-full bg-[#1a1008] font-mono text-white overflow-hidden">
+    <div
+      className="relative w-full h-full bg-[#1a1008] font-mono text-white overflow-hidden"
+      data-museum-active={museumActive ? "true" : "false"}
+      data-museum-slug={museumSlug ?? "arrival"}
+    >
       {/* 3D Canvas — fills everything. */}
       <div
         className="absolute inset-0"
@@ -6491,6 +6534,7 @@ export function RetroOffice3D({
           onSelect={applyMuseumNavigation}
           onExit={() => {
             window.history.pushState({}, "", "/office");
+            window.dispatchEvent(new PopStateEvent("popstate"));
             setMuseumActive(false);
             setMuseumSlug(null);
             cameraPresetRef.current = overviewPreset;

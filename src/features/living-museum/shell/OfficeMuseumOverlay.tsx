@@ -10,6 +10,7 @@ export function OfficeMuseumOverlay({ activeSlug, onSelect, onExit }: { activeSl
   const active = validatedMuseumExhibits.find(({ manifest }) => manifest.slug === activeSlug)?.manifest;
   const navigate = (slug: MuseumExhibitSlug | null) => {
     window.history.pushState({}, "", museumOfficeHref(slug));
+    window.dispatchEvent(new PopStateEvent("popstate"));
     onSelect(slug);
   };
   return (

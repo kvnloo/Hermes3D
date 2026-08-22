@@ -6,6 +6,19 @@ import { validatedMuseumExhibits } from "../registry";
 
 export const OFFICE_MUSEUM_ORIGIN = [28, 0, -10] as const;
 
+export const MUSEUM_ANNEX_BLUEPRINT = {
+  doorway: { center: [-12, 2.7, 0] as const, width: 5.6, height: 5.4 },
+  corridor: { center: [-9.8, 0, 0] as const, width: 4.6, depth: 8.4, height: 4.8 },
+  gallery: { center: [0, 0, 0] as const, width: 18, depth: 18, height: 6.8, entryWidth: 5.2 },
+} as const;
+
+export const MUSEUM_CAMERA_TRAVEL = [
+  { stage: "office-sightline", position: [-30, 20, 18] as const, target: [-12, 1.2, 0] as const, durationMs: 900 },
+  { stage: "threshold", position: [-26, 17, 15] as const, target: [-10, 1.4, 0] as const, durationMs: 900 },
+  { stage: "corridor", position: [-23, 14, 13] as const, target: [-8, 1.5, 0] as const, durationMs: 850 },
+  { stage: "annex-arrival", position: [-21, 12, 11] as const, target: [-6, 1.6, 0] as const, durationMs: 1_050 },
+] as const;
+
 type MuseumLightRig = {
   key: string;
   fill: string;
@@ -39,22 +52,29 @@ export function OfficeMuseumRoom({ active, activeSlug, reducedMotion }: { active
         <planeGeometry args={[18, 18]} />
         <meshStandardMaterial color="#465052" roughness={0.82} metalness={0.04} />
       </mesh>
-      <mesh position={[0, 3.4, -7.5]} receiveShadow castShadow>
-        <boxGeometry args={[18, 6.8, 0.35]} />
+      <mesh position={[0, 1.8, -7.5]} receiveShadow castShadow>
+        <boxGeometry args={[18, 3.6, 0.35]} />
         <meshStandardMaterial color="#918d83" roughness={0.74} />
       </mesh>
-      <mesh position={[-8.8, 3.4, 0]} receiveShadow><boxGeometry args={[0.35, 6.8, 15]} /><meshStandardMaterial color="#555b59" roughness={0.8} /></mesh>
-      <mesh position={[8.8, 3.4, 0]} receiveShadow><boxGeometry args={[0.35, 6.8, 15]} /><meshStandardMaterial color="#555b59" roughness={0.8} /></mesh>
-      <group name="MuseumAnnexThreshold" position={[0, 0, 7.3]}>
-        <mesh position={[-3.8, 2.6, 0]} castShadow receiveShadow><boxGeometry args={[0.7, 5.2, 0.7]} /><meshStandardMaterial color="#9b704b" roughness={0.54} /></mesh>
-        <mesh position={[3.8, 2.6, 0]} castShadow receiveShadow><boxGeometry args={[0.7, 5.2, 0.7]} /><meshStandardMaterial color="#9b704b" roughness={0.54} /></mesh>
-        <mesh position={[0, 5.05, 0]} castShadow receiveShadow><boxGeometry args={[8.3, 0.7, 0.7]} /><meshStandardMaterial color="#b18258" roughness={0.5} /></mesh>
-        <pointLight position={[0, 4.5, -0.8]} intensity={24} distance={9} decay={2} color="#ffd9a6" />
+      <mesh position={[-8.8, 1.2, -5.1]} receiveShadow><boxGeometry args={[0.35, 2.4, 4.8]} /><meshStandardMaterial color="#555b59" roughness={0.8} /></mesh>
+      <mesh position={[-8.8, 1.2, 5.1]} receiveShadow><boxGeometry args={[0.35, 2.4, 4.8]} /><meshStandardMaterial color="#555b59" roughness={0.8} /></mesh>
+      <mesh position={[8.8, 1.2, 0]} receiveShadow><boxGeometry args={[0.35, 2.4, 15]} /><meshStandardMaterial color="#555b59" roughness={0.8} /></mesh>
+      <group name="MuseumAnnexCorridor" position={MUSEUM_ANNEX_BLUEPRINT.corridor.center}>
+        <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow><planeGeometry args={[MUSEUM_ANNEX_BLUEPRINT.corridor.depth, MUSEUM_ANNEX_BLUEPRINT.corridor.width]} /><meshStandardMaterial color="#5f6664" roughness={0.8} /></mesh>
+        <mesh position={[0, 0.7, -2.3]} castShadow receiveShadow><boxGeometry args={[MUSEUM_ANNEX_BLUEPRINT.corridor.depth, 1.4, 0.3]} /><meshStandardMaterial color="#6e716c" roughness={0.78} /></mesh>
+        <mesh position={[0, 0.7, 2.3]} castShadow receiveShadow><boxGeometry args={[MUSEUM_ANNEX_BLUEPRINT.corridor.depth, 1.4, 0.3]} /><meshStandardMaterial color="#6e716c" roughness={0.78} /></mesh>
+        <pointLight position={[0, 3.8, 0]} intensity={30} distance={8} decay={2} color="#ffd9a6" />
       </group>
-      <group name="OfficeLandmarkSightline" position={[0, 0, 8.4]}>
-        <mesh position={[-5.2, 0.75, 1.2]} castShadow><boxGeometry args={[3.2, 0.18, 1.35]} /><meshStandardMaterial color="#7f5b40" roughness={0.7} /></mesh>
-        <mesh position={[-5.2, 0.35, 1.2]} castShadow><boxGeometry args={[0.3, 0.7, 0.3]} /><meshStandardMaterial color="#4d5556" roughness={0.8} /></mesh>
-        <mesh position={[5.1, 1.15, 1.1]} castShadow><cylinderGeometry args={[0.9, 1.15, 2.3, 12]} /><meshStandardMaterial color="#4f765d" roughness={0.86} /></mesh>
+      <group name="MuseumAnnexThreshold" position={MUSEUM_ANNEX_BLUEPRINT.doorway.center}>
+        <mesh position={[0, 0, -3.05]} castShadow receiveShadow><boxGeometry args={[0.7, 5.4, 0.7]} /><meshStandardMaterial color="#9b704b" roughness={0.54} /></mesh>
+        <mesh position={[0, 0, 3.05]} castShadow receiveShadow><boxGeometry args={[0.7, 5.4, 0.7]} /><meshStandardMaterial color="#9b704b" roughness={0.54} /></mesh>
+        <mesh position={[0, 3.05, 0]} castShadow receiveShadow><boxGeometry args={[0.7, 0.7, 6.8]} /><meshStandardMaterial color="#b18258" roughness={0.5} /></mesh>
+        <pointLight position={[0.8, 1.8, 0]} intensity={32} distance={9} decay={2} color="#ffd9a6" />
+      </group>
+      <group name="OfficeLandmarkSightline" position={[-14.4, 0, 0]}>
+        <mesh position={[0, 0.75, -2.8]} castShadow><boxGeometry args={[3.2, 0.18, 1.35]} /><meshStandardMaterial color="#7f5b40" roughness={0.7} /></mesh>
+        <mesh position={[0, 0.35, -2.8]} castShadow><boxGeometry args={[0.3, 0.7, 0.3]} /><meshStandardMaterial color="#4d5556" roughness={0.8} /></mesh>
+        <mesh position={[-0.3, 1.15, 3]} castShadow><cylinderGeometry args={[0.9, 1.15, 2.3, 12]} /><meshStandardMaterial color="#4f765d" roughness={0.86} /></mesh>
       </group>
       {active && !activeSlug ? (
         <group name="MuseumArrivalArchitecture">

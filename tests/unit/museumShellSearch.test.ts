@@ -3,7 +3,11 @@ import { parseMuseumSearchRecordV1, searchMuseum } from "@/features/living-museu
 import { exhibitRuntimeState, museumOfficeHref, museumRendererProfile, nextMuseumActivation, resolveMuseumRoute } from "@/features/living-museum/core/MuseumRuntimeV1";
 import type { MuseumExhibitV1 } from "@/features/living-museum/core/MuseumExhibitV1";
 import { MUSEUM_EXHIBIT_SLUGS } from "@/features/living-museum/core/MuseumExhibitV1";
-import { MUSEUM_EXHIBIT_LIGHTING } from "@/features/living-museum/shell/OfficeMuseumRoom";
+import {
+  MUSEUM_ANNEX_BLUEPRINT,
+  MUSEUM_CAMERA_TRAVEL,
+  MUSEUM_EXHIBIT_LIGHTING,
+} from "@/features/living-museum/shell/OfficeMuseumRoom";
 import { museumSearchCorpus, validatedMuseumExhibits } from "@/features/living-museum/registry";
 import { MuseumSearch } from "@/features/living-museum/shell/MuseumSearch";
 import { createElement } from "react";
@@ -69,15 +73,24 @@ describe("museum runtime ownership", () => {
     expect(officeSource.match(/<Canvas\b/g)).toHaveLength(1);
   });
 
-  it("hydrates the office shell before deriving museum navigation from the browser URL", () => {
+  it("derives fresh museum navigation before the first client render and resyncs on history", () => {
     const source = readFileSync("src/features/retro-office/RetroOffice3D.tsx", "utf8");
-    expect(source).toContain("const [museumActive, setMuseumActive] = useState(false)");
-    expect(source).toContain("const [museumSlug, setMuseumSlug] = useState<MuseumExhibitSlug | null>(null)");
+    expect(source).toContain("const museumSearch = useSyncExternalStore(");
+    expect(source).toContain("const museumRoute = useMemo(");
+    expect(source).toContain("const museumActive = museumRoute.active || museumActiveState");
+    expect(source).toContain('window.addEventListener("popstate", syncFromUrl)');
   });
 
   it("uses a readable museum exposure and suspends office post-processing", () => {
     expect(museumRendererProfile(false)).toEqual({ exposure: 1, renderOfficePostFx: true });
     expect(museumRendererProfile(true)).toEqual({ exposure: 1.35, renderOfficePostFx: false });
+  });
+
+  it("keeps disconnected gateway prompts from occluding the public museum route", () => {
+    const css = readFileSync("src/features/living-museum/shell/museum.css", "utf8");
+    expect(css).toContain('body:has([data-museum-active="true"]) main > .z-50');
+    expect(css).toContain('[aria-label="Connecting to runtime"]');
+    expect(css).toContain('aside:has([aria-label="Synthetic demo agent states"])');
   });
 
   it("bounds a dedicated light rig to every active exhibit and removes arrival occlusion", () => {
@@ -102,6 +115,29 @@ describe("museum runtime ownership", () => {
     expect(source).toContain('name="OfficeLandmarkSightline"');
     expect(source).toContain("meshStandardMaterial");
     expect(source).toMatch(/color="#[3-9a-f][0-9a-f]{5}"/i);
+  });
+
+  it("defines a bounded office doorway, corridor, annex, and multi-stage camera journey", () => {
+    const { doorway, corridor, gallery } = MUSEUM_ANNEX_BLUEPRINT;
+    expect(doorway.center[0]).toBeLessThan(corridor.center[0]);
+    expect(corridor.depth).toBeGreaterThan(6);
+    expect(corridor.width).toBeLessThan(doorway.width);
+    expect(gallery.entryWidth).toBeGreaterThanOrEqual(corridor.width);
+    expect(gallery.width).toBeGreaterThan(corridor.width * 2);
+    expect(gallery.depth).toBeGreaterThan(corridor.depth);
+
+    expect(MUSEUM_CAMERA_TRAVEL.map(({ stage }) => stage)).toEqual([
+      "office-sightline",
+      "threshold",
+      "corridor",
+      "annex-arrival",
+    ]);
+    for (let index = 1; index < MUSEUM_CAMERA_TRAVEL.length; index += 1) {
+      const previous = MUSEUM_CAMERA_TRAVEL[index - 1];
+      const current = MUSEUM_CAMERA_TRAVEL[index];
+      expect(current.position[0]).toBeGreaterThan(previous.position[0]);
+      expect(current.durationMs).toBeGreaterThanOrEqual(700);
+    }
   });
 
 
