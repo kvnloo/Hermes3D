@@ -52,11 +52,11 @@ test("evidence route mounts the card exhibit without onboarding", async ({ page 
   await expect(page).toHaveURL(/\/exhibits\/pokemon-cards\?evidence=1$/);
 });
 
-test("hero composition exposes nine readable evidence objects without horizontal clipping", async ({ page }) => {
+test("hero composition exposes nine literal readable card faces without horizontal clipping", async ({ page }) => {
   const exhibit = page.locator('[data-testid="pokemon-cards-exhibit-active"]');
-  await expect(exhibit.locator('[data-card-object="true"]')).toHaveCount(9);
+  await expect(exhibit.locator('[data-card-face="true"]')).toHaveCount(9);
 
-  const cardBoxes = await exhibit.locator('[data-card-object="true"]').evaluateAll((cards) =>
+  const cardBoxes = await exhibit.locator('[data-card-face="true"]').evaluateAll((cards) =>
     cards.map((card) => {
       const { x, y, width, height } = card.getBoundingClientRect();
       return { x, y, width, height };
@@ -65,8 +65,8 @@ test("hero composition exposes nine readable evidence objects without horizontal
   const viewport = page.viewportSize();
   expect(viewport).not.toBeNull();
   for (const box of cardBoxes) {
-    expect(box.width).toBeGreaterThan(82);
-    expect(box.height).toBeGreaterThan(34);
+    expect(box.width).toBeGreaterThan(42);
+    expect(box.height).toBeGreaterThan(58);
     expect(box.x).toBeGreaterThanOrEqual(0);
     expect(box.y).toBeGreaterThanOrEqual(0);
     expect(box.x + box.width).toBeLessThanOrEqual(viewport?.width ?? 0);
@@ -98,7 +98,9 @@ for (const viewport of [
   test(`${viewport.name} evidence framing keeps all nine cards in bounds`, async ({ page }) => {
     await page.setViewportSize(viewport);
     await page.goto(exhibitUrl, { waitUntil: "domcontentloaded" });
-    const boxes = await page.locator('[data-card-object="true"]').evaluateAll((cards) => cards.map((card) => {
+    const faces = page.locator('[data-card-face="true"]');
+    await expect(faces).toHaveCount(9);
+    const boxes = await faces.evaluateAll((cards) => cards.map((card) => {
       const { x, y, width, height } = card.getBoundingClientRect();
       return { x, y, width, height };
     }));
@@ -116,15 +118,18 @@ test("reduced motion disables foil animation", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.reload();
   await expect(page.locator('[data-testid="pokemon-cards-exhibit-active"]')).toHaveAttribute("data-reduced-motion", "true");
-  await expect(page.locator('[data-card-object="true"]').first()).toHaveCSS("animation-name", "none");
+  await expect(page.locator('[data-card-face="true"]').first()).toHaveCSS("animation-name", "none");
 });
 
-test("inspection camera advertises a deliberate transition and reduced motion disables it", async ({ page }) => {
+test("inspection camera continuously moves from gallery without a navigation cut", async ({ page }) => {
   const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
   await expect(stage).toHaveAttribute("data-view", "gallery");
-  await page.goto(`${exhibitUrl}&view=macro`, { waitUntil: "domcontentloaded" });
+  const originalUrl = page.url();
+  await page.getByRole("button", { name: "Inspect selected card" }).click();
+  await expect(stage).toHaveAttribute("data-camera-transition", "moving");
   await expect(stage).toHaveAttribute("data-camera-transition", "settled");
   await expect(stage).toHaveAttribute("data-camera-anchor", "arcanine-sm1-22-inspection");
+  expect(page.url()).toBe(originalUrl);
 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.reload();

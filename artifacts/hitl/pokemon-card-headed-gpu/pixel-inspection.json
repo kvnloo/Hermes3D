@@ -1,0 +1,58 @@
+[
+  {
+    "frame": "frame-01.png",
+    "left_mean": 41.44,
+    "right_mean": 29.13,
+    "left_stddev": 52.04,
+    "right_stddev": 32.18
+  },
+  {
+    "frame": "frame-02.png",
+    "left_mean": 41.54,
+    "right_mean": 29.31,
+    "left_stddev": 52.5,
+    "right_stddev": 32.93
+  },
+  {
+    "frame": "frame-03.png",
+    "left_mean": 41.53,
+    "right_mean": 29.33,
+    "left_stddev": 52.38,
+    "right_stddev": 33.07
+  },
+  {
+    "frame": "frame-04.png",
+    "left_mean": 36.05,
+    "right_mean": 29.18,
+    "left_stddev": 44.59,
+    "right_stddev": 31.9
+  },
+  {
+    "frame": "frame-05.png",
+    "left_mean": 35.85,
+    "right_mean": 29.35,
+    "left_stddev": 44.13,
+    "right_stddev": 33.03
+  },
+  {
+    "frame": "frame-06.png",
+    "left_mean": 35.64,
+    "right_mean": 29.18,
+    "left_stddev": 43.76,
+    "right_stddev": 31.97
+  },
+  {
+    "frame": "frame-07.png",
+    "left_mean": 35.48,
+    "right_mean": 29.17,
+    "left_stddev": 43.28,
+    "right_stddev": 31.93
+  },
+  {
+    "frame": "frame-08.png",
+    "left_mean": 35.7,
+    "right_mean": 29.16,
+    "left_stddev": 43.73,
+    "right_stddev": 31.92
+  }
+]

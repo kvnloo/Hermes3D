@@ -1,0 +1,12 @@
+{
+  "profile": "/tmp/pokemon-headed-gpu-repair-5FTzO4",
+  "state": {
+    "cardFaces": 9,
+    "scrollWidth": 390,
+    "viewport": [
+      390,
+      844
+    ],
+    "webglRenderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 3080 Ti/PCIe/SSE2, OpenGL 4.5.0)"
+  }
+}

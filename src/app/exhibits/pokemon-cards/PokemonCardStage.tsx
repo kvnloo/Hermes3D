@@ -25,7 +25,7 @@ function MuseumLighting({ reduced }: { reduced: boolean }) {
   </>;
 }
 
-function ResponsiveCamera({ view }: { view: "gallery" | "macro" | "side" }) {
+function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side"; reduced: boolean }) {
   const { camera, size } = useThree();
   useFrame(() => {
     const orthographic = camera as THREE.OrthographicCamera;
@@ -35,9 +35,15 @@ function ResponsiveCamera({ view }: { view: "gallery" | "macro" | "side" }) {
       : view === "macro"
         ? (mobile ? 96 : 112)
         : (mobile ? 116 : 138);
-    if (orthographic.zoom !== nextZoom) {
+    const nextX = view === "gallery" && !mobile ? 0.38 : view === "side" ? 0.2 : 0;
+    const amount = reduced ? 1 : 0.075;
+    const zoom = THREE.MathUtils.lerp(orthographic.zoom, nextZoom, amount);
+    const x = THREE.MathUtils.lerp(orthographic.position.x, nextX, amount);
+    if (Math.abs(orthographic.zoom - nextZoom) > 0.01 || Math.abs(orthographic.position.x - nextX) > 0.001) {
       // eslint-disable-next-line react-hooks/immutability -- Three camera is intentionally imperative frame state.
-      orthographic.zoom = nextZoom;
+      orthographic.zoom = zoom;
+      // eslint-disable-next-line react-hooks/immutability -- Three camera is intentionally imperative frame state.
+      orthographic.position.x = x;
       orthographic.updateProjectionMatrix();
     }
   });
@@ -111,6 +117,10 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
     </mesh>)}
+    <mesh position-z={0.19} renderOrder={20}>
+      <planeGeometry args={[2.12, 2.97]} />
+      <meshPhysicalMaterial color={card.accent} transparent opacity={0.1} depthWrite={false} roughness={0.2} metalness={0.3} clearcoat={1} clearcoatRoughness={0.16} iridescence={0.8} iridescenceIOR={1.45} blending={THREE.AdditiveBlending} />
+    </mesh>
     <group position={[0, -1.72, -0.1]}>
       <mesh rotation-x={-0.16}>
         <boxGeometry args={[1.22, 0.14, 0.72]} />
@@ -124,10 +134,11 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
   </group>;
 }
 
-export function PokemonCardStage({ card, reduced, view, texturesReady, onTexturesReady }: {
+export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady }: {
   card: CardTwinCard;
   reduced: boolean;
   view: "gallery" | "macro" | "side";
+  cameraMoving: boolean;
   texturesReady: boolean;
   onTexturesReady: () => void;
 }) {
@@ -142,7 +153,7 @@ export function PokemonCardStage({ card, reduced, view, texturesReady, onTexture
     data-hidden-fill={card.hiddenFill}
     data-textures-ready={String(texturesReady)}
     data-camera-anchor={view === "gallery" ? "gallery" : `${card.id}-inspection`}
-    data-camera-transition={reduced ? "instant" : view === "gallery" ? "idle" : "settled"}
+    data-camera-transition={reduced ? "instant" : cameraMoving ? "moving" : view === "gallery" ? "idle" : "settled"}
     data-camera-framing={view === "macro" ? "inspection-fit" : undefined}
     data-card-shell="beveled-physical-slab"
     data-display-furniture="museum-plinth"
@@ -167,7 +178,7 @@ export function PokemonCardStage({ card, reduced, view, texturesReady, onTexture
     <Canvas orthographic dpr={[1, 2]} camera={{ position: [0, 0, 10], zoom: 138, near: 0.08, far: 30 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
       <color attach="background" args={["#14211f"]} />
       <MuseumLighting reduced={reduced} />
-      <ResponsiveCamera view={view} />
+      <ResponsiveCamera view={view} reduced={reduced} />
       <Suspense fallback={null}>
         <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} contracts={contracts} onReady={onTexturesReady} />
       </Suspense>

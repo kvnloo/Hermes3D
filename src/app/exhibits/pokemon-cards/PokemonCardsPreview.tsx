@@ -12,6 +12,8 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [cardIndex, setCardIndex] = useState(0);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [texturesReady, setTexturesReady] = useState(false);
+  const [view, setView] = useState(initialView);
+  const [cameraMoving, setCameraMoving] = useState(false);
   const card = CARD_TWIN_CARDS[cardIndex];
 
   useEffect(() => {
@@ -35,6 +37,13 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
     setPhaseIndex(reduced ? revealPhases.length - 1 : 0);
   };
   const handleReady = useCallback(() => setTexturesReady(true), []);
+  const inspectCard = () => {
+    if (view === "macro") return;
+    setCameraMoving(!reduced);
+    setView("macro");
+    if (!reduced) window.setTimeout(() => setCameraMoving(false), 900);
+  };
+  const galleryFaces = Array.from({ length: 9 }, (_, index) => CARD_TWIN_CARDS[index % CARD_TWIN_CARDS.length]);
 
   return (
     <main data-testid="pokemon-cards-exhibit-active" data-reduced-motion={String(reduced)} className="card-exhibit" style={{ "--card-accent": card.accent } as CSSProperties}>
@@ -58,7 +67,16 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
       <div className="hero-cards">
-        <PokemonCardStage card={card} reduced={reduced} view={initialView} texturesReady={texturesReady} onTexturesReady={handleReady} />
+        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} />
+        <aside className="card-face-gallery" aria-label="Nine canonical card faces">
+          {galleryFaces.map((face, index) => <button key={`${face.id}-${index}`} type="button" onClick={() => chooseCard(index % CARD_TWIN_CARDS.length)} aria-label={`Select ${face.name} card ${index + 1}`}>
+            {/* Canonical images remain uncropped; the sheen is a separate light-response layer. */}
+            {/* eslint-disable-next-line @next/next/no-img-element -- canonical exhibit pixels must bypass optimization. */}
+            <img data-card-face="true" src={face.canonical} alt={`${face.name} ${face.printing} canonical card face`} />
+            <i aria-hidden="true" />
+          </button>)}
+        </aside>
+        <button type="button" className="inspect-card" onClick={inspectCard}>Inspect selected card</button>
         <div className="layer-ledger" aria-label={`${card.name} semantic layer ledger`}>
           {card.layers.map((layer) => <article key={layer.id} data-card-object="true"><b>{layer.label}</b><span>{layer.depthMm.toFixed(1)} mm · exact RGBA</span></article>)}
         </div>
@@ -69,7 +87,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <article data-card-object="true" className="study-card"><span>PROVENANCE</span><b>HD</b><small>Canonical source</small></article>
         <article data-card-object="true" className="study-card"><span>SEGMENTATION</span><b>2.1</b><small>Meta SAM</small></article>
       </section>
-      <footer data-testid="exhibit-controls"><span>Pointer or phone tilt moves each semantic plane by depth</span><b>{initialView === "side" ? "EXPLODED LAYERS" : "ASSEMBLED FRONT"} · REDUCED MOTION SAFE</b></footer>
+      <footer data-testid="exhibit-controls"><span>Pointer or phone tilt moves each semantic plane by depth</span><b>{view === "side" ? "EXPLODED LAYERS" : "ASSEMBLED FRONT"} · REDUCED MOTION SAFE</b></footer>
     </main>
   );
 }
