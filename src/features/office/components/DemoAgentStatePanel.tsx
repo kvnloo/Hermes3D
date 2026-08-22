@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ThinkingOrb, type OrbState } from "thinking-orbs";
 import type { CompanyDirectoryAgentV1 } from "@/lib/public-directory/companyDirectoryV1";
 import { syntheticStateAt, type DemoAgentState } from "@/lib/live/publicDemoState";
@@ -48,12 +48,27 @@ function DemoOrb({ state, roleName }: { state: DemoAgentState; roleName: string 
 export function DemoAgentStatePanel({ roles }: { roles: CompanyDirectoryAgentV1[] }) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const safeRoles = useMemo(() => roles.slice(0, 5), [roles]);
+  const visibleStatesRef = useRef(safeRoles.map((_, index) => syntheticStateAt(0, index)).join(","));
 
   useEffect(() => {
     const startedAt = performance.now();
-    const timerId = window.setInterval(() => setElapsedMs(performance.now() - startedAt), 1_000);
-    return () => window.clearInterval(timerId);
-  }, []);
+    const updateVisibleStates = () => {
+      if (document.visibilityState !== "visible") return;
+      const nextElapsedMs = performance.now() - startedAt;
+      const nextVisibleStates = safeRoles
+        .map((_, index) => syntheticStateAt(nextElapsedMs, index))
+        .join(",");
+      if (nextVisibleStates === visibleStatesRef.current) return;
+      visibleStatesRef.current = nextVisibleStates;
+      setElapsedMs(nextElapsedMs);
+    };
+    const timerId = window.setInterval(updateVisibleStates, 1_000);
+    document.addEventListener("visibilitychange", updateVisibleStates);
+    return () => {
+      window.clearInterval(timerId);
+      document.removeEventListener("visibilitychange", updateVisibleStates);
+    };
+  }, [safeRoles]);
 
   return (
     <section className="h-full overflow-y-auto px-3 py-3" aria-label="Synthetic demo agent states">

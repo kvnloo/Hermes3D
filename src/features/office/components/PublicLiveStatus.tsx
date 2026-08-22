@@ -10,18 +10,27 @@ export function PublicLiveStatus() {
 
   useEffect(() => {
     let frameId = 0;
-    let active = true;
-    const onFrame = (timestamp: number) => {
-      lastFrameAt.current = timestamp;
-      if (active) frameId = window.requestAnimationFrame(onFrame);
+    let previousHealthy = false;
+    const sample = () => {
+      if (document.visibilityState !== "visible") {
+        if (previousHealthy) {
+          previousHealthy = false;
+          setHealthy(false);
+        }
+        return;
+      }
+      frameId = window.requestAnimationFrame((timestamp) => {
+        lastFrameAt.current = timestamp;
+        const nextHealthy = rendererHeartbeatIsHealthy(lastFrameAt.current, performance.now());
+        if (nextHealthy !== previousHealthy) {
+          previousHealthy = nextHealthy;
+          setHealthy(nextHealthy);
+        }
+      });
     };
-    frameId = window.requestAnimationFrame(onFrame);
-    const timerId = window.setInterval(() => {
-      const now = performance.now();
-      setHealthy(document.visibilityState === "visible" && rendererHeartbeatIsHealthy(lastFrameAt.current, now));
-    }, 1_000);
+    sample();
+    const timerId = window.setInterval(sample, 1_000);
     return () => {
-      active = false;
       window.cancelAnimationFrame(frameId);
       window.clearInterval(timerId);
     };
