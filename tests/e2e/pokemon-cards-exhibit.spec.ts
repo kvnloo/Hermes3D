@@ -40,6 +40,40 @@ async function readCanvasMetrics(page: Page) {
   }, screenshot.toString("base64"));
 }
 
+async function readCardPixelBounds(page: Page) {
+  const screenshot = await page.locator('[data-testid="pokemon-card-webgl-stage"] canvas').screenshot();
+  return page.evaluate(async (base64) => {
+    const binary = atob(base64);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    const source = await createImageBitmap(new Blob([bytes], { type: "image/png" }));
+    const sample = document.createElement("canvas");
+    sample.width = 240;
+    sample.height = 160;
+    const context = sample.getContext("2d", { willReadFrequently: true });
+    if (!context) throw new Error("2D card sampler unavailable");
+    context.drawImage(source, 0, 0, sample.width, sample.height);
+    source.close();
+    const pixels = context.getImageData(0, 0, sample.width, sample.height).data;
+    let top = sample.height;
+    let bottom = -1;
+    for (let index = 0; index < pixels.length; index += 4) {
+      const [red, green, blue] = [pixels[index], pixels[index + 1], pixels[index + 2]];
+      const luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+      if (luminance > 100 && Math.max(red, green, blue) - Math.min(red, green, blue) > 20) {
+        const y = Math.floor(index / 4 / sample.width);
+        top = Math.min(top, y);
+        bottom = Math.max(bottom, y);
+      }
+    }
+    return {
+      top,
+      bottom,
+      height: bottom >= top ? bottom - top + 1 : 0,
+      sampleHeight: sample.height,
+    };
+  }, screenshot.toString("base64"));
+}
+
 test.beforeEach(async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto(exhibitUrl, { waitUntil: "domcontentloaded" });
@@ -111,6 +145,18 @@ for (const viewport of [
       expect(box.x + box.width).toBeLessThanOrEqual(viewport.width);
       expect(box.y + box.height).toBeLessThanOrEqual(viewport.height);
     }
+
+    if (viewport.name === "mobile") {
+      const gallery = await page.locator(".card-face-gallery").boundingBox();
+      const stage = await page.locator('[data-testid="pokemon-card-webgl-stage"]').boundingBox();
+      expect(gallery).not.toBeNull();
+      expect(stage).not.toBeNull();
+      expect((gallery?.y ?? 0) + (gallery?.height ?? 0)).toBeLessThanOrEqual(stage?.y ?? 0);
+      expect(stage?.height ?? 0).toBeGreaterThanOrEqual(340);
+      const cardPixels = await readCardPixelBounds(page);
+      expect(cardPixels.top).toBeGreaterThan(3);
+      expect(cardPixels.bottom).toBeLessThan(cardPixels.sampleHeight - 4);
+    }
   });
 }
 
@@ -124,12 +170,18 @@ test("reduced motion disables foil animation", async ({ page }) => {
 test("inspection camera continuously moves from gallery without a navigation cut", async ({ page }) => {
   const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
   await expect(stage).toHaveAttribute("data-view", "gallery");
+  await expect(stage).toHaveAttribute("data-textures-ready", "true");
+  const galleryCard = await readCardPixelBounds(page);
   const originalUrl = page.url();
   await page.getByRole("button", { name: "Inspect selected card" }).click();
   await expect(stage).toHaveAttribute("data-camera-transition", "moving");
   await expect(stage).toHaveAttribute("data-camera-transition", "settled");
   await expect(stage).toHaveAttribute("data-camera-anchor", "arcanine-sm1-22-inspection");
   expect(page.url()).toBe(originalUrl);
+  await expect(page.locator(".card-face-gallery")).toBeHidden();
+  await expect(page.locator(".layer-ledger")).toBeHidden();
+  const inspectionCard = await readCardPixelBounds(page);
+  expect(inspectionCard.height).toBeGreaterThan(galleryCard.height * 1.08);
 
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.reload();

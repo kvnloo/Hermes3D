@@ -33,7 +33,7 @@ function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side
     const nextZoom = view === "side"
       ? (mobile ? 64 : 92)
       : view === "macro"
-        ? (mobile ? 96 : 112)
+        ? (mobile ? 130 : 160)
         : (mobile ? 116 : 138);
     const nextX = view === "gallery" && !mobile ? 0.38 : view === "side" ? 0.2 : 0;
     const amount = reduced ? 1 : 0.075;

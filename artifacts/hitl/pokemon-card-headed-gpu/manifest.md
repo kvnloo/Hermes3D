@@ -1,6 +1,6 @@
 # Headed GPU Exhibit Evidence Manifest — PASSING
 
-- Base revision: `ee024c61ae6750bedfe9a70c6e4efc700e747be7`
+- Parent revision: `01430986e2c92ff4453080ddc59cc856906f3833`; these recaptures include the immediately following Second Mate mobile/inspection repair commit.
 - Branch: `feat/pokemon-card-exhibit-preview`
 - Runtime: system Chromium, headed on `DISPLAY=:1`
 - GPU display: NVIDIA GeForce RTX 3080 Ti, direct rendering; browser readback in `capture-state.json` is `ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 3080 Ti/PCIe/SSE2, OpenGL 4.5.0)`.
@@ -24,8 +24,8 @@ PASS.
 PASS.
 
 - `desktop-1920x1080.png` — nine uncropped canonical faces visible alongside the exact layered hero, tactile slab, and plinth.
-- `mobile-390x844.png` — nine uncropped canonical faces visible in a compact 3×3 gallery; measured runtime state reports `cardFaces=9`, viewport `390×844`, and `scrollWidth=390`.
-- `inspection-1920x1080.png` — settled inspection framing retains the readable face, slab, and plinth.
+- `mobile-390x844.png` — nine uncropped canonical faces visible in a compact 3×3 gallery above, rather than overlapping, the fully framed mounted hero; measured runtime state reports `cardFaces=9`, viewport `390×844`, and `scrollWidth=390`.
+- `inspection-1920x1080.png` — settled isolated inspection framing hides gallery/ledger distractions and enlarges the readable face while retaining the slab and plinth.
 - `gallery-to-inspection-1920x1080.webm` — VP9, 1920×1080, 8.0 seconds; includes pointer-driven light response and the continuous in-page camera move.
 - `passing-motion-contact-sheet.png` — eight one-second full-frame samples from the passing video.
 - `pixel-inspection.json` — both halves of every sampled frame contain substantial image variation. Right-half standard deviation remains 31.90–33.07 (not a persistent gray field); left-half standard deviation remains 43.28–52.50.

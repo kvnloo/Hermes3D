@@ -66,7 +66,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <ol data-testid="cardtwin-pipeline">{revealLabels.map((label, index) => <li key={label} data-active={index <= phaseIndex}><i>{index + 1}</i>{label}</li>)}</ol>
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
-      <div className="hero-cards">
+      <div className="hero-cards" data-view={view}>
         <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} />
         <aside className="card-face-gallery" aria-label="Nine canonical card faces">
           {galleryFaces.map((face, index) => <button key={`${face.id}-${index}`} type="button" onClick={() => chooseCard(index % CARD_TWIN_CARDS.length)} aria-label={`Select ${face.name} card ${index + 1}`}>
