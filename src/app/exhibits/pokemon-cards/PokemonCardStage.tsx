@@ -32,7 +32,7 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
 }) {
   const root = useRef<THREE.Group>(null);
   const orientation = useRef({ x: 0, y: 0 });
-  const textures = useLoader(THREE.TextureLoader, card.layers.map((layer) => layer.texture));
+  const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
 
   useMemo(() => textures.forEach((texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -72,9 +72,9 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
   });
 
   return <group ref={root}>
-    <mesh position-z={-0.045} visible={!exploded}>
-      <boxGeometry args={[2.15, 3, 0.09]} />
-      <meshStandardMaterial color="#241e18" roughness={0.72} metalness={0.12} />
+    <mesh position-z={-0.006} visible={!exploded}>
+      <planeGeometry args={[2.15, 3]} />
+      <meshBasicMaterial map={textures[0]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
     </mesh>
     {card.layers.map((layer, index) => <mesh
       key={layer.id}
@@ -82,7 +82,7 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
       renderOrder={index + 1}
     >
       <planeGeometry args={[2.15, 3]} />
-      <meshBasicMaterial map={textures[index]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+      <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
     </mesh>)}
   </group>;
 }
@@ -102,6 +102,7 @@ export function PokemonCardStage({ card, reduced, view, texturesReady, onTexture
     data-view={view}
     data-card-id={card.id}
     data-card-printing={`${card.name} · ${card.set} · ${card.printing}`}
+    data-hidden-fill={card.hiddenFill}
     data-textures-ready={String(texturesReady)}
     data-camera-anchor={view === "gallery" ? "gallery" : `${card.id}-inspection`}
     data-camera-transition={reduced ? "instant" : view === "gallery" ? "idle" : "settled"}

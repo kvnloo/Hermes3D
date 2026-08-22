@@ -12,6 +12,7 @@ export type CardTwinCard = {
   set: string;
   accent: string;
   canonical: string;
+  hiddenFill: string;
   layers: readonly CardTwinLayer[];
 };
 
@@ -27,6 +28,7 @@ export const CARD_TWIN_CARDS: readonly CardTwinCard[] = [
     set: "Sun & Moon",
     accent: "#e8a45b",
     canonical: "/exhibits/pokemon-cards/canonical/arcanine-sm1-22.png",
+    hiddenFill: texture("arcanine-sm1-22", "hidden-background-fill"),
     layers: [
       { id: "far-background", label: "Far background", depthMm: 0, texture: texture("arcanine-sm1-22", "far-background") },
       { id: "hero", label: "Arcanine silhouette", depthMm: 1.5, texture: texture("arcanine-sm1-22", "hero") },
@@ -41,6 +43,7 @@ export const CARD_TWIN_CARDS: readonly CardTwinCard[] = [
     set: "Evolving Skies",
     accent: "#a99cff",
     canonical: "/exhibits/pokemon-cards/canonical/umbreon-vmax-swsh7-215.png",
+    hiddenFill: texture("umbreon-vmax-swsh7-215", "hidden-background-fill"),
     layers: [
       { id: "far-background", label: "Moonlit distance", depthMm: 0, texture: texture("umbreon-vmax-swsh7-215", "far-background") },
       { id: "hero", label: "Umbreon silhouette", depthMm: 1.8, texture: texture("umbreon-vmax-swsh7-215", "hero") },
@@ -55,6 +58,7 @@ export const CARD_TWIN_CARDS: readonly CardTwinCard[] = [
     set: "Prismatic Evolutions",
     accent: "#9fd58a",
     canonical: "/exhibits/pokemon-cards/canonical/leafeon-ex-sv8pt5-144.png",
+    hiddenFill: texture("leafeon-ex-sv8pt5-144", "hidden-background-fill"),
     layers: [
       { id: "far-background", label: "Forest distance", depthMm: 0, texture: texture("leafeon-ex-sv8pt5-144", "far-background") },
       { id: "hero", label: "Leafeon silhouette", depthMm: 1.5, texture: texture("leafeon-ex-sv8pt5-144", "hero") },

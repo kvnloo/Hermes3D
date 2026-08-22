@@ -4,7 +4,7 @@
 
 **PASS — all three exact printings pass the strict asset, runtime, responsive, reduced-motion, and visual sanity gates.**
 
-Revision scope: `feat/pokemon-card-exhibit-preview`, captured from the final pre-commit worktree and committed by task `t_c0a29444`. The viewer uses exact canonical visible pixels cut into mutually exclusive RGBA planes. No SR, synthetic replacement art, SAM3D, mesh reconstruction, or visible inpainting is used. Hidden-only Telea fills are separately disclosed in each ontology-v3 manifest and are not loaded by the visible viewer.
+Revision scope: `feat/pokemon-card-exhibit-preview`, captured from the final pre-commit worktree and committed by task `t_c0a29444`, then corrected after independent review to load each manifest-disclosed hidden-only Telea fill behind the moving exact-pixel planes. The viewer uses exact canonical visible pixels cut into mutually exclusive RGBA planes. No SR, synthetic replacement art, SAM3D, mesh reconstruction, or visible inpainting is used. The fill assets never overwrite canonical visible pixels and prevent separation gaps from exposing a primitive backing.
 
 ## Exact printings
 
@@ -23,6 +23,9 @@ Canonical source/rights/no-SR disclosure: `public/exhibits/pokemon-cards/canonic
 - License: Apache-2.0
 - Checkpoint: `sam2.1_hiera_tiny.pt`, 156,008,466 bytes
 - Checkpoint SHA-256: `7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69`
+- Umbreon checkpoint: `sam2.1_hiera_small.pt`, 184,416,285 bytes
+- Umbreon checkpoint SHA-256: `6d1aa6f30de5c92224f8172114de081d104bbd23dd9dc5c58996f0cad5dc4d38`
+- Per-printing checkpoint usage is pinned in `public/exhibits/pokemon-cards/framework/environment-lock.json` and each manifest.
 - Pinned environment: `/mnt/zer0models/project-envs/cardtwin-sam2`
 - GPU smoke target: NVIDIA GeForce RTX 3080 Ti 12GB; peak allocated 625,829,376 bytes
 - Reproduction details: `docs/cardtwin-sam2.md`

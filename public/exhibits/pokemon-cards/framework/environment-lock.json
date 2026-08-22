@@ -9,5 +9,21 @@
   "checkpointSha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
   "checkpointBytes": 156008466,
   "config": "configs/sam2.1/sam2.1_hiera_t.yaml",
+  "checkpoints": [
+    {
+      "name": "sam2.1_hiera_tiny.pt",
+      "path": "/mnt/zer0models/models/sam2.1/sam2.1_hiera_tiny.pt",
+      "sha256": "7402e0d864fa82708a20fbd15bc84245c2f26dff0eb43a4b5b93452deb34be69",
+      "bytes": 156008466,
+      "usedBy": ["arcanine-sm1-22", "leafeon-ex-sv8pt5-144"]
+    },
+    {
+      "name": "sam2.1_hiera_small.pt",
+      "path": "/mnt/zer0models/models/sam2.1/sam2.1_hiera_small.pt",
+      "sha256": "6d1aa6f30de5c92224f8172114de081d104bbd23dd9dc5c58996f0cad5dc4d38",
+      "bytes": 184416285,
+      "usedBy": ["umbreon-vmax-swsh7-215"]
+    }
+  ],
   "determinism": { "seed": 0, "torchDeterministicAlgorithms": true, "cudnnBenchmark": false, "pngCompressionLevel": 9 }
 }

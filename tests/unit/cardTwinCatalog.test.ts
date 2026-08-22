@@ -9,6 +9,7 @@ describe("CardTwin viewer catalog", () => {
       "leafeon-ex-sv8pt5-144",
     ]);
     for (const card of CARD_TWIN_CARDS) {
+      expect(card.hiddenFill).toBe(`/exhibits/pokemon-cards/${card.id}/layers/hidden-background-fill.png`);
       expect(card.layers.length).toBeGreaterThanOrEqual(3);
       expect(card.layers.map((layer) => layer.depthMm)).toEqual(
         [...card.layers].map((layer) => layer.depthMm).sort((a, b) => a - b),
