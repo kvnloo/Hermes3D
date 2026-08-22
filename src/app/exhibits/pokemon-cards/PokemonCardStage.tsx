@@ -13,7 +13,11 @@ function ResponsiveCamera({ view }: { view: "gallery" | "macro" | "side" }) {
   useFrame(() => {
     const orthographic = camera as THREE.OrthographicCamera;
     const mobile = size.width < 700;
-    const nextZoom = view === "side" ? (mobile ? 64 : 92) : (mobile ? 116 : 138);
+    const nextZoom = view === "side"
+      ? (mobile ? 64 : 92)
+      : view === "macro"
+        ? (mobile ? 96 : 112)
+        : (mobile ? 116 : 138);
     if (orthographic.zoom !== nextZoom) {
       // eslint-disable-next-line react-hooks/immutability -- Three camera is intentionally imperative frame state.
       orthographic.zoom = nextZoom;
@@ -106,6 +110,7 @@ export function PokemonCardStage({ card, reduced, view, texturesReady, onTexture
     data-textures-ready={String(texturesReady)}
     data-camera-anchor={view === "gallery" ? "gallery" : `${card.id}-inspection`}
     data-camera-transition={reduced ? "instant" : view === "gallery" ? "idle" : "settled"}
+    data-camera-framing={view === "macro" ? "inspection-fit" : undefined}
     className="webgl-stage"
     aria-label={`Exact ${card.name} ${card.printing} layered CardTwin construction`}
   >

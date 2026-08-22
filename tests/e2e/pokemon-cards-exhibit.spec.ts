@@ -144,7 +144,9 @@ test("hero construction is real WebGL geometry with semantic layer depth", async
 
 test("macro and side evidence modes isolate the deep construction", async ({ page }) => {
   await page.goto(`${exhibitUrl}&view=macro`, { waitUntil: "domcontentloaded" });
-  await expect(page.locator('[data-testid="pokemon-card-webgl-stage"]')).toHaveAttribute("data-view", "macro");
+  const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
+  await expect(stage).toHaveAttribute("data-view", "macro");
+  await expect(stage).toHaveAttribute("data-camera-framing", "inspection-fit");
   await page.goto(`${exhibitUrl}&view=side`, { waitUntil: "domcontentloaded" });
-  await expect(page.locator('[data-testid="pokemon-card-webgl-stage"]')).toHaveAttribute("data-view", "side");
+  await expect(stage).toHaveAttribute("data-view", "side");
 });
