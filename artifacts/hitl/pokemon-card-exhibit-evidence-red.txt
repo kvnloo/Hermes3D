@@ -1,0 +1,36 @@
+Pokémon card exhibit evidence-mode RED run
+
+Route/state
+- URL: /exhibits/pokemon-cards?evidence=1
+- Browser: isolated Playwright Chromium via /usr/bin/chromium
+- Server: existing production server on 127.0.0.1:3198
+- Viewports asserted: default 1280x720, desktop 1920x1080, mobile 390x844
+
+Exact command
+PLAYWRIGHT_PORT=3198 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium PLAYWRIGHT_JSON_OUTPUT_NAME=artifacts/hitl/pokemon-card-exhibit-evidence-red.json npx playwright test tests/e2e/pokemon-cards-exhibit.spec.ts --config=playwright.config.ts --reporter=json
+
+Result
+- 9 tests total
+- 5 passed
+- 4 failed
+- Runtime: 36.6s
+
+Relevant failing assertions
+1. hero composition exposes nine readable cards without overlay collision
+   Expected every card bottom <= 720; received 831.796875.
+2. rendered WebGL pixels reject blank white, black, and brown output
+   Expected sampled mean luminance > 28; received 22.624066764323953.
+3. mobile evidence framing keeps all nine cards in bounds
+   Expected every card bottom <= 844; received 855.1875.
+4. inspection camera advertises a deliberate transition and reduced motion disables it
+   Expected data-camera-transition="settled" in macro inspection mode; attribute was absent.
+
+Passing setup/contract assertions
+- Evidence route mounted pokemon-cards-exhibit-active without onboarding.
+- Desktop 1920x1080 framing kept all nine cards in bounds.
+- Reduced-motion mode disabled animation.
+- Three WebGL constructions and variant depth contracts were present.
+- Macro and side evidence routes selected the deep construction.
+
+Interpretation
+These are intentional RED failures against the current rejected exhibit state. They are behavior/evidence failures (off-viewport cards, under-threshold rendered luminance, missing inspection transition contract), not browser, route, WebGL, or test-harness setup failures.
