@@ -2,11 +2,12 @@ import { describe, expect, it } from "vitest";
 import { CARD_TWIN_CARDS, getCardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 
 describe("CardTwin viewer catalog", () => {
-  it("loads all three exact printings with deterministic semantic depth order", () => {
+  it("loads every exact printing with deterministic semantic depth order", () => {
     expect(CARD_TWIN_CARDS.map((card) => card.id)).toEqual([
       "arcanine-sm1-22",
       "umbreon-vmax-swsh7-215",
       "leafeon-ex-sv8pt5-144",
+      "sawsbuck-tef-166",
     ]);
     for (const card of CARD_TWIN_CARDS) {
       expect(card.hiddenFill).toBe(`/exhibits/pokemon-cards/${card.id}/layers/hidden-background-fill.png`);
