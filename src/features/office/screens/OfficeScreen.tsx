@@ -1068,14 +1068,12 @@ export function OfficeScreen({
   // The office has a single floor — Hermes.
   const activeFloorId = DEFAULT_ACTIVE_FLOOR_ID;
   const [gatewayModels, setGatewayModels] = useState<GatewayModelChoice[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() =>
+    typeof window === "undefined" ? true : shouldOpenHQSidebar(window.innerWidth),
+  );
   const [marketplaceOpen, setMarketplaceOpen] = useState(false);
   const [kanbanInstallPromptOpen, setKanbanInstallPromptOpen] = useState(false);
 
-  useEffect(() => {
-    // Keep the desktop HQ default without allowing it to cover the office on phones.
-    setSidebarOpen(shouldOpenHQSidebar(window.innerWidth));
-  }, []);
   const [kanbanInstallProgress, setKanbanInstallProgress] = useState<{
     active: boolean;
     percent: number;
@@ -4902,11 +4900,11 @@ export function OfficeScreen({
       ) : null}
 
       {showHermesConsole ? (
-        <section className="pointer-events-auto fixed bottom-3 left-3 z-30 flex w-[520px] max-w-[calc(100vw-1.5rem)] flex-col overflow-hidden rounded border border-cyan-500/25 bg-black/78 shadow-2xl backdrop-blur">
-          <div className="flex items-center justify-between border-b border-cyan-500/15 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-cyan-200/80">
+        <section className="pointer-events-auto fixed bottom-2 left-2 z-30 flex w-[calc(100vw-1rem)] max-w-[520px] flex-col overflow-hidden rounded border border-cyan-500/25 bg-black/78 shadow-2xl backdrop-blur sm:bottom-3 sm:left-3">
+          <div className="flex min-w-0 items-center justify-between gap-2 border-b border-cyan-500/15 px-2 py-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-cyan-200/80 sm:px-3 sm:py-2 sm:text-[11px] sm:tracking-[0.18em]">
             <span>Agent Event Console</span>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] text-cyan-100/45">
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+              <span className="hidden text-[10px] text-cyan-100/45 sm:inline">
                 agents {state.agents.length} | events{" "}
                 {filteredHermesLogEntries.length}/{hermesLogEntries.length}
               </span>
@@ -4915,7 +4913,7 @@ export function OfficeScreen({
                 onClick={() => {
                   void handleCopyHermesConsoleJson();
                 }}
-                className="rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
+                className="hidden rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50 sm:block"
               >
                 {hermesConsoleCopyStatus === "copied"
                   ? "Copied"
@@ -4926,7 +4924,7 @@ export function OfficeScreen({
               <button
                 type="button"
                 onClick={handleDownloadHermesConsoleJson}
-                className="rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50"
+                className="hidden rounded border border-cyan-500/20 px-2 py-0.5 text-[9px] text-cyan-100/70 transition-colors hover:border-cyan-400/45 hover:text-cyan-50 sm:block"
               >
                 Download JSON
               </button>
@@ -5114,7 +5112,7 @@ export function OfficeScreen({
       ) : null}
 
       <div
-        className={`fixed bottom-3 z-30 flex flex-col items-end gap-2 ${sidebarOpen ? "right-84" : "right-3"} ${
+        className={`fixed bottom-14 right-2 z-30 flex flex-col items-end gap-2 sm:bottom-3 ${sidebarOpen ? "sm:right-84" : "sm:right-3"} ${
           debugEnabled ? "hidden" : ""
         }`}
       >

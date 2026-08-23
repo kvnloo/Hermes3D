@@ -116,6 +116,23 @@ describe("slice-02: rebuild bursts debounce into exactly one bounded cycle", () 
     unsubscribe();
     lifecycle.close();
   });
+
+  it("terminal completion disarms a late quiet callback in the real activity path", () => {
+    vi.useFakeTimers();
+    const lifecycle = makeLifecycle({ quietMs: 75, stageMs: 10 });
+    const { events } = collect(lifecycle);
+    lifecycle.compilerActivity();
+    vi.advanceTimersByTime(65);
+    lifecycle.compilerActivity();
+    vi.advanceTimersByTime(10);
+    lifecycle.compilerActivity();
+    vi.advanceTimersByTime(5000);
+    const completeIndex = events.findIndex((event) => event.type === "build.complete");
+    expect(completeIndex).toBeGreaterThan(-1);
+    expect(events.slice(completeIndex + 1)).toEqual([]);
+    expect(new Set(events.map((event) => event.stage)).size).toBe(events.length);
+    lifecycle.close();
+  });
 });
 
 describe("slice-02: lifecycle transitions fire correctly and exactly once per cycle", () => {

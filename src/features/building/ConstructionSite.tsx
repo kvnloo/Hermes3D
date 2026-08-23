@@ -2,6 +2,7 @@
 
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import { Html } from "@react-three/drei";
 import * as THREE from "three";
 import type { BuildSceneState, BuildStage } from "./buildContract";
 
@@ -59,7 +60,13 @@ export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
   });
 
   return (
-    <group position={[11.5, 0.03, -4.5]} visible={presentation.siteVisible}>
+    <group position={[6.5, 0.03, -1.5]} visible={presentation.siteVisible}>
+      <Html position={[0, 7.8, 0]} center distanceFactor={18} zIndexRange={[12, 0]}>
+        <div className="pointer-events-none min-w-max rounded-md border border-amber-300/70 bg-black/85 px-3 py-2 text-center font-mono text-[11px] font-bold tracking-[0.16em] text-amber-100 shadow-[0_0_24px_rgba(251,191,36,0.35)]">
+          <div>MUSEUM ANNEX</div>
+          <div className="mt-1 text-[9px] text-cyan-200">{state?.stage} · {presentation.finishedVisible ? "HANDOFF COMPLETE" : "CONSTRUCTION ACTIVE"}</div>
+        </div>
+      </Html>
       <group visible={active}>
       <primitive object={grid} position={[0, 0.02, 0]} visible={discoveryVisible} />
       <mesh position={[0, 0.055, 0]} visible={discoveryVisible}>
@@ -157,7 +164,7 @@ export function BuildProvenance({ state }: { state: BuildSceneState | null }) {
   return (
     <aside
       data-testid="build-provenance"
-      className="pointer-events-none absolute bottom-4 left-4 z-20 max-w-[calc(100%-2rem)] rounded border px-3 py-2 font-mono text-[11px] backdrop-blur-md sm:bottom-6 sm:left-6 sm:text-xs"
+      className="pointer-events-none absolute left-2 top-14 z-20 max-w-[calc(100%-4rem)] rounded border px-2 py-1.5 font-mono text-[9px] backdrop-blur-md sm:bottom-6 sm:left-6 sm:top-auto sm:max-w-[calc(100%-2rem)] sm:px-3 sm:py-2 sm:text-xs"
       style={{
         borderColor: problem ? "rgba(255,64,92,.7)" : "rgba(80,224,255,.6)",
         background: "rgba(4,15,22,.78)",

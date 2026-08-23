@@ -45,6 +45,13 @@ function createBuildLifecycle({ revision, now = () => new Date(), quietMs = 700,
     timers.clear();
     if (quietTimer) { clearTimeout(quietTimer); quietTimer = null; }
   };
+  const complete = () => {
+    if (!active || !compilerDone || announcedStages.has("READY")) return;
+    cancelTimers();
+    announcedStages.add("READY");
+    active = false;
+    emit(event("build.complete", "READY", 100));
+  };
   const start = () => {
     cancelTimers();
     active = true;
@@ -60,7 +67,7 @@ function createBuildLifecycle({ revision, now = () => new Date(), quietMs = 700,
       // compilation is still running.
       announcedStages.add(stage);
       emit(event(compilerDone ? "build.progress" : "asset.stage", stage));
-      if (stage === "VERIFY") schedule(() => { if (active && compilerDone) { emit(event("build.complete", "READY", 100)); active = false; } }, Math.min(stageMs, 1500));
+      if (stage === "VERIFY") schedule(complete, Math.min(stageMs, 1500));
     }, stageMs * (index + 1)));
   };
   const compilerActivity = () => {
@@ -70,7 +77,7 @@ function createBuildLifecycle({ revision, now = () => new Date(), quietMs = 700,
       quietTimer = null;
       compilerDone = true;
       const stage = state?.stage ?? "DISCOVER";
-      if (state?.stage === "VERIFY") { emit(event("build.complete", "READY", 100)); active = false; }
+      if (state?.stage === "VERIFY") complete();
       else if (!announcedStages.has(stage)) {
         announcedStages.add(stage);
         emit(event("build.progress", stage));
