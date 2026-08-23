@@ -3,6 +3,7 @@ const https = require("node:https");
 const next = require("next");
 
 const { createAccessGate } = require("./access-gate");
+const { createBuildEventHandler, createBuildLifecycle, createBuildOutputObserver } = require("./build-events");
 const { createGatewayProxy } = require("./gateway-proxy");
 const { assertPublicHostAllowed, resolveHosts } = require("./network-policy");
 const { loadUpstreamGatewaySettings } = require("./studio-settings");
@@ -87,6 +88,12 @@ async function main() {
   const accessGate = createAccessGate({
     token: process.env.STUDIO_ACCESS_TOKEN,
   });
+  const buildEventsEnabled = dev && process.env.HERMES3D_BUILD_EVENTS_ENABLED === "true";
+  const revision = require("node:child_process")
+    .execFileSync("git", ["rev-parse", "--short=12", "HEAD"], { encoding: "utf8" })
+    .trim();
+  const buildLifecycle = createBuildLifecycle({ revision });
+  const handleBuildEvents = createBuildEventHandler({ enabled: buildEventsEnabled, lifecycle: buildLifecycle });
 
   const proxy = createGatewayProxy({
     loadUpstreamSettings: async () => {
@@ -103,6 +110,14 @@ async function main() {
   });
 
   await app.prepare();
+  if (buildEventsEnabled) {
+    buildLifecycle.compilerActivity();
+    const outputWatcher = createBuildOutputObserver({ root: require("node:path").join(process.cwd(), ".next"), onActivity: () => buildLifecycle.compilerActivity() });
+    process.once("exit", () => {
+      outputWatcher.close();
+      buildLifecycle.close();
+    });
+  }
   const handleUpgrade = app.getUpgradeHandler();
   const handleServerUpgrade = (req, socket, head) => {
     if (resolvePathname(req.url) === "/api/gateway/ws") {
@@ -118,10 +133,12 @@ async function main() {
     useHttps
       ? https.createServer(httpsCert, (req, res) => {
           if (accessGate.handleHttp(req, res)) return;
+          if (handleBuildEvents(req, res)) return;
           handle(req, res);
         })
       : http.createServer((req, res) => {
           if (accessGate.handleHttp(req, res)) return;
+          if (handleBuildEvents(req, res)) return;
           handle(req, res);
         });
 
