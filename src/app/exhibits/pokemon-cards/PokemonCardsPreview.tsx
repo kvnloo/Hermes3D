@@ -14,6 +14,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [texturesReady, setTexturesReady] = useState(false);
   const [view, setView] = useState(initialView);
   const [cameraMoving, setCameraMoving] = useState(false);
+  const [motionStatus, setMotionStatus] = useState<"idle" | "orientation" | "calibrated" | "denied" | "unavailable">("idle");
   const card = CARD_TWIN_CARDS[cardIndex];
 
   useEffect(() => {
@@ -37,6 +38,22 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
     setPhaseIndex(reduced ? revealPhases.length - 1 : 0);
   };
   const handleReady = useCallback(() => setTexturesReady(true), []);
+  const handleMotionSample = useCallback(() => setMotionStatus("calibrated"), []);
+  const enableMotion = async () => {
+    if (!("DeviceOrientationEvent" in window)) {
+      setMotionStatus("unavailable");
+      return;
+    }
+    const OrientationEvent = window.DeviceOrientationEvent as typeof DeviceOrientationEvent & {
+      requestPermission?: () => Promise<"granted" | "denied">;
+    };
+    try {
+      const permission = OrientationEvent.requestPermission ? await OrientationEvent.requestPermission() : "granted";
+      setMotionStatus(permission === "granted" ? "orientation" : "denied");
+    } catch {
+      setMotionStatus("denied");
+    }
+  };
   const inspectCard = () => {
     if (view === "macro") return;
     setCameraMoving(!reduced);
@@ -67,7 +84,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
       <div className="hero-cards" data-view={view}>
-        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} />
+        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} motionEnabled={motionStatus === "orientation" || motionStatus === "calibrated"} onMotionSample={handleMotionSample} />
         <aside className="card-face-gallery" aria-label="Nine canonical card faces">
           {galleryFaces.map((face, index) => <button key={`${face.id}-${index}`} type="button" onClick={() => chooseCard(index % CARD_TWIN_CARDS.length)} aria-label={`Select ${face.name} card ${index + 1}`}>
             {/* Canonical images remain uncropped; the sheen is a separate light-response layer. */}
@@ -77,6 +94,9 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
           </button>)}
         </aside>
         <button type="button" className="inspect-card" onClick={inspectCard}>Inspect selected card</button>
+        {!reduced && <button type="button" className="motion-control" onClick={enableMotion} disabled={motionStatus === "orientation" || motionStatus === "calibrated"}>
+          {motionStatus === "idle" ? "Enable motion" : motionStatus === "orientation" ? "Hold steady · calibrating" : motionStatus === "calibrated" ? "Orientation · calibrated" : motionStatus === "denied" ? "Motion denied · pointer active" : "Motion unavailable · pointer active"}
+        </button>}
         <div className="layer-ledger" aria-label={`${card.name} semantic layer ledger`}>
           {card.layers.map((layer) => <article key={layer.id} data-card-object="true"><b>{layer.label}</b><span>{layer.depthMm.toFixed(1)} mm · exact RGBA</span></article>)}
         </div>

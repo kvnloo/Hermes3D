@@ -2,10 +2,10 @@
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
-import { Suspense, useEffect, useMemo, useRef, type MutableRefObject } from "react";
+import { Suspense, useEffect, useRef, type MutableRefObject } from "react";
 import * as THREE from "three";
 import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
-import { resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
+import { applyCardTwinMotionFilter, normalizeCardTwinOrientation, resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
 
 type ContractRefs = MutableRefObject<Array<HTMLSpanElement | null>>;
 
@@ -50,35 +50,45 @@ function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side
   return null;
 }
 
-function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
+function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onReady, onMotionSample }: {
   card: CardTwinCard;
   reduced: boolean;
   exploded: boolean;
+  motionEnabled: boolean;
   contracts: ContractRefs;
   onReady: () => void;
+  onMotionSample: () => void;
 }) {
   const root = useRef<THREE.Group>(null);
+  const { gl } = useThree();
   const orientation = useRef({ x: 0, y: 0 });
+  const neutral = useRef<{ beta: number; gamma: number } | null>(null);
   const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
 
-  useMemo(() => textures.forEach((texture) => {
+  useEffect(() => textures.forEach((texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = 8;
+    texture.anisotropy = gl.capabilities.getMaxAnisotropy();
     texture.generateMipmaps = true;
     texture.minFilter = THREE.LinearMipmapLinearFilter;
-  }), [textures]);
+    texture.magFilter = THREE.LinearFilter;
+    texture.needsUpdate = true;
+  }), [gl, textures]);
 
   useEffect(() => {
     onReady();
+    if (!motionEnabled || reduced) return;
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      orientation.current = {
-        x: THREE.MathUtils.clamp((event.gamma ?? 0) / 22, -1, 1),
-        y: THREE.MathUtils.clamp((event.beta ?? 0) / 28, -1, 1),
-      };
+      if (document.hidden || event.beta == null || event.gamma == null) return;
+      const sample = { beta: event.beta, gamma: event.gamma };
+      neutral.current ??= sample;
+      const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
+      const target = normalizeCardTwinOrientation(sample, neutral.current, screenAngle);
+      orientation.current = applyCardTwinMotionFilter(orientation.current, target, 0.18);
+      onMotionSample();
     };
     window.addEventListener("deviceorientation", handleOrientation);
     return () => window.removeEventListener("deviceorientation", handleOrientation);
-  }, [onReady]);
+  }, [motionEnabled, onMotionSample, onReady, reduced]);
 
   useFrame(({ pointer }) => {
     if (!root.current) return;
@@ -111,7 +121,7 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
     </mesh>
     {card.layers.map((layer, index) => <mesh
       key={layer.id}
-      position={[exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0, 0, 0.012 + layer.depthMm * 0.04]}
+      position={[exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0, 0, 0.012 + layer.depthMm * 0.062]}
       renderOrder={index + 1}
     >
       <planeGeometry args={[2.15, 3]} />
@@ -134,13 +144,15 @@ function LayeredCard({ card, reduced, exploded, contracts, onReady }: {
   </group>;
 }
 
-export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady }: {
+export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, motionEnabled = false, onMotionSample = () => undefined }: {
   card: CardTwinCard;
   reduced: boolean;
   view: "gallery" | "macro" | "side";
   cameraMoving: boolean;
   texturesReady: boolean;
   onTexturesReady: () => void;
+  motionEnabled?: boolean;
+  onMotionSample?: () => void;
 }) {
   const exploded = view === "side";
   const contracts = useRef<Array<HTMLSpanElement | null>>([]);
@@ -180,7 +192,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
       <MuseumLighting reduced={reduced} />
       <ResponsiveCamera view={view} reduced={reduced} />
       <Suspense fallback={null}>
-        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} contracts={contracts} onReady={onTexturesReady} />
+        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} motionEnabled={motionEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSample={onMotionSample} />
       </Suspense>
     </Canvas>
   </section>;
