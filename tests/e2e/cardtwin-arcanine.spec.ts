@@ -102,7 +102,7 @@ test("all exact printings switch deterministically and expose real layer-relativ
   await page.goto("/exhibits/pokemon-cards?evidence=1&view=macro", { waitUntil: "domcontentloaded" });
   const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
   const choices = page.getByRole("button", { name: /view exact printing/i });
-  await expect(choices).toHaveCount(3);
+  await expect(choices).toHaveCount(cards.length);
 
   for (const [index, { printing: expected }] of cards.entries()) {
     await choices.nth(index).click();
