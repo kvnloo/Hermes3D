@@ -1,0 +1,3 @@
+[submodule "private/cardtwin-card-materials"]
+	path = private/cardtwin-card-materials
+	url = https://github.com/kvnloo/cardtwin-card-materials.git

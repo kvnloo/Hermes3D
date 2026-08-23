@@ -1,0 +1,150 @@
+{
+  "status": "PASS",
+  "cards": [
+    {
+      "cardId": "arcanine-sm1-22",
+      "printing": "Arcanine SM1 22/149",
+      "canonicalSha256": "763abeb960a5c5e362bf49b6e4e1210b8b3d6a483384a85de372d19ea848ed1c",
+      "dimensions": "734x1024",
+      "layers": [
+        {
+          "id": "far-background",
+          "semantic": "far-background",
+          "maskSha256": "8627b9707ed577036a6950f2f60f0aab7cade34ae43f14fe1078c35737346848",
+          "coverage": 0.141079
+        },
+        {
+          "id": "hero",
+          "semantic": "character/hero",
+          "maskSha256": "e80f9b57f9483e084b93b53941e90177d02d02529a92c79605a155b0d9f81fca",
+          "coverage": 0.10983
+        },
+        {
+          "id": "foreground-effects",
+          "semantic": "foreground-effects",
+          "maskSha256": "476ddbd2067920ca16f2b3b09466fc1665ab271619e62c44534cca5e4df89fbd",
+          "coverage": 0.069973
+        },
+        {
+          "id": "outer-frame-text",
+          "semantic": "outer-card/frame-text",
+          "maskSha256": "6a5b1d4bed49cb92acfb32e3257892782dcce1d19ff6c251208b97e17b2e1fcc",
+          "coverage": 0.679118
+        }
+      ],
+      "overlapPixels": 0,
+      "uncoveredPixels": 0,
+      "recompositionMaxChannelDifference": 0,
+      "maxHoleAreaPx": 0,
+      "edgeFringePx": 0,
+      "fill": {
+        "scope": "hidden-background-only",
+        "provenance": "inpainted-hidden-fill",
+        "maskSha256": "468ffa40ca19eff7d7d5a9fac3624a5a26f6ecb606aeb85c47bac0a3dabb4e23"
+      },
+      "evidence": {
+        "contactSheet": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/contact-sheet.png",
+        "heroEdgeQuality": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/hero-edge-quality.png",
+        "overlapLabelMap": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/overlap-label-map.png",
+        "occlusionGapMap": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/occlusion-gap-map.png",
+        "recompositionHeatmap": "artifacts/hitl/cardtwin-semantic-layers/arcanine-sm1-22/recomposition-difference-heatmap.png"
+      },
+      "status": "PASS"
+    },
+    {
+      "cardId": "umbreon-vmax-swsh7-215",
+      "printing": "Umbreon VMAX SWSH7 215/203",
+      "canonicalSha256": "0588afac1c3dee4c8a039d5ff9d0cff2ec4abfbcadedbb62b573750b8f772d92",
+      "dimensions": "734x1024",
+      "layers": [
+        {
+          "id": "far-background",
+          "semantic": "far-background",
+          "maskSha256": "3220e88dcf9d9973d17ce364bea756e9de8e961232c9ebb3dc76b3285e594b32",
+          "coverage": 0.267464
+        },
+        {
+          "id": "hero",
+          "semantic": "character/hero",
+          "maskSha256": "5d93e7aeebe13d4717aedb2b8a000ef1c2ca57edf15d09e87714bacc48d34630",
+          "coverage": 0.083873
+        },
+        {
+          "id": "foreground-architecture",
+          "semantic": "foreground-effects/foliage/architecture",
+          "maskSha256": "d056b94aca17043105fabdd875bc97f023b220f9eb037d05ef8a43b9d0f24255",
+          "coverage": 0.065645
+        },
+        {
+          "id": "outer-card-frame",
+          "semantic": "outer-card/frame",
+          "maskSha256": "17f2ae22cb271290c57cae1e19bc013e88104722d8d83ef3e95317ed7abf358b",
+          "coverage": 0.583018
+        }
+      ],
+      "overlapPixels": 0,
+      "uncoveredPixels": 0,
+      "recompositionMaxChannelDifference": 0,
+      "maxHoleAreaPx": 0,
+      "edgeFringePx": 0,
+      "fill": {
+        "scope": "hidden-background-only",
+        "provenance": "inpainted-hidden-fill",
+        "maskSha256": "90826d26cfcd984254f52c867cc80f2ab74093dca52a03d76270d1b4f3c71e1a"
+      },
+      "evidence": {
+        "assembledExact": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/assembled-exact.png",
+        "contactSheet": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/contact-sheet.png",
+        "edgeQualitySheet": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/edge-quality-sheet.png",
+        "overlapLabelMap": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/overlap-label-map.png",
+        "occlusionGapMap": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/occlusion-gap-map.png",
+        "recompositionHeatmap": "artifacts/hitl/cardtwin-semantic-layers/umbreon-vmax-swsh7-215/recomposition-difference-heatmap.png"
+      },
+      "status": "PASS"
+    },
+    {
+      "cardId": "leafeon-ex-sv8pt5-144",
+      "printing": "Leafeon ex PRE/SV8.5 144/131",
+      "canonicalSha256": "f00547340035daf54ba086ee1f4c6d907476ae2772030517b68605a9ebd9842f",
+      "dimensions": "733x1024",
+      "layers": [
+        {
+          "id": "far-background",
+          "semantic": "far-background",
+          "maskSha256": "490538a74b5cc6312be9dbd9c41ec35c9eb3d9f659e5b594aed37b6a88bc9923",
+          "coverage": 0.407433
+        },
+        {
+          "id": "hero",
+          "semantic": "character/hero",
+          "maskSha256": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9",
+          "coverage": 0.053426
+        },
+        {
+          "id": "outer-frame-text",
+          "semantic": "outer-card/frame-text",
+          "maskSha256": "47a361cc3d7933c4183aec6a5fd54911d3c6094801e16b67ac27319d6ff8848f",
+          "coverage": 0.539141
+        }
+      ],
+      "overlapPixels": 0,
+      "uncoveredPixels": 0,
+      "recompositionMaxChannelDifference": 0,
+      "maxHoleAreaPx": 0,
+      "edgeFringePx": 0,
+      "fill": {
+        "scope": "hidden-background-only",
+        "provenance": "inpainted-hidden-fill",
+        "maskSha256": "8888e5a12b6baf95e36b1d7228faea00ca28d99c841077d50a232b044eafbfd9"
+      },
+      "evidence": {
+        "contactSheet": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/contact-sheet.png",
+        "heroEdgeQuality": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/hero-edge-quality.png",
+        "overlapLabelMap": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/overlap-label-map.png",
+        "occlusionGapMap": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/occlusion-gap-map.png",
+        "recompositionHeatmap": "artifacts/hitl/cardtwin-semantic-layers/leafeon-ex-sv8pt5-144/recomposition-difference-heatmap.png"
+      },
+      "status": "PASS"
+    }
+  ]
+}

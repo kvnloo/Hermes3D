@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 2,
+  "viewport": [
+    390,
+    844
+  ],
+  "decisionRule": "cheapest option with post-downscale sharpness > Lanczos baseline and passing all structural gates",
+  "structuralThresholds": {
+    "ocrAgreementMin": 0.9,
+    "contourIouMin": 0.7,
+    "paletteDeltaEMax": 10.0,
+    "symbolTemplateMin": 0.8
+  },
+  "ocrReference": "A\n\nArcanine\n\n#1308\n\ni\n\ne/\n\n\"\n\n-\n\n%'\\\n\nM\n\n)\n\n4\n\ne\n\noo\n\net\n\nWXX  Searing Flame\n\n60\n\nYour opponent\u2019s Active Pok\u00e9mon is now Burned.\n\n|\n\n\u2018 WX Firestorm\n\n190\n\nj Discard 3 & Energy from this Pok\u00e9mon.\n\n\\\n\nCITEC. CIT\n\ns lodons\n\nOverloingithbeatyand ety tis\n\nstrongPok\u00e9on appeas inancient Easten\n\n| B 29 %\n\ne\n\nfolore\n\n<",
+  "methods": [
+    {
+      "method": "renderer-only + Lanczos",
+      "source": "public/exhibits/pokemon-cards/arcanine-sm1-22/source/arcanine-sm1-22.png",
+      "gpuWallSeconds": 0.0,
+      "batchGpuHours1000": 0.0,
+      "postDownscaleSharpness": 4326.008209660782,
+      "sharpnessGainVsBaseline": 0.0,
+      "sharpnessGainPerGpuSecond": null,
+      "structuralMetrics": {
+        "ocrAgreement": 1.0,
+        "contourIou": 1.0,
+        "paletteDeltaE": 0.0,
+        "symbolTemplateMatch": 0.9999996423721313
+      },
+      "structuralIdentityPass": true
+    },
+    {
+      "method": "RealESRGAN",
+      "source": "public/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/realesrgan-x4plus-baseline.png",
+      "gpuWallSeconds": 31.72600071100169,
+      "batchGpuHours1000": 8.812777975278246,
+      "postDownscaleSharpness": 5797.885926174404,
+      "sharpnessGainVsBaseline": 1471.8777165136216,
+      "sharpnessGainPerGpuSecond": 46.393421279954005,
+      "structuralMetrics": {
+        "ocrAgreement": 0.7166276346604216,
+        "contourIou": 0.8601958969012814,
+        "paletteDeltaE": 7.676548004150391,
+        "symbolTemplateMatch": 0.9763094782829285
+      },
+      "structuralIdentityPass": false
+    },
+    {
+      "method": "FLUX.2-Klein",
+      "source": "public/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/flux2-klein-sr-seed220149.png",
+      "gpuWallSeconds": 193.16154636699866,
+      "batchGpuHours1000": 53.655985101944076,
+      "postDownscaleSharpness": 8175.661563992552,
+      "sharpnessGainVsBaseline": 3849.65335433177,
+      "sharpnessGainPerGpuSecond": 19.929708716545445,
+      "structuralMetrics": {
+        "ocrAgreement": 0.07432432432432433,
+        "contourIou": 0.47220579538734475,
+        "paletteDeltaE": 34.327003479003906,
+        "symbolTemplateMatch": 0.7273808717727661
+      },
+      "structuralIdentityPass": false
+    }
+  ],
+  "decision": "renderer-only + Lanczos",
+  "batchAllowed": false
+}

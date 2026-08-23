@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
+import { reduceCardTwinFullscreen, type CardTwinFullscreenState, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { PokemonCardStage } from "./PokemonCardStage";
 
 const revealPhases = ["capture", "lookup", "canonical", "segment", "assemble", "ready"] as const;
@@ -15,6 +16,9 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [view, setView] = useState(initialView);
   const [cameraMoving, setCameraMoving] = useState(false);
   const [motionStatus, setMotionStatus] = useState<"idle" | "orientation" | "calibrated" | "denied" | "unavailable">("idle");
+  const [motionSource, setMotionSource] = useState<CardTwinMotionSource>("pointer");
+  const [fullscreen, setFullscreen] = useState<CardTwinFullscreenState>("gallery");
+  const inspectRoot = useRef<HTMLDivElement>(null);
   const card = CARD_TWIN_CARDS[cardIndex];
 
   useEffect(() => {
@@ -38,7 +42,10 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
     setPhaseIndex(reduced ? revealPhases.length - 1 : 0);
   };
   const handleReady = useCallback(() => setTexturesReady(true), []);
-  const handleMotionSample = useCallback(() => setMotionStatus("calibrated"), []);
+  const handleMotionSource = useCallback((source: CardTwinMotionSource) => {
+    setMotionSource(source);
+    if (source === "orientation") setMotionStatus("calibrated");
+  }, []);
   const enableMotion = async () => {
     if (!("DeviceOrientationEvent" in window)) {
       setMotionStatus("unavailable");
@@ -54,12 +61,30 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
       setMotionStatus("denied");
     }
   };
-  const inspectCard = () => {
-    if (view === "macro") return;
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const active = document.fullscreenElement === inspectRoot.current;
+      setFullscreen((state) => reduceCardTwinFullscreen(state, { type: "fullscreenchange", active }));
+      if (!active) setView(initialView);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, [initialView]);
+
+  const inspectCard = async () => {
+    if (!inspectRoot.current || fullscreen !== "gallery") return;
+    setFullscreen((state) => reduceCardTwinFullscreen(state, { type: "inspect" }));
     setCameraMoving(!reduced);
     setView("macro");
     if (!reduced) window.setTimeout(() => setCameraMoving(false), 900);
+    try {
+      await inspectRoot.current.requestFullscreen({ navigationUI: "hide" });
+    } catch {
+      setView(initialView);
+      setFullscreen((state) => reduceCardTwinFullscreen(state, { type: "request-failed" }));
+    }
   };
+  const exitInspection = () => document.fullscreenElement && document.exitFullscreen();
   const galleryFaces = Array.from({ length: 9 }, (_, index) => CARD_TWIN_CARDS[index % CARD_TWIN_CARDS.length]);
 
   return (
@@ -83,8 +108,8 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <ol data-testid="cardtwin-pipeline">{revealLabels.map((label, index) => <li key={label} data-active={index <= phaseIndex}><i>{index + 1}</i>{label}</li>)}</ol>
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
-      <div className="hero-cards" data-view={view}>
-        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} motionEnabled={motionStatus === "orientation" || motionStatus === "calibrated"} onMotionSample={handleMotionSample} />
+      <div ref={inspectRoot} className="hero-cards" data-view={view} data-fullscreen-state={fullscreen} data-motion-source={motionSource}>
+        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} motionEnabled={motionStatus === "orientation" || motionStatus === "calibrated"} onMotionSource={handleMotionSource} />
         <aside className="card-face-gallery" aria-label="Nine canonical card faces">
           {galleryFaces.map((face, index) => <button key={`${face.id}-${index}`} type="button" onClick={() => chooseCard(index % CARD_TWIN_CARDS.length)} aria-label={`Select ${face.name} card ${index + 1}`}>
             {/* Canonical images remain uncropped; the sheen is a separate light-response layer. */}
@@ -93,9 +118,11 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
             <i aria-hidden="true" />
           </button>)}
         </aside>
-        <button type="button" className="inspect-card" onClick={inspectCard}>Inspect selected card</button>
+        {fullscreen === "fullscreen"
+          ? <button type="button" className="inspect-card" onClick={exitInspection}>Exit inspection</button>
+          : <button type="button" className="inspect-card" onClick={inspectCard} disabled={fullscreen === "requesting"}>Inspect selected card</button>}
         {!reduced && <button type="button" className="motion-control" onClick={enableMotion} disabled={motionStatus === "orientation" || motionStatus === "calibrated"}>
-          {motionStatus === "idle" ? "Enable motion" : motionStatus === "orientation" ? "Hold steady · calibrating" : motionStatus === "calibrated" ? "Orientation · calibrated" : motionStatus === "denied" ? "Motion denied · pointer active" : "Motion unavailable · pointer active"}
+          {motionStatus === "idle" ? "Enable motion" : motionStatus === "orientation" ? "Hold steady · calibrating" : motionStatus === "calibrated" ? "Orientation · active" : motionStatus === "denied" ? "Motion denied · pointer active" : "Motion unavailable · pointer active"}
         </button>}
         <div className="layer-ledger" aria-label={`${card.name} semantic layer ledger`}>
           {card.layers.map((layer) => <article key={layer.id} data-card-object="true"><b>{layer.label}</b><span>{layer.depthMm.toFixed(1)} mm · exact RGBA</span></article>)}

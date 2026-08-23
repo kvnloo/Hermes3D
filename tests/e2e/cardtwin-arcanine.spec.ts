@@ -54,9 +54,15 @@ for (const [index, card] of cards.entries()) {
     await expect(stage).toHaveAttribute("data-textures-ready", "true");
     const box = await stage.boundingBox();
     expect(box).not.toBeNull();
-    for (const [x, y] of [[0.2, 0.25], [0.8, 0.25], [0.8, 0.75], [0.2, 0.75], [0.5, 0.5]]) {
-      await page.mouse.move((box?.x ?? 0) + (box?.width ?? 1) * x, (box?.y ?? 0) + (box?.height ?? 1) * y, { steps: 12 });
-      await page.waitForTimeout(280);
+    const planeDepths = await stage.locator("[data-plane-z]").evaluateAll((nodes) =>
+      nodes.map((node) => Number(node.getAttribute("data-plane-z"))),
+    );
+    expect(new Set(planeDepths.map((depth) => depth.toFixed(8))).size).toBe(planeDepths.length);
+    for (let pass = 0; pass < 3; pass += 1) {
+      for (const [x, y] of [[0.12, 0.15], [0.88, 0.15], [0.88, 0.85], [0.12, 0.85], [0.5, 0.5]]) {
+        await page.mouse.move((box?.x ?? 0) + (box?.width ?? 1) * x, (box?.y ?? 0) + (box?.height ?? 1) * y, { steps: 24 });
+        await page.waitForTimeout(1_000);
+      }
     }
     await page.close();
     await video?.saveAs(join(cardEvidence, "tilt-parallax.webm"));

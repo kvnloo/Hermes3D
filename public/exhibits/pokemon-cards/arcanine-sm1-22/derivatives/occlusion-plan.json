@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 2,
+  "status": "APPROVED_FOR_ARCANINE_BENCHMARK",
+  "allowedScope": "arcanine-benchmark-only",
+  "purpose": "Captain-approved physical occlusion plan. Approval is limited to producing disclosed Arcanine benchmark derivatives; it does not authorize canonical replacement or three-card batching.",
+  "canonical": {
+    "path": "source/arcanine-sm1-22.png",
+    "sha256": "763abeb960a5c5e362bf49b6e4e1210b8b3d6a483384a85de372d19ea848ed1c",
+    "width": 734,
+    "height": 1024,
+    "mutable": false
+  },
+  "componentOrdering": "strict physical depth, back to front",
+  "components": [
+    {
+      "id": "arc-r00-outer-frame",
+      "semanticGroup": "outer-frame",
+      "depthRank": 0,
+      "parentOccluder": "far-background",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 25,
+        "y": 512,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 0,
+        "y": 0,
+        "width": 734,
+        "height": 1024
+      },
+      "confidence": "high",
+      "boundaryDisposition": "identity-locked"
+    },
+    {
+      "id": "arc-r01-far-background",
+      "semanticGroup": "far-background",
+      "depthRank": 1,
+      "parentOccluder": "midground-cliff",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 363,
+        "y": 150,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 58,
+        "y": 96,
+        "width": 620,
+        "height": 389
+      },
+      "confidence": "high",
+      "boundaryDisposition": "benchmark-candidate-only"
+    },
+    {
+      "id": "arc-r02-midground-cliff",
+      "semanticGroup": "midground-cliff",
+      "depthRank": 2,
+      "parentOccluder": "character/hero",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 590,
+        "y": 390,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 58,
+        "y": 250,
+        "width": 620,
+        "height": 235
+      },
+      "confidence": "medium",
+      "boundaryDisposition": "benchmark-candidate-only"
+    },
+    {
+      "id": "arc-r03-hero",
+      "semanticGroup": "character/hero",
+      "depthRank": 3,
+      "parentOccluder": "midground-seed-puffs-wind-streaks",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 330,
+        "y": 315,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 70,
+        "y": 126,
+        "width": 450,
+        "height": 345
+      },
+      "confidence": "low",
+      "boundaryDisposition": "benchmark-candidate-only"
+    },
+    {
+      "id": "arc-r04-seed-puffs-wind-streaks",
+      "semanticGroup": "midground-seed-puffs-wind-streaks",
+      "depthRank": 4,
+      "parentOccluder": "foreground-foliage",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 560,
+        "y": 205,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 58,
+        "y": 105,
+        "width": 620,
+        "height": 370
+      },
+      "confidence": "medium",
+      "boundaryDisposition": "benchmark-candidate-only"
+    },
+    {
+      "id": "arc-r05-foreground-foliage",
+      "semanticGroup": "foreground-foliage",
+      "depthRank": 5,
+      "parentOccluder": "art-border-caption-bar",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 360,
+        "y": 465,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 58,
+        "y": 405,
+        "width": 620,
+        "height": 80
+      },
+      "confidence": "medium",
+      "boundaryDisposition": "benchmark-candidate-only"
+    },
+    {
+      "id": "arc-r06-art-border-caption-bar",
+      "semanticGroup": "art-border-caption-bar",
+      "depthRank": 6,
+      "parentOccluder": "card-body-ui-text",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 365,
+        "y": 493,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 50,
+        "y": 88,
+        "width": 634,
+        "height": 420
+      },
+      "confidence": "high",
+      "boundaryDisposition": "identity-locked"
+    },
+    {
+      "id": "arc-r07-card-body-ui-text",
+      "semanticGroup": "card-body-ui-text",
+      "depthRank": 7,
+      "parentOccluder": "viewer",
+      "registrationAnchor": {
+        "coordinateSpace": "canonical-pixels",
+        "x": 365,
+        "y": 690,
+        "method": "human-approved-semantic-interior"
+      },
+      "bounds": {
+        "x": 50,
+        "y": 485,
+        "width": 634,
+        "height": 515
+      },
+      "confidence": "high",
+      "boundaryDisposition": "identity-locked"
+    }
+  ],
+  "occlusionGraph": [
+    {
+      "behind": "outer-frame",
+      "occludedBy": "far-background"
+    },
+    {
+      "behind": "far-background",
+      "occludedBy": "midground-cliff"
+    },
+    {
+      "behind": "midground-cliff",
+      "occludedBy": "character/hero"
+    },
+    {
+      "behind": "character/hero",
+      "occludedBy": "midground-seed-puffs-wind-streaks"
+    },
+    {
+      "behind": "midground-seed-puffs-wind-streaks",
+      "occludedBy": "foreground-foliage"
+    },
+    {
+      "behind": "foreground-foliage",
+      "occludedBy": "art-border-caption-bar"
+    },
+    {
+      "behind": "art-border-caption-bar",
+      "occludedBy": "card-body-ui-text"
+    }
+  ],
+  "protectedIdentityGroups": [
+    "outer frame",
+    "card name",
+    "HP",
+    "symbols",
+    "art border",
+    "caption bar",
+    "attack text",
+    "grey info bar",
+    "footer",
+    "collector number"
+  ],
+  "gates": {
+    "canonical": "PASS",
+    "depthPlan": "PASS",
+    "boundary": "REVIEW_REQUIRED",
+    "fill": "NOT_RUN",
+    "nest": "NOT_RUN",
+    "separation": "PASS_EXISTING",
+    "motion": "NOT_RUN",
+    "provenance": "PASS_PLANNED"
+  },
+  "fluxGenerationAllowed": true,
+  "reviewNotes": [
+    "Far background is one uniform plane; it must not be split into sky, ocean, or hill components.",
+    "The cliff/headland is a distinct midground plane behind Arcanine.",
+    "Seed puffs and wind streaks are near-hero midground; only bottom foliage is foreground.",
+    "Frame, art border/caption, and body UI are separate identity-locked printed planes.",
+    "FLUX may create SR comparisons, hidden continuation, and boundary proposals only. Accepted visible RGBA must be copied byte-for-byte from canonical coordinates."
+  ]
+}

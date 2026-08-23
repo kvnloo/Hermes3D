@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "decision": "FAIL_CLOSED_NO_BATCH",
+  "canonical": {
+    "path": "source/arcanine-sm1-22.png",
+    "sha256": "763abeb960a5c5e362bf49b6e4e1210b8b3d6a483384a85de372d19ea848ed1c",
+    "dimensions": [
+      734,
+      1024
+    ],
+    "overwritten": false
+  },
+  "baseline": {
+    "method": "RealESRGAN_x4plus",
+    "dimensions": [
+      2936,
+      4096
+    ],
+    "laplacianSharpnessNative": 184.85402,
+    "laplacianSharpnessRegisteredToCanonical": 1533.822916,
+    "registeredChangedPixelPercent": 99.537131,
+    "gpuWallSeconds": 31.72600071100169,
+    "sha256": "e9cadbc28d689d0c1f6540f51698d26625092c8aacf2749aebcf1f9ba7d84dd0"
+  },
+  "fluxSr": {
+    "model": "FLUX.2 Klein Base 4B FP8",
+    "seed": 220149,
+    "dimensions": [
+      1056,
+      1472
+    ],
+    "laplacianSharpnessNative": 5631.343104,
+    "laplacianSharpnessRegisteredToCanonical": 1933.780432,
+    "registeredChangedPixelPercent": 99.974854,
+    "identityGate": "FAIL",
+    "identityReason": "Generated full-card pixels do not preserve the exact-pixel/text/symbol/border contract.",
+    "gpuWallSeconds": 193.16154636699866,
+    "peakGpuMemoryMiB": 11500.0,
+    "sha256": "63e3d560efc9efef0ad67273edcd93324e6e4da1160088ccaf49d26686627326"
+  },
+  "maskBenchmark": {
+    "legacySam2GrabCut": {
+      "iou_vs_legacy": 1.0,
+      "canonical_edge_alignment": 201.277679,
+      "area_pixels": 82550,
+      "edge_pixels": 4154
+    },
+    "fluxThresholded": {
+      "iou_vs_legacy": 0.415875,
+      "canonical_edge_alignment": 104.389275,
+      "area_pixels": 189373,
+      "edge_pixels": 15736
+    },
+    "edgeQualityGate": "FAIL",
+    "exactPixelContract": "PASS_BY_CONSTRUCTION_ONLY_WHEN_MASK_SELECTS_BYTE_IDENTICAL_CANONICAL_RGB",
+    "gpuWallSeconds": 104.72344628800056,
+    "peakGpuMemoryMiB": 11839.0,
+    "rawSha256": "c5ef56f32e9e8cf3b477f936adf5277d392bae905f8ada9f4ae6c5ade7ea3090",
+    "thresholdedSha256": "664851079172b60a68ba5363a70080ebc3d83c3e12bc0af23c17ca2e01ad2c72"
+  },
+  "verifier": {
+    "crossCard": "PASS_3_OF_3",
+    "evidence": "artifacts/hitl/cardtwin-semantic-layers/aggregate/flux-benchmark-cross-card-verification.json",
+    "canonicalVisiblePixelsModified": false
+  },
+  "batchAllowed": false
+}

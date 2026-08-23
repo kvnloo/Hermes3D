@@ -5,6 +5,8 @@ import { RoundedBox } from "@react-three/drei";
 import { Suspense, useEffect, useRef, type MutableRefObject } from "react";
 import * as THREE from "three";
 import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
+import { resolveCardTwinSurfaceDepths } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinDepth";
+import { selectCardTwinMotionSource, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { applyCardTwinMotionFilter, normalizeCardTwinOrientation, resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
 
 type ContractRefs = MutableRefObject<Array<HTMLSpanElement | null>>;
@@ -50,20 +52,23 @@ function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side
   return null;
 }
 
-function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onReady, onMotionSample }: {
+function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onReady, onMotionSource }: {
   card: CardTwinCard;
   reduced: boolean;
   exploded: boolean;
   motionEnabled: boolean;
   contracts: ContractRefs;
   onReady: () => void;
-  onMotionSample: () => void;
+  onMotionSource: (source: CardTwinMotionSource) => void;
 }) {
   const root = useRef<THREE.Group>(null);
   const { gl } = useThree();
   const orientation = useRef({ x: 0, y: 0 });
+  const pointer = useRef({ x: 0, y: 0 });
+  const hasOrientationSample = useRef(false);
   const neutral = useRef<{ beta: number; gamma: number } | null>(null);
   const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
+  const surfaceDepths = resolveCardTwinSurfaceDepths(card.layers);
 
   useEffect(() => textures.forEach((texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -84,15 +89,30 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
       const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
       const target = normalizeCardTwinOrientation(sample, neutral.current, screenAngle);
       orientation.current = applyCardTwinMotionFilter(orientation.current, target, 0.18);
-      onMotionSample();
+      hasOrientationSample.current = true;
+      onMotionSource("orientation");
     };
     window.addEventListener("deviceorientation", handleOrientation);
     return () => window.removeEventListener("deviceorientation", handleOrientation);
-  }, [motionEnabled, onMotionSample, onReady, reduced]);
+  }, [motionEnabled, onMotionSource, onReady, reduced]);
 
-  useFrame(({ pointer }) => {
+  useEffect(() => {
+    if (reduced) return;
+    const handlePointer = (event: PointerEvent) => {
+      pointer.current = {
+        x: (event.clientX / Math.max(window.innerWidth, 1)) * 2 - 1,
+        y: -((event.clientY / Math.max(window.innerHeight, 1)) * 2 - 1),
+      };
+      if (!hasOrientationSample.current) onMotionSource("pointer");
+    };
+    window.addEventListener("pointermove", handlePointer, { passive: true });
+    return () => window.removeEventListener("pointermove", handlePointer);
+  }, [onMotionSource, reduced]);
+
+  useFrame(() => {
     if (!root.current) return;
-    const input = Math.abs(pointer.x) + Math.abs(pointer.y) > 0.02 ? pointer : orientation.current;
+    const source = selectCardTwinMotionSource(motionEnabled, hasOrientationSample.current);
+    const input = source === "orientation" ? orientation.current : pointer.current;
     const cardTilt = resolveCardTwinTilt(input, 0, reduced);
     root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, cardTilt.rotateX, reduced ? 1 : 0.09);
     root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, cardTilt.rotateY, reduced ? 1 : 0.09);
@@ -115,19 +135,19 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
     <RoundedBox args={[2.2, 3.05, 0.018]} radius={0.045} smoothness={5} position-z={0.003}>
       <meshPhysicalMaterial color={card.accent} roughness={0.2} metalness={0.58} clearcoat={0.42} clearcoatRoughness={0.32} iridescence={0.32} iridescenceIOR={1.32} />
     </RoundedBox>
-    <mesh position-z={-0.006} visible={!exploded}>
+    <mesh position-z={surfaceDepths.hiddenFill} renderOrder={1} visible={!exploded}>
       <planeGeometry args={[2.15, 3]} />
-      <meshBasicMaterial map={textures[0]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+      <meshBasicMaterial map={textures[0]} transparent alphaTest={0.01} depthWrite toneMapped={false} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={4} polygonOffsetUnits={4} />
     </mesh>
     {card.layers.map((layer, index) => <mesh
       key={layer.id}
-      position={[exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0, 0, 0.012 + layer.depthMm * 0.062]}
-      renderOrder={index + 1}
+      position={[exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0, 0, surfaceDepths[layer.id]]}
+      renderOrder={index + 2}
     >
       <planeGeometry args={[2.15, 3]} />
-      <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+      <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite toneMapped={false} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-(index + 1)} polygonOffsetUnits={-(index + 1)} />
     </mesh>)}
-    <mesh position-z={0.19} renderOrder={20}>
+    <mesh position-z={surfaceDepths.foil} renderOrder={20}>
       <planeGeometry args={[2.12, 2.97]} />
       <meshPhysicalMaterial color={card.accent} transparent opacity={0.1} depthWrite={false} roughness={0.2} metalness={0.3} clearcoat={1} clearcoatRoughness={0.16} iridescence={0.8} iridescenceIOR={1.45} blending={THREE.AdditiveBlending} />
     </mesh>
@@ -144,7 +164,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   </group>;
 }
 
-export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, motionEnabled = false, onMotionSample = () => undefined }: {
+export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, motionEnabled = false, onMotionSource = () => undefined }: {
   card: CardTwinCard;
   reduced: boolean;
   view: "gallery" | "macro" | "side";
@@ -152,7 +172,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
   texturesReady: boolean;
   onTexturesReady: () => void;
   motionEnabled?: boolean;
-  onMotionSample?: () => void;
+  onMotionSource?: (source: CardTwinMotionSource) => void;
 }) {
   const exploded = view === "side";
   const contracts = useRef<Array<HTMLSpanElement | null>>([]);
@@ -182,17 +202,18 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
         ref={(node) => { contracts.current[index] = node; }}
         data-layer-id={layer.id}
         data-layer-depth={layer.depthMm}
+        data-plane-z={resolveCardTwinSurfaceDepths(card.layers)[layer.id]}
         data-layer-texture={layer.texture}
         data-parallax-x="0"
         data-parallax-y="0"
       />)}
     </div>
-    <Canvas orthographic dpr={[1, 2]} camera={{ position: [0, 0, 10], zoom: 138, near: 0.08, far: 30 }} gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}>
+    <Canvas orthographic dpr={[1, 2]} camera={{ position: [0, 0, 10], zoom: 138, near: 0.08, far: 30 }} gl={{ antialias: true, alpha: true, logarithmicDepthBuffer: true, powerPreference: "high-performance" }}>
       <color attach="background" args={["#14211f"]} />
       <MuseumLighting reduced={reduced} />
       <ResponsiveCamera view={view} reduced={reduced} />
       <Suspense fallback={null}>
-        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} motionEnabled={motionEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSample={onMotionSample} />
+        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} motionEnabled={motionEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} />
       </Suspense>
     </Canvas>
   </section>;
