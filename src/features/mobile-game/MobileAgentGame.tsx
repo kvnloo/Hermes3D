@@ -2,7 +2,8 @@
 
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createGameCoordinator, createGameHistoryBridge, type GameRoot, type GameRoute } from "./navigation";
 import { createFixtureTruthAdapter, type FixtureTaskStatus } from "./truthAdapter";
 import styles from "./mobileAgentGame.module.css";
 
@@ -54,10 +55,32 @@ function Courtyard({ onSelect, taskStatus }: { onSelect: (item: Selection) => vo
 
 export function MobileAgentGame() {
   const adapter = useMemo(() => createFixtureTruthAdapter(), []);
+  const coordinator = useMemo(() => createGameCoordinator(), []);
   const [truth, setTruth] = useState(adapter.snapshot());
-  const [selection, setSelection] = useState<Selection | null>(null);
-  const [root, setRoot] = useState("world");
+  const [route, setRoute] = useState<GameRoute>(coordinator.current());
+  const bridge = useMemo(() => typeof window === "undefined" ? null : createGameHistoryBridge(coordinator, window, () => setRoute(coordinator.current())), [coordinator]);
   const task = truth.tasks[0];
+  useEffect(() => { bridge?.start(); return () => bridge?.stop(); }, [bridge]);
+  const selection = route.kind === "root" ? null
+    : route.kind === "site" ? sites.find((item) => item.id === route.id) ?? null
+    : route.kind === "agent" ? agents.find((item) => item.id === route.id) ?? null
+    : route.kind === "task" ? sites[1]
+    : { type: "gate" as const, id: route.id, title: "Review gate", detail: `${statusLabel[task.status]} · synthetic evidence` };
+  const navigate = (next: GameRoute) => {
+    if (!coordinator.push(next)) return;
+    bridge?.commit("push");
+    setRoute(coordinator.current());
+  };
+  const select = (item: Selection) => navigate(item.type === "site"
+    ? { version: 1, root: "world", kind: "site", id: item.id }
+    : item.type === "agent"
+      ? { version: 1, root: "agents", kind: "agent", id: item.id }
+      : { version: 1, root: "review", kind: "review", id: item.id });
+  const closeInspector = () => {
+    if (!coordinator.pop()) return;
+    bridge?.commit("replace");
+    setRoute(coordinator.current());
+  };
   const advance = () => {
     if (task.status === "queued") {
       adapter.issue({ version: 1, commandId: "cmd-mobile-001", action: "assign", taskId: task.id, agentId: "agent-atlas" });
@@ -77,12 +100,12 @@ export function MobileAgentGame() {
       </header>
       <section className={styles.world} aria-label="Interactive company settlement">
         <Canvas camera={{ position: [9, 10, 13], fov: 38 }} dpr={[1, 1.5]} shadows={false}>
-          <Courtyard onSelect={setSelection} taskStatus={task.status} />
+          <Courtyard onSelect={select} taskStatus={task.status} />
         </Canvas>
         <div className={styles.legend}><b>{statusLabel[task.status]}</b><span>{task.title}</span></div>
       </section>
       <aside id="game-panel" className={`${styles.panel} ${selection ? styles.panelOpen : ""}`} aria-hidden={!selection}>
-        <button className={styles.close} onClick={() => setSelection(null)} aria-label="Close inspector">×</button>
+        <button className={styles.close} onClick={closeInspector} aria-label="Close inspector">×</button>
         <span className={styles.eyebrow}>{selection?.type ?? "selection"}</span>
         <h2>{selection?.title ?? "Select a worksite"}</h2>
         <p>{selection?.detail}</p>
@@ -90,7 +113,15 @@ export function MobileAgentGame() {
         {selection && task.status !== "review" && <button className={styles.action} onClick={advance}>{task.status === "queued" ? "Assign Atlas locally" : "Attach review evidence"}<span aria-hidden="true">→</span></button>}
       </aside>
       <nav className={styles.dock} aria-label="Settlement sections">
-        {[['world','World','⌂'],['agents','Agents','◇'],['build','Build','▥'],['review','Review','✓']].map(([id, label, icon]) => <button key={id} aria-current={root === id ? "page" : undefined} onClick={() => { setRoot(id); setSelection(id === "world" ? null : id === "agents" ? agents[0] : id === "build" ? sites[1] : { type: "gate", id: "review-mobile-shell", title: "Review gate", detail: `${statusLabel[task.status]} · synthetic evidence` }); }}><span aria-hidden="true">{icon}</span>{label}</button>)}
+        {([['world','World','⌂'],['agents','Agents','◇'],['build','Build','▥'],['review','Review','✓']] as const).map(([id, label, icon]) => <button key={id} aria-current={route.root === id ? "page" : undefined} onClick={() => {
+          const contextual: Record<GameRoot, GameRoute> = {
+            world: { version: 1, root: "world", kind: "root" },
+            agents: { version: 1, root: "agents", kind: "agent", id: agents[0].id },
+            build: { version: 1, root: "build", kind: "task", id: task.id },
+            review: { version: 1, root: "review", kind: "review", id: "review-mobile-shell" },
+          };
+          navigate(contextual[id]);
+        }}><span aria-hidden="true">{icon}</span>{label}</button>)}
       </nav>
     </main>
   );

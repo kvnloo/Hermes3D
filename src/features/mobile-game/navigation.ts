@@ -36,6 +36,26 @@ export function parseGameRoute(value: unknown): GameRoute | null {
 const rootRoute = (root: GameRoot): RootRoute => ({ version: 1, root, kind: "root" });
 const routeEqual = (a: GameRoute, b: GameRoute) => JSON.stringify(a) === JSON.stringify(b);
 
+export type GameNavigationSnapshot = {
+  version: 1;
+  selected: GameRoot;
+  stacks: Record<GameRoot, GameRoute[]>;
+};
+
+function parseSnapshot(value: unknown): GameNavigationSnapshot | null {
+  if (!isRecord(value) || value.version !== 1 || typeof value.selected !== "string" || !rootSet.has(value.selected) || !isRecord(value.stacks)) return null;
+  if (Object.keys(value).length !== 3 || Object.keys(value.stacks).length !== GAME_ROOTS.length) return null;
+  const stacks = {} as Record<GameRoot, GameRoute[]>;
+  for (const root of GAME_ROOTS) {
+    const input = value.stacks[root];
+    if (!Array.isArray(input) || input.length === 0) return null;
+    const routes = input.map(parseGameRoute);
+    if (routes.some((route) => !route) || routes[0]?.kind !== "root" || routes[0]?.root !== root || routes.some((route) => route?.root !== root)) return null;
+    stacks[root] = routes as GameRoute[];
+  }
+  return { version: 1, selected: value.selected as GameRoot, stacks };
+}
+
 export function createGameCoordinator() {
   const stacks = Object.fromEntries(GAME_ROOTS.map((root) => [root, [rootRoute(root)]])) as Record<GameRoot, GameRoute[]>;
   let selected: GameRoot = "world";
@@ -58,6 +78,13 @@ export function createGameCoordinator() {
       stacks[selected].pop();
       return true;
     },
+    restore(input: unknown): boolean {
+      const snapshot = parseSnapshot(input);
+      if (!snapshot) return false;
+      selected = snapshot.selected;
+      for (const root of GAME_ROOTS) stacks[root] = snapshot.stacks[root].map((route) => ({ ...route }));
+      return true;
+    },
     snapshot() {
       return {
         version: 1 as const,
@@ -65,5 +92,41 @@ export function createGameCoordinator() {
         stacks: Object.fromEntries(GAME_ROOTS.map((root) => [root, stacks[root].map((route) => ({ ...route }))])),
       };
     },
+  };
+}
+
+type GameCoordinator = ReturnType<typeof createGameCoordinator>;
+type HistoryBrowser = {
+  location: { pathname: string; search: string };
+  history: {
+    state: unknown;
+    pushState(state: unknown, unused: string, url: string): void;
+    replaceState(state: unknown, unused: string, url: string): void;
+  };
+  addEventListener(name: "popstate", listener: (event: { state: unknown }) => void): void;
+  removeEventListener(name: "popstate", listener: (event: { state: unknown }) => void): void;
+};
+
+const HISTORY_KEY = "hermesMobileGame";
+const routeHash = (route: GameRoute) => route.kind === "root" ? `#${route.root}` : `#${route.root}/${route.kind}/${route.id}`;
+
+export function createGameHistoryBridge(coordinator: GameCoordinator, browser: HistoryBrowser, onRestore: () => void = () => undefined) {
+  const stateWithSnapshot = () => ({ ...(isRecord(browser.history.state) ? browser.history.state : {}), [HISTORY_KEY]: coordinator.snapshot() });
+  const url = () => `${browser.location.pathname}${browser.location.search}${routeHash(coordinator.current())}`;
+  const onPopState = (event: { state: unknown }) => {
+    const state = isRecord(event.state) ? event.state[HISTORY_KEY] : null;
+    if (coordinator.restore(state)) onRestore();
+  };
+  return {
+    start() {
+      const state = isRecord(browser.history.state) ? browser.history.state[HISTORY_KEY] : null;
+      if (coordinator.restore(state)) onRestore();
+      else browser.history.replaceState(stateWithSnapshot(), "", url());
+      browser.addEventListener("popstate", onPopState);
+    },
+    commit(mode: "push" | "replace") {
+      browser.history[mode === "push" ? "pushState" : "replaceState"](stateWithSnapshot(), "", url());
+    },
+    stop() { browser.removeEventListener("popstate", onPopState); },
   };
 }
