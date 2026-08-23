@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState, type CSSProperties } from "re
 import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 import { reduceCardTwinFullscreen, type CardTwinFullscreenState, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { PokemonCardStage } from "./PokemonCardStage";
+import { CARD_TWIN_PAPER_DEFAULTS, loadCardTwinPaperSettings, saveCardTwinPaperSettings, type CardTwinPaperSettings } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPaperMode";
 
 const revealPhases = ["capture", "lookup", "canonical", "segment", "assemble", "ready"] as const;
 const revealLabels = ["Phone photo", "Exact printing lookup", "Canonical HD", "SAM 2.1 cut", "Layer assembly", "CardTwin ready"];
@@ -13,13 +14,25 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [cardIndex, setCardIndex] = useState(0);
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [texturesReady, setTexturesReady] = useState(false);
-  const [view, setView] = useState(initialView);
+  const [view, setView] = useState<"gallery" | "macro" | "side" | "parts">(initialView);
   const [cameraMoving, setCameraMoving] = useState(false);
   const [motionStatus, setMotionStatus] = useState<"idle" | "orientation" | "calibrated" | "denied" | "unavailable">("idle");
   const [motionSource, setMotionSource] = useState<CardTwinMotionSource>("pointer");
   const [fullscreen, setFullscreen] = useState<CardTwinFullscreenState>("gallery");
+  const [paperSettings, setPaperSettings] = useState<CardTwinPaperSettings>(CARD_TWIN_PAPER_DEFAULTS);
+  const [paperSettingsReady, setPaperSettingsReady] = useState(false);
+  const [calibrating, setCalibrating] = useState(false);
   const inspectRoot = useRef<HTMLDivElement>(null);
   const card = CARD_TWIN_CARDS[cardIndex];
+
+  useEffect(() => {
+    setPaperSettings(loadCardTwinPaperSettings(window.localStorage));
+    setPaperSettingsReady(true);
+  }, []);
+  const updatePaperSettings = (next: CardTwinPaperSettings) => {
+    setPaperSettings(next);
+    saveCardTwinPaperSettings(window.localStorage, next);
+  };
 
   useEffect(() => {
     const media = matchMedia("(prefers-reduced-motion: reduce)");
@@ -108,8 +121,18 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <ol data-testid="cardtwin-pipeline">{revealLabels.map((label, index) => <li key={label} data-active={index <= phaseIndex}><i>{index + 1}</i>{label}</li>)}</ol>
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
-      <div ref={inspectRoot} className="hero-cards" data-view={view} data-fullscreen-state={fullscreen} data-motion-source={motionSource}>
-        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} motionEnabled={motionStatus === "orientation" || motionStatus === "calibrated"} onMotionSource={handleMotionSource} />
+      <div ref={inspectRoot} className="hero-cards" data-view={view} data-fullscreen-state={fullscreen} data-motion-source={motionSource} data-display-mode={paperSettings.mode}>
+        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} paperSettings={paperSettings} motionEnabled={motionStatus === "orientation" || motionStatus === "calibrated"} onMotionSource={handleMotionSource} />
+        {paperSettingsReady && <div className="paper-controls">
+          <button type="button" aria-pressed={paperSettings.mode === "paper"} onClick={() => updatePaperSettings({ ...paperSettings, mode: paperSettings.mode === "paper" ? "glass" : "paper" })}>{paperSettings.mode === "paper" ? "Paper · on" : "Paper"}</button>
+          {paperSettings.mode === "paper" && <button type="button" onClick={() => setCalibrating((value) => !value)}>Calibrate</button>}
+        </div>}
+        {calibrating && paperSettings.mode === "paper" && <section className="paper-calibration" aria-label="Paper display calibration">
+          <strong>Paper under this light</strong><div className="paper-swatch" />
+          {(["brightness", "contrast", "grain"] as const).map((key) => <label key={key}>{key}<input type="range" aria-label={`Paper ${key}`} min={key === "brightness" ? .85 : key === "contrast" ? .8 : 0} max={key === "brightness" ? 1.15 : key === "contrast" ? 1.1 : 1} step="0.01" value={paperSettings[key]} onChange={(event) => updatePaperSettings({ ...paperSettings, [key]: Number(event.target.value) })} /></label>)}
+          <button type="button" onClick={() => setCalibrating(false)}>Done</button>
+        </section>}
+        <button type="button" className="parts-sheet-control" aria-pressed={view === "parts"} onClick={() => setView(view === "parts" ? initialView : "parts")}>Parts Sheet</button>
         <aside className="card-face-gallery" aria-label="Nine canonical card faces">
           {galleryFaces.map((face, index) => <button key={`${face.id}-${index}`} type="button" onClick={() => chooseCard(index % CARD_TWIN_CARDS.length)} aria-label={`Select ${face.name} card ${index + 1}`}>
             {/* Canonical images remain uncropped; the sheen is a separate light-response layer. */}
@@ -134,7 +157,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <article data-card-object="true" className="study-card"><span>PROVENANCE</span><b>HD</b><small>Canonical source</small></article>
         <article data-card-object="true" className="study-card"><span>SEGMENTATION</span><b>2.1</b><small>Meta SAM</small></article>
       </section>
-      <footer data-testid="exhibit-controls"><span>Pointer or phone tilt moves each semantic plane by depth</span><b>{view === "side" ? "EXPLODED LAYERS" : "ASSEMBLED FRONT"} · REDUCED MOTION SAFE</b></footer>
+      <footer data-testid="exhibit-controls"><span>Pointer or phone tilt moves each semantic plane by depth</span><b>{view === "parts" ? `PARTS SHEET · ${card.layers.length} CUTS INSPECTABLE` : view === "side" ? "EXPLODED LAYERS" : "ASSEMBLED FRONT"} · REDUCED MOTION SAFE</b></footer>
     </main>
   );
 }

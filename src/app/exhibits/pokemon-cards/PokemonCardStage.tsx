@@ -1,17 +1,21 @@
 "use client";
 
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
-import { RoundedBox } from "@react-three/drei";
-import { Suspense, useEffect, useRef, type MutableRefObject } from "react";
+import { Grid, RoundedBox } from "@react-three/drei";
+import { Suspense, useEffect, useRef, type CSSProperties, type MutableRefObject } from "react";
 import * as THREE from "three";
 import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 import { resolveCardTwinSurfaceDepths } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinDepth";
 import { selectCardTwinMotionSource, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { dampCardTwinMotion, normalizeCardTwinOrientation, resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
+import { resolveCardTwinMaterial, type CardTwinDisplayMode, type CardTwinPaperSettings } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPaperMode";
+import { resolvePartsSheetLayout } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPartsSheet";
+
+type CardTwinView = "gallery" | "macro" | "side" | "parts";
 
 type ContractRefs = MutableRefObject<Array<HTMLSpanElement | null>>;
 
-function MuseumLighting({ reduced }: { reduced: boolean }) {
+function MuseumLighting({ reduced, displayMode }: { reduced: boolean; displayMode: CardTwinDisplayMode }) {
   const rim = useRef<THREE.PointLight>(null);
   useFrame(({ clock }) => {
     if (!rim.current || reduced) return;
@@ -20,19 +24,21 @@ function MuseumLighting({ reduced }: { reduced: boolean }) {
     rim.current.position.y = 2.2 + Math.cos(sweep * 0.8) * 0.5;
   });
   return <>
-    <ambientLight intensity={0.72} />
-    <directionalLight position={[-3.8, 4.6, 5.5]} intensity={2.15} color="#fff1d4" />
+    <ambientLight intensity={displayMode === "paper" ? 1.05 : 0.72} />
+    <directionalLight position={[-3.8, 4.6, 5.5]} intensity={displayMode === "paper" ? 1.15 : 2.15} color="#fff1d4" />
     <directionalLight position={[4, 0.8, 4]} intensity={0.72} color="#8fc9c1" />
-    <pointLight ref={rim} position={[2.8, 2.4, 2.5]} intensity={reduced ? 1.05 : 1.5} distance={9} color="#ffd29a" />
+    <pointLight ref={rim} position={[2.8, 2.4, 2.5]} intensity={displayMode === "paper" ? 0.12 : reduced ? 1.05 : 1.5} distance={9} color="#ffd29a" />
   </>;
 }
 
-function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side"; reduced: boolean }) {
+function ResponsiveCamera({ view, reduced }: { view: CardTwinView; reduced: boolean }) {
   const { camera, size } = useThree();
   useFrame((_, delta) => {
     const orthographic = camera as THREE.OrthographicCamera;
     const mobile = size.width < 700;
-    const nextZoom = view === "side"
+    const nextZoom = view === "parts"
+      ? (mobile ? 42 : 76)
+      : view === "side"
       ? (mobile ? 64 : 92)
       : view === "macro"
         ? (mobile ? 130 : 160)
@@ -52,7 +58,7 @@ function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side
   return null;
 }
 
-function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onReady, onMotionSource }: {
+function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onReady, onMotionSource, displayMode, partsSheet = false }: {
   card: CardTwinCard;
   reduced: boolean;
   exploded: boolean;
@@ -60,6 +66,8 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   contracts: ContractRefs;
   onReady: () => void;
   onMotionSource: (source: CardTwinMotionSource) => void;
+  displayMode: CardTwinDisplayMode;
+  partsSheet?: boolean;
 }) {
   const root = useRef<THREE.Group>(null);
   const { gl } = useThree();
@@ -71,6 +79,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   const neutral = useRef<{ beta: number; gamma: number } | null>(null);
   const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
   const surfaceDepths = resolveCardTwinSurfaceDepths(card.layers);
+  const partLayout = resolvePartsSheetLayout(card.layers.length);
 
   useEffect(() => textures.forEach((texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -130,10 +139,11 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
       const mesh = root.current?.children[index + 3];
       if (!mesh) return;
       const parallax = resolveCardTwinTilt(input, layer.depthMm, reduced);
-      const spread = exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0;
+      const placement = partLayout[index];
+      const spread = partsSheet ? placement.x : exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0;
       const position = dampCardTwinMotion(
         { x: mesh.position.x, y: mesh.position.y },
-        { x: spread + parallax.x, y: parallax.y },
+        { x: spread + (partsSheet ? 0 : parallax.x), y: partsSheet ? placement.y : parallax.y },
         delta,
         reduced ? Infinity : 14,
       );
@@ -147,30 +157,36 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
     if (updateContracts) lastContractUpdate.current = clock.elapsedTime;
   });
 
+  const shellMaterial = resolveCardTwinMaterial(displayMode);
   return <group ref={root}>
-    <RoundedBox args={[2.25, 3.1, 0.11]} radius={0.055} smoothness={6} position-z={-0.075}>
+    <RoundedBox visible={!partsSheet} args={[2.25, 3.1, 0.11]} radius={0.055} smoothness={6} position-z={-0.075}>
       <meshStandardMaterial color="#d8d0bf" roughness={0.46} metalness={0.08} />
     </RoundedBox>
-    <RoundedBox args={[2.2, 3.05, 0.018]} radius={0.045} smoothness={5} position-z={0.003}>
-      <meshPhysicalMaterial color={card.accent} roughness={0.2} metalness={0.58} clearcoat={0.42} clearcoatRoughness={0.32} iridescence={0.32} iridescenceIOR={1.32} />
+    <RoundedBox visible={!partsSheet} args={[2.2, 3.05, 0.018]} radius={0.045} smoothness={5} position-z={0.003}>
+      <meshPhysicalMaterial color={card.accent} {...shellMaterial} iridescence={displayMode === "paper" ? 0 : 0.32} iridescenceIOR={1.32} />
     </RoundedBox>
-    <mesh position-z={surfaceDepths.hiddenFill} renderOrder={1} visible={!exploded}>
+    <mesh position-z={surfaceDepths.hiddenFill} renderOrder={1} visible={!exploded && !partsSheet}>
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial map={textures[0]} transparent alphaTest={0.01} depthWrite toneMapped={false} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={4} polygonOffsetUnits={4} />
     </mesh>
     {card.layers.map((layer, index) => <mesh
       key={layer.id}
-      position={[exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0, 0, surfaceDepths[layer.id]]}
+      position={[partsSheet ? partLayout[index].x : exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0, partsSheet ? partLayout[index].y : 0, partsSheet ? 0.03 : surfaceDepths[layer.id]]}
+      scale={partsSheet ? 0.62 : 1}
       renderOrder={index + 2}
     >
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite toneMapped={false} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-(index + 1)} polygonOffsetUnits={-(index + 1)} />
     </mesh>)}
-    <mesh position-z={surfaceDepths.foil} renderOrder={20}>
+    {card.layers.map((layer, index) => <mesh key={`${layer.id}-foam-shadow`} visible={!partsSheet} position={[0.018, -0.022, surfaceDepths[layer.id] - 0.006]} renderOrder={index + 1}>
+      <planeGeometry args={[2.15, 3]} />
+      <meshBasicMaterial color="#130d08" alphaMap={textures[index + 1]} transparent opacity={0.24} depthWrite={false} toneMapped={false} />
+    </mesh>)}
+    <mesh position-z={surfaceDepths.foil} renderOrder={20} visible={!partsSheet && displayMode === "glass"}>
       <planeGeometry args={[2.12, 2.97]} />
       <meshPhysicalMaterial color={card.accent} transparent opacity={0.1} depthWrite={false} roughness={0.2} metalness={0.3} clearcoat={1} clearcoatRoughness={0.16} iridescence={0.8} iridescenceIOR={1.45} blending={THREE.AdditiveBlending} />
     </mesh>
-    <group position={[0, -1.72, -0.1]}>
+    <group visible={!partsSheet} position={[0, -1.72, -0.1]}>
       <mesh rotation-x={-0.16}>
         <boxGeometry args={[1.22, 0.14, 0.72]} />
         <meshStandardMaterial color="#382b20" roughness={0.56} metalness={0.08} />
@@ -183,13 +199,14 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   </group>;
 }
 
-export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, motionEnabled = false, onMotionSource = () => undefined }: {
+export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, paperSettings, motionEnabled = false, onMotionSource = () => undefined }: {
   card: CardTwinCard;
   reduced: boolean;
-  view: "gallery" | "macro" | "side";
+  view: CardTwinView;
   cameraMoving: boolean;
   texturesReady: boolean;
   onTexturesReady: () => void;
+  paperSettings: CardTwinPaperSettings;
   motionEnabled?: boolean;
   onMotionSource?: (source: CardTwinMotionSource) => void;
 }) {
@@ -199,6 +216,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
     data-testid="pokemon-card-webgl-stage"
     data-renderer="three-webgl"
     data-view={view}
+    data-parts-sheet={view === "parts" ? "cutting-mat-flat-lay" : undefined}
     data-card-id={card.id}
     data-card-printing={`${card.name} · ${card.set} · ${card.printing}`}
     data-hidden-fill={card.hiddenFill}
@@ -210,9 +228,11 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
     data-display-furniture="museum-plinth"
     data-lighting-rig="key-fill-rim"
     data-foil-response="restrained-iridescent"
+    data-display-mode={paperSettings.mode}
     data-foil-motion={reduced ? "disabled" : "sweeping-rim"}
     data-static-composition={reduced ? "assembled-readable" : undefined}
     className="webgl-stage"
+    style={{ "--paper-brightness": paperSettings.brightness, "--paper-contrast": paperSettings.contrast, "--paper-grain": paperSettings.grain } as CSSProperties}
     aria-label={`Exact ${card.name} ${card.printing} layered CardTwin construction`}
   >
     <div className="webgl-contracts" aria-hidden="true">
@@ -229,10 +249,11 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
     </div>
     <Canvas orthographic dpr={[1, 2]} camera={{ position: [0, 0, 10], zoom: 138, near: 0.08, far: 30 }} gl={{ antialias: true, alpha: true, logarithmicDepthBuffer: true, powerPreference: "high-performance" }}>
       <color attach="background" args={["#14211f"]} />
-      <MuseumLighting reduced={reduced} />
+      {view === "parts" && <Grid args={[10, 8]} position={[0, 0, -0.1]} rotation-x={Math.PI / 2} cellSize={0.25} cellThickness={0.5} cellColor="#3c7468" sectionSize={1} sectionThickness={1} sectionColor="#6da095" fadeDistance={20} infiniteGrid={false} />}
+      <MuseumLighting reduced={reduced} displayMode={paperSettings.mode} />
       <ResponsiveCamera view={view} reduced={reduced} />
       <Suspense fallback={null}>
-        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} motionEnabled={motionEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} />
+        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} partsSheet={view === "parts"} motionEnabled={motionEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} displayMode={paperSettings.mode} />
       </Suspense>
     </Canvas>
   </section>;
