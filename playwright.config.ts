@@ -20,6 +20,7 @@ export default defineConfig({
       PORT: String(port),
       HERMES_STATE_DIR: path.resolve("./tests/fixtures/gateway-empty-state"),
       NEXT_PUBLIC_GATEWAY_URL: "",
+      CARDTWIN_TEST_FIXTURES: "1",
     },
   },
 });

@@ -9,9 +9,12 @@ import { CARD_TWIN_PAPER_DEFAULTS, loadCardTwinPaperSettings, saveCardTwinPaperS
 const revealPhases = ["capture", "lookup", "canonical", "segment", "assemble", "ready"] as const;
 const revealLabels = ["Phone photo", "Exact printing lookup", "Canonical HD", "SAM 2.1 cut", "Layer assembly", "CardTwin ready"];
 
-export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | "macro" | "side" }) {
+export function PokemonCardsPreview({ initialView, initialCardId }: { initialView: "gallery" | "macro" | "side"; initialCardId?: string }) {
   const [reduced, setReduced] = useState(false);
-  const [cardIndex, setCardIndex] = useState(0);
+  const [cardIndex, setCardIndex] = useState(() => {
+    const index = CARD_TWIN_CARDS.findIndex((card) => card.id === initialCardId);
+    return index < 0 ? 0 : index;
+  });
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [texturesReady, setTexturesReady] = useState(false);
   const [view, setView] = useState<"gallery" | "macro" | "side" | "parts">(initialView);
@@ -20,16 +23,13 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [motionSource, setMotionSource] = useState<CardTwinMotionSource>("pointer");
   const [input, setInput] = useState(CARD_TWIN_INPUT_INITIAL);
   const [fullscreen, setFullscreen] = useState<CardTwinFullscreenState>("gallery");
-  const [paperSettings, setPaperSettings] = useState<CardTwinPaperSettings>(CARD_TWIN_PAPER_DEFAULTS);
-  const [paperSettingsReady, setPaperSettingsReady] = useState(false);
+  const [paperSettings, setPaperSettings] = useState<CardTwinPaperSettings>(() => typeof window === "undefined" ? CARD_TWIN_PAPER_DEFAULTS : loadCardTwinPaperSettings(window.localStorage));
+  const paperSettingsReady = typeof window !== "undefined";
   const [calibrating, setCalibrating] = useState(false);
   const inspectRoot = useRef<HTMLDivElement>(null);
   const card = CARD_TWIN_CARDS[cardIndex];
 
-  useEffect(() => {
-    setPaperSettings(loadCardTwinPaperSettings(window.localStorage));
-    setPaperSettingsReady(true);
-  }, []);
+
   const updatePaperSettings = (next: CardTwinPaperSettings) => {
     setPaperSettings(next);
     saveCardTwinPaperSettings(window.localStorage, next);
