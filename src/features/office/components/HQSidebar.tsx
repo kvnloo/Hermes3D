@@ -38,6 +38,8 @@ const TAB_LABELS: Record<HQSidebarTab, string> = {
 
 const PRIMARY_TABS: HQSidebarTab[] = ["agents", "inbox", "history", "kanban", "playbooks"];
 
+export const shouldOpenHQSidebar = (viewportWidth: number) => viewportWidth >= 640;
+
 export function HQSidebar({
   open,
   activeTab,

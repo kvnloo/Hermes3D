@@ -140,6 +140,7 @@ describe("construction presentation", () => {
       siteVisible: true,
       active: true,
       discoveryVisible: true,
+      landmarkVisible: true,
       finishedVisible: false,
     });
   });

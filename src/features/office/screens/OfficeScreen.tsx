@@ -124,6 +124,7 @@ import { writeGatewayAgentFiles } from "@/lib/gateway/agentFiles";
 import { randomUUID } from "@/lib/uuid";
 import {
   HQSidebar,
+  shouldOpenHQSidebar,
   type HQSidebarTab,
 } from "@/features/office/components/HQSidebar";
 import { CompanyBuilderModal } from "@/features/company-builder/components/CompanyBuilderModal";
@@ -1070,6 +1071,11 @@ export function OfficeScreen({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [marketplaceOpen, setMarketplaceOpen] = useState(false);
   const [kanbanInstallPromptOpen, setKanbanInstallPromptOpen] = useState(false);
+
+  useEffect(() => {
+    // Keep the desktop HQ default without allowing it to cover the office on phones.
+    setSidebarOpen(shouldOpenHQSidebar(window.innerWidth));
+  }, []);
   const [kanbanInstallProgress, setKanbanInstallProgress] = useState<{
     active: boolean;
     percent: number;

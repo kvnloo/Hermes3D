@@ -34,6 +34,7 @@ export function getConstructionPresentation(state: BuildSceneState | null) {
     frameVisible: active && stageDepth >= 1,
     geometryVisible: active && stageDepth >= 2,
     materialsVisible: active && stageDepth >= 3,
+    landmarkVisible: active && stageDepth >= 0,
     finishedVisible: state?.finishedVisible === true,
   };
 }
@@ -58,13 +59,34 @@ export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
   });
 
   return (
-    <group position={[17, 0.03, -8]} visible={presentation.siteVisible}>
+    <group position={[11.5, 0.03, -4.5]} visible={presentation.siteVisible}>
       <group visible={active}>
       <primitive object={grid} position={[0, 0.02, 0]} visible={discoveryVisible} />
       <mesh position={[0, 0.055, 0]} visible={discoveryVisible}>
         <boxGeometry args={[8.6, 0.08, 6.6]} />
         <meshBasicMaterial color="#123b48" transparent opacity={0.72} wireframe />
       </mesh>
+      {/* High-contrast gate and crane: a literal construction silhouette from DISCOVER onward. */}
+      <group visible={discoveryVisible}>
+        {([-3.7, 3.7] as const).map((x) => (
+          <mesh key={x} position={[x, 1.35, 3.25]}>
+            <boxGeometry args={[0.18, 2.7, 0.18]} />
+            <meshBasicMaterial color="#ffd34d" />
+          </mesh>
+        ))}
+        <mesh position={[0, 2.65, 3.25]}>
+          <boxGeometry args={[7.6, 0.22, 0.18]} />
+          <meshBasicMaterial color="#ffd34d" />
+        </mesh>
+        <mesh position={[-3.5, 3.5, -2.5]}>
+          <boxGeometry args={[0.2, 7, 0.2]} />
+          <meshBasicMaterial color="#ffb52e" />
+        </mesh>
+        <mesh position={[-0.3, 6.85, -2.5]}>
+          <boxGeometry args={[6.6, 0.18, 0.18]} />
+          <meshBasicMaterial color="#ffb52e" />
+        </mesh>
+      </group>
       <mesh ref={scanRef} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[9.5, 0.05]} />
         <meshBasicMaterial color={failed ? "#ff405c" : "#63eeff"} transparent opacity={0.85} />
