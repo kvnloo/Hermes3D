@@ -9,7 +9,9 @@ const viewports = [
 ] as const;
 
 test.setTimeout(90_000);
-test.use({ hasTouch: true, isMobile: true });
+// Keep touch events enabled while allowing each explicit viewport, including landscape,
+// to own the CSS viewport instead of inheriting Chromium's portrait mobile emulation.
+test.use({ hasTouch: true });
 
 for (const viewport of viewports) {
   test(`keeps mobile actions visible and the gallery vertically scrollable at ${viewport.width}x${viewport.height}`, async ({ page }) => {
@@ -19,8 +21,9 @@ for (const viewport of viewports) {
     const actions = page.getByTestId("cardtwin-mobile-actions");
     await expect(actions).toBeVisible();
     const box = await actions.boundingBox();
+    const cssViewportHeight = await page.evaluate(() => innerHeight);
     expect(box).not.toBeNull();
-    expect((box?.y ?? Infinity) + (box?.height ?? 0)).toBeLessThanOrEqual(viewport.height);
+    expect((box?.y ?? Infinity) + (box?.height ?? 0)).toBeLessThanOrEqual(cssViewportHeight);
     await expect(page.getByRole("button", { name: "Inspect fullscreen" })).toBeVisible();
     await expect(page.locator(".card-face-gallery")).toBeHidden();
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(48);

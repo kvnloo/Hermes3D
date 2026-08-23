@@ -7,6 +7,7 @@ const cards = [
   { slug: "arcanine-sm1-22", printing: "Arcanine · Sun & Moon · 22/149" },
   { slug: "umbreon-vmax-swsh7-215", printing: "Umbreon VMAX · Evolving Skies · 215/203" },
   { slug: "leafeon-ex-sv8pt5-144", printing: "Leafeon ex · Prismatic Evolutions · 144/131" },
+  { slug: "sawsbuck-tef-166", printing: "Sawsbuck · Temporal Forces · 166/162" },
 ] as const;
 test.use({ viewport: { width: 1280, height: 720 }, video: "on" });
 test.setTimeout(90_000);
