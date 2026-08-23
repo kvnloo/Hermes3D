@@ -53,6 +53,7 @@ describe("Living Encounter runtime", () => {
     render(<LivingEncounter pokemon={pokemon} model={{ pokemonId: 25, catalogVersion: "2", modelUrl: "/approved.glb", derivativeSha256: "a", promotionRecord: "review", license: "approved", attribution: "reviewed" }} />);
     expect(screen.getAllByTestId("model-canvas")).toHaveLength(1);
     expect(screen.getByTestId("orbit-controls")).toBeVisible();
+    expect(requestAnimationFrame).not.toHaveBeenCalled();
   });
 
   it("offers only evidenced shiny assets and changes the presentation", () => {

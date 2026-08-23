@@ -47,7 +47,9 @@ export function LivingEncounter({ pokemon, model }: { pokemon: PokemonDetail; mo
 
   useEffect(() => {
     const node = root.current;
-    if (!node || reducedMotion || saveData) return;
+    // R3F owns the sole render loop for promoted models. The DOM parallax loop
+    // is only needed by sprite/artwork presentations.
+    if (!node || reducedMotion || saveData || asset.kind === "model") return;
     let raf = 0;
     let targetX = 0;
     let targetY = 0;
@@ -70,7 +72,7 @@ export function LivingEncounter({ pokemon, model }: { pokemon: PokemonDetail; mo
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", pointer);
     };
-  }, [reducedMotion, saveData]);
+  }, [asset.kind, reducedMotion, saveData]);
 
   useEffect(() => () => {
     cancelAnimationFrame(reactionRaf.current);

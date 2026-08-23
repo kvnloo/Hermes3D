@@ -18,9 +18,13 @@ for (const viewport of [{ name: "mobile", width: 390, height: 844 }, { name: "de
     const after = await encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"));
     expect(after).not.toBe(before);
     const creature = page.getByRole("button", { name: /react with/i });
-    const frameA = await creature.screenshot();
+    // Freeze every environmental layer and sample the image element itself so
+    // habitat motion cannot masquerade as creature motion.
+    await page.addStyleTag({ content: ".ct-encounter-sky,.ct-particles,.ct-encounter-floor{animation:none!important}.ct-creature{background:#13202b!important}" });
+    const creatureImage = creature.locator("img");
+    const frameA = await creatureImage.screenshot();
     await page.waitForTimeout(350);
-    const frameB = await creature.screenshot();
+    const frameB = await creatureImage.screenshot();
     expect(frameA.equals(frameB)).toBe(false);
     await page.getByRole("button", { name: /enable cry audio/i }).click();
     await expect(page.getByRole("button", { name: /disable cry audio/i })).toBeVisible();
@@ -33,3 +37,41 @@ for (const viewport of [{ name: "mobile", width: 390, height: 844 }, { name: "de
     expect(errors).toEqual([]);
   });
 }
+
+test("browser Back restores the Pokedex scroll state", async ({ page }) => {
+  await page.goto("/pokedex", { waitUntil: "domcontentloaded" });
+  await expect(page.locator('a[href="/pokedex/25"]').first()).toBeVisible();
+  await page.evaluate(() => window.scrollTo(0, Math.min(700, document.documentElement.scrollHeight - innerHeight)));
+  const restoredY = await page.evaluate(() => scrollY);
+  await page.locator('a[href="/pokedex/25"]').first().click();
+  await expect(page.getByRole("region", { name: "Living Encounter" })).toBeVisible();
+  await page.goBack({ waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/pokedex$/);
+  await expect.poll(() => page.evaluate(() => scrollY)).toBe(restoredY);
+});
+
+test("reduced motion and data saver produce a stable quiet encounter", async ({ browser }) => {
+  const reduced = await browser.newPage({ reducedMotion: "reduce" });
+  await reduced.goto("/pokedex/25", { waitUntil: "networkidle" });
+  const encounter = reduced.getByRole("region", { name: "Living Encounter" });
+  const before = await encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"));
+  await reduced.mouse.move(380, 200);
+  await reduced.waitForTimeout(200);
+  expect(await encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"))).toBe(before);
+  await reduced.close();
+
+  const saver = await browser.newPage();
+  await saver.addInitScript(() => Object.defineProperty(navigator, "connection", { configurable: true, value: { saveData: true } }));
+  await saver.goto("/pokedex/25", { waitUntil: "networkidle" });
+  await expect(saver.getByRole("region", { name: "Living Encounter" })).toHaveAttribute("data-particles", "0");
+  await expect(saver.getByRole("button", { name: /audio unavailable in data saver/i })).toBeDisabled();
+  await saver.close();
+});
+
+test("twenty browser route entries never expose multiple encounter owners", async ({ page }) => {
+  for (let index = 0; index < 20; index += 1) {
+    await page.goto(`/pokedex/${index % 2 === 0 ? 25 : 1}`, { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("region", { name: "Living Encounter" })).toHaveCount(1);
+    await expect(page.locator("canvas")).toHaveCount(0);
+  }
+});
