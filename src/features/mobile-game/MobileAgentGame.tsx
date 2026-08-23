@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { useEffect, useMemo, useState } from "react";
 import { createGameCoordinator, createGameHistoryBridge, type GameRoot, type GameRoute } from "./navigation";
+import { describeTruthSource } from "./presentation";
 import { createFixtureTruthAdapter, type FixtureTaskStatus } from "./truthAdapter";
 import styles from "./mobileAgentGame.module.css";
 
@@ -53,13 +54,17 @@ function Courtyard({ onSelect, taskStatus }: { onSelect: (item: Selection) => vo
   );
 }
 
-export function MobileAgentGame() {
-  const adapter = useMemo(() => createFixtureTruthAdapter(), []);
+export function MobileAgentGame({ stale = false }: { stale?: boolean }) {
+  const adapter = useMemo(() => createFixtureTruthAdapter({
+    stale,
+  }), [stale]);
   const coordinator = useMemo(() => createGameCoordinator(), []);
   const [truth, setTruth] = useState(adapter.snapshot());
+  const [listMode, setListMode] = useState(false);
   const [route, setRoute] = useState<GameRoute>(coordinator.current());
   const bridge = useMemo(() => typeof window === "undefined" ? null : createGameHistoryBridge(coordinator, window, () => setRoute(coordinator.current())), [coordinator]);
   const task = truth.tasks[0];
+  const source = describeTruthSource(truth);
   useEffect(() => { bridge?.start(); return () => bridge?.stop(); }, [bridge]);
   const selection = route.kind === "root" ? null
     : route.kind === "site" ? sites.find((item) => item.id === route.id) ?? null
@@ -95,14 +100,21 @@ export function MobileAgentGame() {
     <main className={styles.shell} data-testid="game-shell">
       <a className={styles.skip} href="#game-panel">Skip to settlement controls</a>
       <header className={styles.header}>
-        <div><span className={styles.eyebrow}>Synthetic evidence · private</span><h1>Company courtyard</h1></div>
-        <div className={styles.freshness}><span aria-hidden="true">◆</span> observed 18:00 UTC</div>
+        <div><span className={styles.eyebrow}>{source.label}</span><h1>Company courtyard</h1></div>
+        <div className={`${styles.freshness} ${source.stale ? styles.stale : ""}`}><span aria-hidden="true">{source.stale ? "△" : "◆"}</span> {source.detail}</div>
       </header>
       <section className={styles.world} aria-label="Interactive company settlement">
-        <Canvas camera={{ position: [9, 10, 13], fov: 38 }} dpr={[1, 1.5]} shadows={false}>
+        {!listMode && <Canvas camera={{ position: [9, 10, 13], fov: 38 }} dpr={[1, 1.5]} shadows={false}>
           <Courtyard onSelect={select} taskStatus={task.status} />
-        </Canvas>
+        </Canvas>}
+        {listMode && <div className={styles.listView} aria-label="Settlement list view">
+          <span className={styles.eyebrow}>Non-3D alternative</span>
+          <h2>Settlement status</h2>
+          <button onClick={() => select(sites[1])}><b>{sites[1].title}</b><span>BUILDING IN PROGRESS · {statusLabel[task.status]}</span></button>
+          {agents.map((agent) => <button key={agent.id} onClick={() => select(agent)}><b>{agent.title}</b><span>{agent.detail}</span></button>)}
+        </div>}
         <div className={styles.legend}><b>{statusLabel[task.status]}</b><span>{task.title}</span></div>
+        <button className={styles.viewToggle} onClick={() => setListMode((current) => !current)} aria-pressed={listMode}>{listMode ? "Show 3D world" : "Use list view"}</button>
       </section>
       <aside id="game-panel" className={`${styles.panel} ${selection ? styles.panelOpen : ""}`} aria-hidden={!selection}>
         <button className={styles.close} onClick={closeInspector} aria-label="Close inspector">×</button>
@@ -110,7 +122,7 @@ export function MobileAgentGame() {
         <h2>{selection?.title ?? "Select a worksite"}</h2>
         <p>{selection?.detail}</p>
         {selection && <dl><div><dt>Authority</dt><dd>Fixture adapter v1</dd></div><div><dt>Mutation</dt><dd>Local only</dd></div><div><dt>Source</dt><dd>docs/mobile-agent-game</dd></div></dl>}
-        {selection && task.status !== "review" && <button className={styles.action} onClick={advance}>{task.status === "queued" ? "Assign Atlas locally" : "Attach review evidence"}<span aria-hidden="true">→</span></button>}
+        {selection && task.status !== "review" && <button className={styles.action} onClick={advance} disabled={!source.commandsAvailable}>{source.commandsAvailable ? (task.status === "queued" ? "Assign Atlas locally" : "Attach review evidence") : "Commands unavailable while stale"}<span aria-hidden="true">→</span></button>}
       </aside>
       <nav className={styles.dock} aria-label="Settlement sections">
         {([['world','World','⌂'],['agents','Agents','◇'],['build','Build','▥'],['review','Review','✓']] as const).map(([id, label, icon]) => <button key={id} aria-current={route.root === id ? "page" : undefined} onClick={() => {
