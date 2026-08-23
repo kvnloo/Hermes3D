@@ -13,10 +13,8 @@ for (const viewport of [{ name: "mobile", width: 390, height: 844 }, { name: "de
     await expect(page.getByText(/2D sprite|2D artwork/)).toBeVisible();
     await expect(page.getByText("3D model unavailable")).toBeVisible();
     const before = await encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"));
-    await page.mouse.move(viewport.width - 10, viewport.height / 3);
-    await page.waitForTimeout(250);
-    const after = await encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"));
-    expect(after).not.toBe(before);
+    await page.evaluate(({ x, y }) => window.dispatchEvent(new PointerEvent("pointermove", { clientX: x, clientY: y })), { x: viewport.width - 1, y: 1 });
+    await expect.poll(() => encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"))).not.toBe(before);
     const creature = page.getByRole("button", { name: /react with/i });
     // Freeze every environmental layer and sample the image element itself so
     // habitat motion cannot masquerade as creature motion.
@@ -68,10 +66,19 @@ test("reduced motion and data saver produce a stable quiet encounter", async ({ 
   await saver.close();
 });
 
-test("twenty browser route entries never expose multiple encounter owners", async ({ page }) => {
+test("twenty client-side route entries release listeners and animation owners", async ({ page }) => {
+  await page.goto("/pokedex", { waitUntil: "networkidle" });
+  const runtime = () => page.evaluate(() => (window as typeof window & { __livingEncounterRuntime?: { owners: number; listeners: number; reactions: number } }).__livingEncounterRuntime ?? { owners: 0, listeners: 0, reactions: 0 });
+  expect(await runtime()).toEqual({ owners: 0, listeners: 0, reactions: 0 });
   for (let index = 0; index < 20; index += 1) {
-    await page.goto(`/pokedex/${index % 2 === 0 ? 25 : 1}`, { waitUntil: "domcontentloaded" });
+    await page.locator('a[href="/pokedex/25"]').first().click();
     await expect(page.getByRole("region", { name: "Living Encounter" })).toHaveCount(1);
+    await expect.poll(runtime).toEqual({ owners: 1, listeners: 1, reactions: 0 });
+    await page.getByRole("button", { name: /react with/i }).click();
+    await expect.poll(runtime).toEqual({ owners: 1, listeners: 1, reactions: 1 });
+    await page.goBack({ waitUntil: "domcontentloaded" });
+    await expect(page).toHaveURL(/\/pokedex$/);
+    await expect.poll(runtime).toEqual({ owners: 0, listeners: 0, reactions: 0 });
     await expect(page.locator("canvas")).toHaveCount(0);
   }
 });

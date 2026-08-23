@@ -11,6 +11,14 @@ import { habitatForPokemon, selectEncounterAsset } from "./livingEncounter";
 
 const browserPreferenceFallback = () => false;
 
+type EncounterRuntime = { owners: number; listeners: number; reactions: number };
+
+function adjustRuntime(key: keyof EncounterRuntime, delta: number) {
+  const runtimeWindow = window as typeof window & { __livingEncounterRuntime?: EncounterRuntime };
+  const runtime = runtimeWindow.__livingEncounterRuntime ??= { owners: 0, listeners: 0, reactions: 0 };
+  runtime[key] = Math.max(0, runtime[key] + delta);
+}
+
 function useReducedMotion() {
   return useSyncExternalStore(
     (onChange) => {
@@ -36,6 +44,7 @@ export function LivingEncounter({ pokemon, model }: { pokemon: PokemonDetail; mo
   const audio = useRef<HTMLAudioElement>(null);
   const reactionRaf = useRef(0);
   const reactionTimer = useRef(0);
+  const reactionActive = useRef(false);
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [reacting, setReacting] = useState(false);
   const [shiny, setShiny] = useState(false);
@@ -67,24 +76,44 @@ export function LivingEncounter({ pokemon, model }: { pokemon: PokemonDetail; mo
       raf = requestAnimationFrame(frame);
     };
     window.addEventListener("pointermove", pointer, { passive: true });
+    adjustRuntime("listeners", 1);
+    adjustRuntime("owners", 1);
     raf = requestAnimationFrame(frame);
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", pointer);
+      adjustRuntime("listeners", -1);
+      adjustRuntime("owners", -1);
     };
   }, [asset.kind, reducedMotion, saveData]);
+
+  useEffect(() => {
+    if (asset.kind !== "model") return;
+    adjustRuntime("owners", 1);
+    return () => adjustRuntime("owners", -1);
+  }, [asset.kind]);
 
   useEffect(() => () => {
     cancelAnimationFrame(reactionRaf.current);
     window.clearTimeout(reactionTimer.current);
+    if (reactionActive.current) adjustRuntime("reactions", -1);
+    reactionActive.current = false;
   }, []);
 
   const react = () => {
     setReacting(false);
     cancelAnimationFrame(reactionRaf.current);
     window.clearTimeout(reactionTimer.current);
+    if (!reactionActive.current) {
+      reactionActive.current = true;
+      adjustRuntime("reactions", 1);
+    }
     reactionRaf.current = requestAnimationFrame(() => setReacting(true));
-    reactionTimer.current = window.setTimeout(() => setReacting(false), 720);
+    reactionTimer.current = window.setTimeout(() => {
+      setReacting(false);
+      reactionActive.current = false;
+      adjustRuntime("reactions", -1);
+    }, 720);
     if (!saveData && audioEnabled && audio.current) void audio.current.play().catch(() => undefined);
   };
 

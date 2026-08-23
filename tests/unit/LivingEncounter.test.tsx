@@ -47,6 +47,7 @@ describe("Living Encounter runtime", () => {
     view.unmount();
     expect(cancelAnimationFrame).toHaveBeenCalledWith(7);
     expect(remove).toHaveBeenCalledWith("pointermove", expect.any(Function));
+    expect((window as typeof window & { __livingEncounterRuntime?: { owners: number; listeners: number; reactions: number } }).__livingEncounterRuntime).toEqual({ owners: 0, listeners: 0, reactions: 0 });
   });
 
   it("renders an approved model in one lit canvas with bounded orbit", () => {
