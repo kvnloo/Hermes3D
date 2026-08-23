@@ -25,7 +25,7 @@ const securityHeaders = [
       "media-src 'self' blob: data: http: https:",
       "worker-src 'self' blob:",
       "object-src 'none'",
-      "upgrade-insecure-requests",
+      ...(process.env.HTTPS === "true" ? ["upgrade-insecure-requests"] : []),
     ].join("; "),
   },
   {
@@ -50,7 +50,7 @@ const securityHeaders = [
   },
 ];
 
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" && process.env.HTTPS === "true") {
   securityHeaders.push({
     key: "Strict-Transport-Security",
     value: "max-age=31536000; includeSubDomains",
