@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Founder Palace Strategy Observatory low-fidelity storyboard</title>
+  <desc id="desc">Original desktop and mobile wireframes showing the Orient, Map, Focus, Act, Observe, Retrieve, Update loop with provenance and approval boundaries.</desc>
+  <rect width="1440" height="900" fill="#0b0d10"/>
+  <text x="64" y="64" fill="#f4f1e8" font-family="sans-serif" font-size="28" font-weight="700">STRATEGY OBSERVATORY / ORIGINAL FIXTURE STORYBOARD</text>
+  <text x="64" y="94" fill="#9da5b4" font-family="sans-serif" font-size="14">Low fidelity • no production state • spatial and text-equivalent flows</text>
+
+  <rect x="64" y="130" width="900" height="700" rx="28" fill="#15191f" stroke="#39414d"/>
+  <text x="92" y="172" fill="#f4f1e8" font-family="sans-serif" font-size="16">DESKTOP / MAP + COACH + EVIDENCE</text>
+  <rect x="92" y="196" width="250" height="606" rx="20" fill="#101318" stroke="#303744"/>
+  <text x="116" y="232" fill="#d9b86c" font-family="sans-serif" font-size="13">STRATEGY OBSERVATORY</text>
+  <text x="116" y="264" fill="#f4f1e8" font-family="sans-serif" font-size="18">Objective map</text>
+  <g fill="#232a34" stroke="#465162">
+    <rect x="116" y="292" width="202" height="56" rx="12"/><rect x="116" y="370" width="202" height="56" rx="12"/><rect x="116" y="448" width="202" height="56" rx="12"/><rect x="116" y="526" width="202" height="56" rx="12"/><rect x="116" y="604" width="202" height="56" rx="12"/>
+  </g>
+  <g fill="#d7dce5" font-family="sans-serif" font-size="12">
+    <text x="132" y="317">Intent: durable company</text><text x="132" y="335">with customer value</text>
+    <text x="132" y="395">Objective: sustainable profit</text><text x="132" y="413">editable • founder approved</text>
+    <text x="132" y="473">Guardrails: quality, ethics,</text><text x="132" y="491">runway, customer outcome</text>
+    <text x="132" y="551">Hypothesis: narrow focus</text><text x="132" y="569">improves delivery signal</text>
+    <text x="132" y="629">Outcome: pending evidence</text><text x="132" y="647">confidence 42%</text>
+  </g>
+
+  <rect x="366" y="196" width="570" height="386" rx="20" fill="#101318" stroke="#303744"/>
+  <text x="394" y="234" fill="#8fd3c7" font-family="sans-serif" font-size="11">FOCUS • 07:42 REMAINING • SHALLOW ALERTS BATCHED</text>
+  <text x="394" y="280" fill="#f4f1e8" font-family="sans-serif" font-size="27">Choose one project to defer.</text>
+  <text x="394" y="314" fill="#aeb6c4" font-family="sans-serif" font-size="14">Model: strategy is a constrained choice, not a list.</text>
+  <rect x="394" y="344" width="514" height="112" rx="14" fill="#1b212a" stroke="#3b4554"/>
+  <text x="414" y="374" fill="#d7dce5" font-family="sans-serif" font-size="13">Prompt 1 of 1</text>
+  <text x="414" y="402" fill="#f4f1e8" font-family="sans-serif" font-size="16">Which active project consumes capacity without</text>
+  <text x="414" y="426" fill="#f4f1e8" font-family="sans-serif" font-size="16">advancing the approved objective or guardrails?</text>
+  <rect x="394" y="480" width="216" height="56" rx="28" fill="#d9b86c"/>
+  <text x="424" y="514" fill="#111318" font-family="sans-serif" font-size="14" font-weight="700">Draft defer decision →</text>
+  <text x="628" y="505" fill="#9da5b4" font-family="sans-serif" font-size="12">Preview only</text><text x="628" y="523" fill="#9da5b4" font-family="sans-serif" font-size="12">No action without approval</text>
+
+  <rect x="366" y="606" width="570" height="196" rx="20" fill="#101318" stroke="#303744"/>
+  <text x="394" y="642" fill="#d9b86c" font-family="sans-serif" font-size="12">PROVENANCE / UNCERTAINTY</text>
+  <text x="394" y="674" fill="#d7dce5" font-family="sans-serif" font-size="13">FACT • Kanban snapshot • observed 12 min ago</text>
+  <text x="394" y="700" fill="#d7dce5" font-family="sans-serif" font-size="13">HYPOTHESIS • capacity is the bottleneck • 42% confidence</text>
+  <text x="394" y="726" fill="#d7dce5" font-family="sans-serif" font-size="13">OBSERVE • lead time + customer outcome + quality + confounds</text>
+  <text x="394" y="766" fill="#8fd3c7" font-family="sans-serif" font-size="12">ORIENT → MAP → FOCUS → ACT → OBSERVE → RETRIEVE → UPDATE</text>
+
+  <rect x="1000" y="130" width="376" height="700" rx="36" fill="#15191f" stroke="#586372" stroke-width="2"/>
+  <rect x="1018" y="148" width="340" height="664" rx="28" fill="#101318"/>
+  <text x="1042" y="188" fill="#d9b86c" font-family="sans-serif" font-size="11">STRATEGY OBSERVATORY</text>
+  <text x="1042" y="222" fill="#f4f1e8" font-family="sans-serif" font-size="22">One choice now.</text>
+  <rect x="1042" y="248" width="292" height="56" rx="14" fill="#1d242d"/>
+  <text x="1060" y="273" fill="#8fd3c7" font-family="sans-serif" font-size="11">FOCUS • INTERRUPTION SAFE</text><text x="1060" y="291" fill="#d7dce5" font-family="sans-serif" font-size="12">Objective: sustainable profit</text>
+  <text x="1042" y="348" fill="#aeb6c4" font-family="sans-serif" font-size="13">Explain before hints:</text>
+  <text x="1042" y="382" fill="#f4f1e8" font-family="sans-serif" font-size="18">What makes a strategy</text><text x="1042" y="407" fill="#f4f1e8" font-family="sans-serif" font-size="18">a constrained choice?</text>
+  <rect x="1042" y="442" width="292" height="124" rx="16" fill="#171c23" stroke="#39414d"/>
+  <text x="1060" y="474" fill="#737d8c" font-family="sans-serif" font-size="13">Founder response…</text>
+  <text x="1060" y="538" fill="#9da5b4" font-family="sans-serif" font-size="11">Confidence before feedback: 60%</text>
+  <rect x="1042" y="594" width="292" height="58" rx="29" fill="#d9b86c"/>
+  <text x="1114" y="629" fill="#111318" font-family="sans-serif" font-size="14" font-weight="700">Record &amp; compare →</text>
+  <rect x="1042" y="674" width="292" height="92" rx="14" fill="#1d242d"/>
+  <text x="1060" y="704" fill="#d9b86c" font-family="sans-serif" font-size="11">TEXT EQUIVALENT</text>
+  <text x="1060" y="729" fill="#d7dce5" font-family="sans-serif" font-size="12">Landmark 1/10 • list mode</text>
+  <text x="1060" y="749" fill="#9da5b4" font-family="sans-serif" font-size="11">Back resumes without duplicate action</text>
+</svg>

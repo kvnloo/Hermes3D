@@ -1,0 +1,39 @@
+flowchart LR
+  subgraph Context[Scoped company context]
+    R[Registry / portfolio]
+    K[Kanban / repositories]
+    D[Decisions / goals]
+    E[Accepted evidence]
+  end
+
+  V[Validation + provenance classifier] --> O
+  R --> V
+  K --> V
+  D --> V
+  E --> V
+
+  subgraph Engine[Founder Palace learning engine]
+    O[ORIENT] --> M[MAP]
+    M --> F[FOCUS]
+    F --> A[ACT]
+    A --> B[OBSERVE]
+    B --> T[RETRIEVE]
+    T --> U[UPDATE]
+    U --> O
+  end
+
+  M <--> G[(Versioned FounderKnowledgeItem graph)]
+  B <--> G
+  T <--> G
+  U <--> G
+
+  C[Hermes coach\ntruth classes + uncertainty] <--> Engine
+  P[Explicit approval boundary] --> X[Owning external system]
+  C --> P
+
+  S[Spatial settlement adapter] --> C
+  L[Accessible list/text adapter] --> C
+  H[History + interruption-safe session state] --> C
+
+  X --> Q[Authoritative receipt]
+  Q --> V
