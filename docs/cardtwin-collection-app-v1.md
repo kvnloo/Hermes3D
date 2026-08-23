@@ -10,7 +10,7 @@ PokeAPI list records provide stable National Dex IDs. Official artwork URLs use 
 
 TCGdex is the card source. The provider preserves the exact TCGdex ID, local number, set ID/name, rarity when present, and source image URL. CardTwin matching is a separate fail-closed identity table requiring source ID, set name, and number to all match. A source card without that exact tuple stays flat and says `CardTwin depth not available`. Exact matches embed the existing accepted `PokemonCardsPreview` viewer directly; its gyro, Touch, fullscreen, Paper/Glass, damping, and layer interaction code is reused rather than forked.
 
-The Pokémon 3D catalog is separate from PokeAPI records and currently empty by design. Every detail route therefore says `3D model unavailable`; no artwork-derived mesh or unrelated model is substituted.
+The Pokémon 3D catalog is separate from PokeAPI records and currently empty by design. Every detail route therefore says `3D model unavailable`; no artwork-derived mesh or unrelated model is substituted. Browser coverage intentionally verifies only this fail-closed path at both target viewports. An available-model journey is inapplicable until an approved versioned local model enters the catalog.
 
 ## External sources and terms
 
@@ -24,7 +24,7 @@ Pokémon names, card art, and official artwork belong to their respective rights
 
 Search and filter state is addressable in the URL. Invalid pages and filters normalize safely. Empty, upstream/offline, and retry states are explicit. Contextual Back uses browser history when available and falls back to the parent catalog. The fixed navigation includes only functional Pokédex and Cards links; Scan and Profile are disabled and labeled `Later`.
 
-The responsive grid is capped to 24 records per page and tested at 390x844 and 1920x1080. The page reserves bottom safe-area space, allows vertical scrolling, and clips no horizontal content. System dark mode uses the same information hierarchy and red/blue accents.
+The responsive grid is capped to 24 records per page and tested at 390x844 and 1920x1080. At both viewports, browser journeys submit Cards URL filters, exercise contextual Back from both detail routes, cover CardTwin available/unavailable printings, and cover the deliberately empty 3D catalog. The page reserves bottom safe-area space, allows vertical scrolling, and clips no horizontal content. System dark mode uses the same information hierarchy and red/blue accents.
 
 ## Verification
 
