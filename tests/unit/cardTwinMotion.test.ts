@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   applyCardTwinMotionFilter,
+  dampCardTwinMotion,
   getCardTwinMotionCapability,
   normalizeCardTwinOrientation,
   resolveCardTwinTilt,
@@ -33,6 +34,23 @@ describe("CardTwin phone tilt", () => {
     expect(target).toEqual({ x: -1, y: 1 });
     expect(applyCardTwinMotionFilter({ x: 0, y: 0 }, target, 0.2)).toEqual({ x: -0.2, y: 0.2 });
     expect(applyCardTwinMotionFilter({ x: 0.95, y: -0.95 }, { x: 2, y: -2 }, 1)).toEqual({ x: 1, y: -1 });
+  });
+
+  it.each([60, 120, 144])("converges to the same pose after one second at %iHz", (hz) => {
+    let pose = { x: 0, y: 0 };
+    for (let frame = 0; frame < hz; frame += 1) {
+      pose = dampCardTwinMotion(pose, { x: 1, y: -0.75 }, 1 / hz, 12);
+    }
+
+    expect(pose.x).toBeCloseTo(1 - Math.exp(-12), 10);
+    expect(pose.y).toBeCloseTo(-0.75 * (1 - Math.exp(-12)), 10);
+  });
+
+  it("clamps long frame gaps while preserving an exact reduced-motion snap", () => {
+    expect(dampCardTwinMotion({ x: 0, y: 0 }, { x: 1, y: -1 }, 1, 12)).toEqual(
+      dampCardTwinMotion({ x: 0, y: 0 }, { x: 1, y: -1 }, 0.05, 12),
+    );
+    expect(dampCardTwinMotion({ x: 0.25, y: -0.25 }, { x: 1, y: -1 }, 0, Infinity)).toEqual({ x: 1, y: -1 });
   });
 
   it("fails closed when orientation is unavailable or permission is denied", () => {

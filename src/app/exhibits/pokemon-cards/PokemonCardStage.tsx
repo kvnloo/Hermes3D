@@ -7,7 +7,7 @@ import * as THREE from "three";
 import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 import { resolveCardTwinSurfaceDepths } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinDepth";
 import { selectCardTwinMotionSource, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
-import { applyCardTwinMotionFilter, normalizeCardTwinOrientation, resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
+import { dampCardTwinMotion, normalizeCardTwinOrientation, resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
 
 type ContractRefs = MutableRefObject<Array<HTMLSpanElement | null>>;
 
@@ -29,7 +29,7 @@ function MuseumLighting({ reduced }: { reduced: boolean }) {
 
 function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side"; reduced: boolean }) {
   const { camera, size } = useThree();
-  useFrame(() => {
+  useFrame((_, delta) => {
     const orthographic = camera as THREE.OrthographicCamera;
     const mobile = size.width < 700;
     const nextZoom = view === "side"
@@ -38,7 +38,7 @@ function ResponsiveCamera({ view, reduced }: { view: "gallery" | "macro" | "side
         ? (mobile ? 130 : 160)
         : (mobile ? 116 : 138);
     const nextX = view === "gallery" && !mobile ? 0.38 : view === "side" ? 0.2 : 0;
-    const amount = reduced ? 1 : 0.075;
+    const amount = reduced ? 1 : 1 - Math.exp(-4.7 * Math.min(delta, 0.05));
     const zoom = THREE.MathUtils.lerp(orthographic.zoom, nextZoom, amount);
     const x = THREE.MathUtils.lerp(orthographic.position.x, nextX, amount);
     if (Math.abs(orthographic.zoom - nextZoom) > 0.01 || Math.abs(orthographic.position.x - nextX) > 0.001) {
@@ -64,7 +64,9 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   const root = useRef<THREE.Group>(null);
   const { gl } = useThree();
   const orientation = useRef({ x: 0, y: 0 });
+  const presentedInput = useRef({ x: 0, y: 0 });
   const pointer = useRef({ x: 0, y: 0 });
+  const lastContractUpdate = useRef(0);
   const hasOrientationSample = useRef(false);
   const neutral = useRef<{ beta: number; gamma: number } | null>(null);
   const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
@@ -88,7 +90,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
       neutral.current ??= sample;
       const screenAngle = window.screen.orientation?.angle ?? window.orientation ?? 0;
       const target = normalizeCardTwinOrientation(sample, neutral.current, screenAngle);
-      orientation.current = applyCardTwinMotionFilter(orientation.current, target, 0.18);
+      orientation.current = target;
       hasOrientationSample.current = true;
       onMotionSource("orientation");
     };
@@ -109,23 +111,40 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
     return () => window.removeEventListener("pointermove", handlePointer);
   }, [onMotionSource, reduced]);
 
-  useFrame(() => {
+  useFrame(({ clock }, delta) => {
     if (!root.current) return;
     const source = selectCardTwinMotionSource(motionEnabled, hasOrientationSample.current);
-    const input = source === "orientation" ? orientation.current : pointer.current;
+    const targetInput = source === "orientation" ? orientation.current : pointer.current;
+    presentedInput.current = dampCardTwinMotion(presentedInput.current, targetInput, delta, reduced ? Infinity : 14);
+    const input = presentedInput.current;
     const cardTilt = resolveCardTwinTilt(input, 0, reduced);
-    root.current.rotation.x = THREE.MathUtils.lerp(root.current.rotation.x, cardTilt.rotateX, reduced ? 1 : 0.09);
-    root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, cardTilt.rotateY, reduced ? 1 : 0.09);
+    const tilt = dampCardTwinMotion(
+      { x: root.current.rotation.x, y: root.current.rotation.y },
+      { x: cardTilt.rotateX, y: cardTilt.rotateY },
+      delta,
+      reduced ? Infinity : 11,
+    );
+    root.current.rotation.set(tilt.x, tilt.y, 0);
+    const updateContracts = clock.elapsedTime - lastContractUpdate.current >= 1 / 15;
     card.layers.forEach((layer, index) => {
       const mesh = root.current?.children[index + 3];
       if (!mesh) return;
       const parallax = resolveCardTwinTilt(input, layer.depthMm, reduced);
       const spread = exploded ? (index - (card.layers.length - 1) / 2) * 1.25 : 0;
-      mesh.position.x = THREE.MathUtils.lerp(mesh.position.x, spread + parallax.x, reduced ? 1 : 0.12);
-      mesh.position.y = THREE.MathUtils.lerp(mesh.position.y, parallax.y, reduced ? 1 : 0.12);
-      contracts.current[index]?.setAttribute("data-parallax-x", mesh.position.x.toFixed(4));
-      contracts.current[index]?.setAttribute("data-parallax-y", mesh.position.y.toFixed(4));
+      const position = dampCardTwinMotion(
+        { x: mesh.position.x, y: mesh.position.y },
+        { x: spread + parallax.x, y: parallax.y },
+        delta,
+        reduced ? Infinity : 14,
+      );
+      mesh.position.x = position.x;
+      mesh.position.y = position.y;
+      if (updateContracts) {
+        contracts.current[index]?.setAttribute("data-parallax-x", mesh.position.x.toFixed(4));
+        contracts.current[index]?.setAttribute("data-parallax-y", mesh.position.y.toFixed(4));
+      }
     });
+    if (updateContracts) lastContractUpdate.current = clock.elapsedTime;
   });
 
   return <group ref={root}>

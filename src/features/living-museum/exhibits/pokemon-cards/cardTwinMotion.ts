@@ -43,6 +43,21 @@ export function applyCardTwinMotionFilter(
   };
 }
 
+export function dampCardTwinMotion(
+  current: CardTwinMotionVector,
+  target: CardTwinMotionVector,
+  deltaSeconds: number,
+  response: number,
+): CardTwinMotionVector {
+  if (response === Infinity) return { ...target };
+  const dt = Math.max(0, Math.min(0.05, deltaSeconds));
+  const alpha = 1 - Math.exp(-Math.max(0, response) * dt);
+  return {
+    x: current.x + (target.x - current.x) * alpha,
+    y: current.y + (target.y - current.y) * alpha,
+  };
+}
+
 export function resolveCardTwinTilt(
   input: { x: number; y: number },
   depthMm: number,
