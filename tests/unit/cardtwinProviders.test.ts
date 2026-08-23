@@ -11,8 +11,8 @@ describe("catalog provider normalization", () => {
   });
 
   it("normalizes only API-evidenced Pokémon detail fields", () => {
-    const detail = normalizePokemonDetail({ id: 25, name: "pikachu", types: [{ type: { name: "electric" } }], abilities: [{ ability: { name: "static" }, is_hidden: false }], stats: [{ base_stat: 90, stat: { name: "speed" } }], sprites: { other: { "official-artwork": { front_default: "https://images.test/25.png" } } } });
-    expect(detail).toMatchObject({ id: 25, name: "Pikachu", types: ["electric"], abilities: ["Static"], stats: [{ name: "Speed", value: 90 }] });
+    const detail = normalizePokemonDetail({ id: 25, name: "pikachu", types: [{ type: { name: "electric" } }], abilities: [{ ability: { name: "static" }, is_hidden: false }], stats: [{ base_stat: 90, stat: { name: "speed" } }], cries: { latest: "https://audio.test/25.ogg" }, sprites: { other: { "official-artwork": { front_default: "https://images.test/25.png", front_shiny: "https://images.test/shiny/25.png" }, showdown: { front_default: "https://sprites.test/25.gif" } } } }, [], { habitat: { name: "forest" }, color: { name: "yellow" }, generation: { name: "generation-i" }, varieties: [{ is_default: true, pokemon: { name: "pikachu", url: "https://pokeapi.co/api/v2/pokemon/25/" } }] });
+    expect(detail).toMatchObject({ id: 25, name: "Pikachu", types: ["electric"], abilities: ["Static"], stats: [{ name: "Speed", value: 90 }], habitat: "forest", color: "yellow", animatedSpriteUrl: "https://sprites.test/25.gif", shinyArtworkUrl: "https://images.test/shiny/25.png", cryUrl: "https://audio.test/25.ogg", forms: [{ id: 25, name: "Pikachu", isDefault: true }] });
   });
 
   it("normalizes an evidenced evolution chain in source order", () => {

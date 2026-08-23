@@ -3,7 +3,19 @@ import type { CatalogQuery } from "../catalogQuery";
 export type Provenance = { source: string; sourceUrl: string; fetchedAt: string; attribution: string };
 export type PokemonSummary = { id: number; name: string; artworkUrl: string; generation: number; region: string; source: "PokeAPI" };
 export type PokemonEvolution = { id: number; name: string };
-export type PokemonDetail = PokemonSummary & { types: string[]; abilities: string[]; stats: Array<{ name: string; value: number }>; evolution: PokemonEvolution[] };
+export type PokemonForm = { id: number; name: string; isDefault: boolean };
+export type PokemonDetail = PokemonSummary & {
+  types: string[];
+  abilities: string[];
+  stats: Array<{ name: string; value: number }>;
+  evolution: PokemonEvolution[];
+  habitat: string | null;
+  color: string | null;
+  animatedSpriteUrl: string | null;
+  shinyArtworkUrl: string | null;
+  cryUrl: string | null;
+  forms: PokemonForm[];
+};
 export type CardSummary = { id: string; name: string; number: string; imageUrl: string; rarity?: string; types: string[]; set: { id: string; name: string }; source: "TCGdex"; sourceUrl: string };
 export type CatalogPage<T> = { items: T[]; page: number; totalPages: number; total: number; provenance: Provenance };
 

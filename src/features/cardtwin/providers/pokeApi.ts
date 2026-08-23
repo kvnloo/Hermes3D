@@ -13,7 +13,15 @@ type PokeApiDetail = {
   types?: Array<{ type: { name: string } }>;
   abilities?: Array<{ ability: { name: string }; is_hidden?: boolean }>;
   stats?: Array<{ base_stat: number; stat: { name: string } }>;
-  sprites?: { other?: { "official-artwork"?: { front_default?: string } } };
+  cries?: { latest?: string | null };
+  sprites?: { other?: { "official-artwork"?: { front_default?: string; front_shiny?: string | null }; showdown?: { front_default?: string | null } } };
+};
+type PokeApiSpecies = {
+  evolution_chain?: { url?: string };
+  habitat?: { name: string } | null;
+  color?: { name: string } | null;
+  generation?: { name: string };
+  varieties?: Array<{ is_default: boolean; pokemon: { name: string; url: string } }>;
 };
 
 type EvolutionNode = { species: { name: string; url: string }; evolves_to?: EvolutionNode[] };
@@ -39,7 +47,7 @@ export function normalizePokemonList(payload: { results?: Array<{ name: string; 
   });
 }
 
-export function normalizePokemonDetail(payload: PokeApiDetail, evolution: PokemonEvolution[] = []): PokemonDetail {
+export function normalizePokemonDetail(payload: PokeApiDetail, evolution: PokemonEvolution[] = [], species: PokeApiSpecies = {}): PokemonDetail {
   const generation = generationForPokemon(payload.id) ?? { generation: 0, region: "Unknown" };
   return {
     id: payload.id, name: title(payload.name), ...generation, source: "PokeAPI",
@@ -47,6 +55,15 @@ export function normalizePokemonDetail(payload: PokeApiDetail, evolution: Pokemo
     types: (payload.types ?? []).map((item) => item.type.name),
     abilities: (payload.abilities ?? []).map((item) => title(item.ability.name)),
     stats: (payload.stats ?? []).map((item) => ({ name: title(item.stat.name), value: item.base_stat })), evolution,
+    habitat: species.habitat?.name ?? null,
+    color: species.color?.name ?? null,
+    animatedSpriteUrl: payload.sprites?.other?.showdown?.front_default ?? null,
+    shinyArtworkUrl: payload.sprites?.other?.["official-artwork"]?.front_shiny ?? null,
+    cryUrl: payload.cries?.latest ?? null,
+    forms: (species.varieties ?? []).flatMap((entry) => {
+      const id = Number(entry.pokemon.url.match(/\/(\d+)\/?$/)?.[1]);
+      return Number.isInteger(id) ? [{ id, name: title(entry.pokemon.name), isDefault: entry.is_default }] : [];
+    }),
   };
 }
 
@@ -71,9 +88,9 @@ export const pokeApiProvider: PokemonCatalogProvider = {
     if (!Number.isInteger(id) || id < 1 || id > 1025) return null;
     if (testFixtures && id === 25) return { record: normalizePokemonDetail({ id: 25, name: "pikachu", types: [{ type: { name: "electric" } }], abilities: [{ ability: { name: "static" } }], stats: [{ base_stat: 90, stat: { name: "speed" } }] }, [{ id: 172, name: "Pichu" }, { id: 25, name: "Pikachu" }, { id: 26, name: "Raichu" }]), provenance: provenance() };
     const payload = await fetcher.json<PokeApiDetail>(`pokemon-detail-${id}`, `${API}/pokemon/${id}`);
-    const species = await fetcher.json<{ evolution_chain?: { url?: string } }>(`pokemon-species-${id}`, `${API}/pokemon-species/${id}`);
+    const species = await fetcher.json<PokeApiSpecies>(`pokemon-species-${id}`, `${API}/pokemon-species/${id}`);
     const chainUrl = species.evolution_chain?.url;
     const evolution = chainUrl ? normalizeEvolutionChain(await fetcher.json<{ chain?: EvolutionNode }>(`pokemon-evolution-${chainUrl.match(/\/(\d+)\/?$/)?.[1] ?? id}`, chainUrl)) : [];
-    return { record: normalizePokemonDetail(payload, evolution), provenance: provenance() };
+    return { record: normalizePokemonDetail(payload, evolution, species), provenance: provenance() };
   },
 };
