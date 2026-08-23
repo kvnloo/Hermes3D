@@ -17,7 +17,14 @@ for (const viewport of [{ name: "mobile", width: 390, height: 844 }, { name: "de
     await page.waitForTimeout(250);
     const after = await encounter.evaluate((node) => getComputedStyle(node).getPropertyValue("--encounter-x"));
     expect(after).not.toBe(before);
-    await page.getByRole("button", { name: /react with/i }).click();
+    const creature = page.getByRole("button", { name: /react with/i });
+    const frameA = await creature.screenshot();
+    await page.waitForTimeout(350);
+    const frameB = await creature.screenshot();
+    expect(frameA.equals(frameB)).toBe(false);
+    await page.getByRole("button", { name: /enable cry audio/i }).click();
+    await expect(page.getByRole("button", { name: /disable cry audio/i })).toBeVisible();
+    await creature.click();
     await expect(encounter).toHaveClass(/is-reacting/);
     await page.screenshot({ path: `artifacts/living-encounter/${viewport.name}-reaction.png`, fullPage: true });
     const geometry = await page.evaluate(() => ({ overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth, bodyOverflow: getComputedStyle(document.body).overflowY }));

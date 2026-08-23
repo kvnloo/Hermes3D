@@ -86,7 +86,7 @@ export const pokeApiProvider: PokemonCatalogProvider = {
   },
   async get(id) {
     if (!Number.isInteger(id) || id < 1 || id > 1025) return null;
-    if (testFixtures && id === 25) return { record: normalizePokemonDetail({ id: 25, name: "pikachu", types: [{ type: { name: "electric" } }], abilities: [{ ability: { name: "static" } }], stats: [{ base_stat: 90, stat: { name: "speed" } }] }, [{ id: 172, name: "Pichu" }, { id: 25, name: "Pikachu" }, { id: 26, name: "Raichu" }]), provenance: provenance() };
+    if (testFixtures && id === 25) return { record: normalizePokemonDetail({ id: 25, name: "pikachu", types: [{ type: { name: "electric" } }], abilities: [{ ability: { name: "static" } }], stats: [{ base_stat: 90, stat: { name: "speed" } }], cries: { latest: "data:audio/ogg;base64,T2dnUw==" }, sprites: { other: { showdown: { front_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/25.gif" }, "official-artwork": { front_default: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png", front_shiny: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/25.png" } } } }, [{ id: 172, name: "Pichu" }, { id: 25, name: "Pikachu" }, { id: 26, name: "Raichu" }], { varieties: [{ is_default: true, pokemon: { name: "pikachu", url: `${API}/pokemon/25/` } }] }), provenance: provenance() };
     const payload = await fetcher.json<PokeApiDetail>(`pokemon-detail-${id}`, `${API}/pokemon/${id}`);
     const species = await fetcher.json<PokeApiSpecies>(`pokemon-species-${id}`, `${API}/pokemon-species/${id}`);
     const chainUrl = species.evolution_chain?.url;
