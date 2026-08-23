@@ -24,7 +24,7 @@ export function useBuildSceneState(): BuildSceneState | null {
         const event = parsePublicBuildEvent(JSON.parse(message.data));
         setState((current) => {
           const next = applyBuildEvent(current, event);
-          persistBuildState(next);
+          if (next !== current) persistBuildState(next);
           return next;
         });
       } catch {

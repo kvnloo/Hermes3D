@@ -24,15 +24,25 @@ const PANEL_POSITIONS: readonly (readonly [number, number, number])[] = [
   [-2.6, 1.6, 2.9], [0, 1.6, 2.9], [2.6, 1.6, 2.9],
 ];
 
-export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
-  const rootRef = useRef<THREE.Group>(null);
-  const scanRef = useRef<THREE.Mesh>(null);
-  const droneRef = useRef<THREE.Group>(null);
+export function getConstructionPresentation(state: BuildSceneState | null) {
   const stageDepth = state ? STAGE_DEPTH[state.stage] : -1;
   const active = state !== null && state.status !== "ready";
-  const frameVisible = active && stageDepth >= 1;
-  const geometryVisible = active && stageDepth >= 2;
-  const materialsVisible = active && stageDepth >= 3;
+  return {
+    siteVisible: state !== null,
+    active,
+    discoveryVisible: active && stageDepth >= 0,
+    frameVisible: active && stageDepth >= 1,
+    geometryVisible: active && stageDepth >= 2,
+    materialsVisible: active && stageDepth >= 3,
+    finishedVisible: state?.finishedVisible === true,
+  };
+}
+
+export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
+  const scanRef = useRef<THREE.Mesh>(null);
+  const droneRef = useRef<THREE.Group>(null);
+  const presentation = getConstructionPresentation(state);
+  const { active, discoveryVisible, frameVisible, geometryVisible, materialsVisible } = presentation;
   const failed = state?.status === "failed" || state?.status === "stale";
 
   const grid = useMemo(() => new THREE.GridHelper(10, 20, 0x34d9ff, 0x276073), []);
@@ -45,13 +55,16 @@ export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
       droneRef.current.position.x = Math.sin(t * 0.65) * 3.2;
       droneRef.current.position.y = 3.8 + Math.sin(t * 1.7) * 0.2;
     }
-    if (rootRef.current) rootRef.current.visible = state !== null;
   });
 
   return (
-    <group ref={rootRef} position={[17, 0.03, -8]} visible={state !== null}>
+    <group position={[17, 0.03, -8]} visible={presentation.siteVisible}>
       <group visible={active}>
-      <primitive object={grid} position={[0, 0.02, 0]} />
+      <primitive object={grid} position={[0, 0.02, 0]} visible={discoveryVisible} />
+      <mesh position={[0, 0.055, 0]} visible={discoveryVisible}>
+        <boxGeometry args={[8.6, 0.08, 6.6]} />
+        <meshBasicMaterial color="#123b48" transparent opacity={0.72} wireframe />
+      </mesh>
       <mesh ref={scanRef} rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[9.5, 0.05]} />
         <meshBasicMaterial color={failed ? "#ff405c" : "#63eeff"} transparent opacity={0.85} />
@@ -91,14 +104,20 @@ export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
         </mesh>
       </group>
       </group>
-      <group visible={state?.finishedVisible === true}>
-        <mesh position={[0, 1.8, 0]}>
-          <boxGeometry args={[8, 3.6, 6]} />
+      <group visible={presentation.finishedVisible}>
+        <mesh position={[0, 0.08, 0]}>
+          <boxGeometry args={[8, 0.12, 6]} />
           <meshStandardMaterial color="#173847" roughness={0.48} metalness={0.18} />
         </mesh>
-        <mesh position={[0, 1.8, 3.04]}>
-          <boxGeometry args={[6.8, 2.65, 0.08]} />
-          <meshStandardMaterial color="#8edfec" roughness={0.18} metalness={0.06} />
+        {BEAM_POSITIONS.slice(0, 4).map((position, index) => (
+          <mesh key={index} position={[position[0], 1.8, position[2]]}>
+            <boxGeometry args={[0.18, 3.6, 0.18]} />
+            <meshStandardMaterial color="#49bfd2" roughness={0.35} />
+          </mesh>
+        ))}
+        <mesh position={[0, 1.8, -3.04]}>
+          <boxGeometry args={[7.7, 3.25, 0.08]} />
+          <meshStandardMaterial color="#8edfec" transparent opacity={0.42} roughness={0.18} />
         </mesh>
         <mesh position={[0, 3.64, 0]}>
           <boxGeometry args={[8.4, 0.12, 6.4]} />

@@ -132,6 +132,10 @@ export function applyBuildEvent(
   input: unknown,
 ): BuildSceneState {
   const event = parsePublicBuildEvent(input);
+  if (
+    current && event.buildId === current.buildId && event.type === current.type &&
+    event.stage === current.stage && event.timestamp === current.timestamp
+  ) return current;
   if (event.type === "build.start") {
     return { ...event, status: "building", finishedVisible: false };
   }

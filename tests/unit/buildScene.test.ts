@@ -11,6 +11,7 @@ import {
   persistBuildState,
 } from "@/features/building/buildStore";
 import { resolveConstructionComponent } from "@/features/building/constructionManifest";
+import { getConstructionPresentation } from "@/features/building/ConstructionSite";
 
 const startedAt = "2026-08-22T20:00:00.000Z";
 const baseStart = {
@@ -125,6 +126,36 @@ describe("build scene state machine", () => {
       progress: 100,
     });
     expect(ready).toMatchObject({ status: "ready", stage: "READY", finishedVisible: true });
+  });
+
+  it("returns the existing state object for a replayed event", () => {
+    const started = applyBuildEvent(null, baseStart);
+    expect(applyBuildEvent(started, baseStart)).toBe(started);
+  });
+});
+
+describe("construction presentation", () => {
+  it("makes DISCOVER visibly identifiable before frame geometry arrives", () => {
+    expect(getConstructionPresentation(applyBuildEvent(null, baseStart))).toMatchObject({
+      siteVisible: true,
+      active: true,
+      discoveryVisible: true,
+      finishedVisible: false,
+    });
+  });
+
+  it("keeps the finished handoff visible at READY", () => {
+    const ready = applyBuildEvent(null, {
+      ...baseStart,
+      type: "build.complete",
+      stage: "READY",
+      progress: 100,
+    });
+    expect(getConstructionPresentation(ready)).toMatchObject({
+      siteVisible: true,
+      active: false,
+      finishedVisible: true,
+    });
   });
 });
 
