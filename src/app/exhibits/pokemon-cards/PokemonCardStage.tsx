@@ -10,6 +10,7 @@ import { selectCardTwinMotionSource, type CardTwinMotionSource } from "@/feature
 import { dampCardTwinMotion, normalizeCardTwinOrientation, resolveCardTwinTilt } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinMotion";
 import { resolveCardTwinMaterial, type CardTwinDisplayMode, type CardTwinPaperSettings } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPaperMode";
 import { resolvePartsSheetLayout } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPartsSheet";
+import type { CardTwinArtMode } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinArtMode";
 
 type CardTwinView = "gallery" | "macro" | "side" | "parts";
 
@@ -58,8 +59,10 @@ function ResponsiveCamera({ view, reduced }: { view: CardTwinView; reduced: bool
   return null;
 }
 
-function LayeredCard({ card, reduced, exploded, motionEnabled, touchEnabled, contracts, onReady, onMotionSource, displayMode, partsSheet = false }: {
+function LayeredCard({ card, artMode, artImage, reduced, exploded, motionEnabled, touchEnabled, contracts, onReady, onMotionSource, displayMode, partsSheet = false }: {
   card: CardTwinCard;
+  artMode: CardTwinArtMode;
+  artImage: string;
   reduced: boolean;
   exploded: boolean;
   motionEnabled: boolean;
@@ -79,7 +82,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, touchEnabled, con
   const lastContractUpdate = useRef(0);
   const hasOrientationSample = useRef(false);
   const neutral = useRef<{ beta: number; gamma: number } | null>(null);
-  const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
+  const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture), artImage]);
   const surfaceDepths = resolveCardTwinSurfaceDepths(card.layers);
   const partLayout = resolvePartsSheetLayout(card.layers.length, card.layers.length > 6 ? 4 : 3);
 
@@ -210,6 +213,10 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, touchEnabled, con
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial map={textures[index + 1]} transparent alphaTest={0.01} depthWrite toneMapped={false} side={THREE.DoubleSide} polygonOffset polygonOffsetFactor={-(index + 1)} polygonOffsetUnits={-(index + 1)} />
     </mesh>)}
+    <mesh position-z={surfaceDepths.foil - 0.0001} renderOrder={19} visible={artMode === "hd" && !exploded && !partsSheet}>
+      <planeGeometry args={[2.15, 3]} />
+      <meshBasicMaterial map={textures[textures.length - 1]} toneMapped={false} />
+    </mesh>
     {card.layers.map((layer, index) => <mesh key={`${layer.id}-foam-shadow`} visible={!partsSheet} position={[0.018, -0.022, surfaceDepths[layer.id] - 0.006]} renderOrder={index + 1}>
       <planeGeometry args={[2.15, 3]} />
       <meshBasicMaterial color="#130d08" alphaMap={textures[index + 1]} transparent opacity={0.24} depthWrite={false} toneMapped={false} />
@@ -231,8 +238,10 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, touchEnabled, con
   </group>;
 }
 
-export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, paperSettings, motionEnabled = false, touchEnabled = false, onMotionSource = () => undefined }: {
+export function PokemonCardStage({ card, artMode, artImage, reduced, view, cameraMoving, texturesReady, onTexturesReady, paperSettings, motionEnabled = false, touchEnabled = false, onMotionSource = () => undefined }: {
   card: CardTwinCard;
+  artMode: CardTwinArtMode;
+  artImage: string;
   reduced: boolean;
   view: CardTwinView;
   cameraMoving: boolean;
@@ -251,6 +260,8 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
     data-view={view}
     data-parts-sheet={view === "parts" ? "cutting-mat-flat-lay" : undefined}
     data-card-id={card.id}
+    data-art-mode={artMode}
+    data-art-image={artImage}
     data-card-printing={`${card.name} · ${card.set} · ${card.printing}`}
     data-hidden-fill={card.hiddenFill}
     data-textures-ready={String(texturesReady)}
@@ -288,7 +299,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
       <MuseumLighting reduced={reduced} displayMode={paperSettings.mode} />
       <ResponsiveCamera view={view} reduced={reduced} />
       <Suspense fallback={null}>
-        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} partsSheet={view === "parts"} motionEnabled={motionEnabled} touchEnabled={touchEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} displayMode={paperSettings.mode} />
+        <LayeredCard key={`${card.id}-${artMode}`} card={card} artMode={artMode} artImage={artImage} reduced={reduced} exploded={exploded} partsSheet={view === "parts"} motionEnabled={motionEnabled} touchEnabled={touchEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} displayMode={paperSettings.mode} />
       </Suspense>
     </Canvas>
   </section>;

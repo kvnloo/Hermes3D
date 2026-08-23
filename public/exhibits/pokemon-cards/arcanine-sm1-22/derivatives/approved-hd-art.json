@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "printingId": "arcanine-sm1-22",
+  "mode": "assembled-front-only",
+  "publicImageReference": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/approved-hd-art.png",
+  "privateMaterialsCommit": "3f2086e",
+  "candidate": "B-C100",
+  "model": {
+    "name": "RealESRGAN_x4plus_anime_6B",
+    "sha256": "f872d837d3c90ed2e05227bed711af5671a6fd1c9f7d7e91c911a61f155e99da"
+  },
+  "sourceSha256": "67062914bb23be5fddf3bf89fb36236c1e0972348d50d80409b6bde895ae75c2",
+  "outputSha256": "b805c5a9495ee805a3df2e0db8aad622586d1c71ac6b52a302943c8e2a49e7f6",
+  "tiling": {
+    "inputTile": [512, 512],
+    "inputOverlap": [32, 32],
+    "auditedOutputEdgesX": [1920, 2048]
+  },
+  "disclosure": "AI restoration is confined to the illustration art box; canonical frame, text, symbols and borders are unchanged. Layer cutouts remain canonical in this initial toggle."
+}

@@ -13,6 +13,13 @@ export type CardTwinCard = {
   accent: string;
   canonical: string;
   hiddenFill: string;
+  approvedHdArt?: {
+    image: string;
+    model: "RealESRGAN_x4plus_anime_6B";
+    sourceSha256: string;
+    modelSha256: string;
+    outputSha256: string;
+  };
   layers: readonly CardTwinLayer[];
 };
 
@@ -28,6 +35,13 @@ export const CARD_TWIN_CARDS: readonly CardTwinCard[] = [
     set: "Sun & Moon",
     accent: "#e8a45b",
     canonical: "/exhibits/pokemon-cards/canonical/arcanine-sm1-22.png",
+    approvedHdArt: {
+      image: "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/approved-hd-art.png",
+      model: "RealESRGAN_x4plus_anime_6B",
+      sourceSha256: "67062914bb23be5fddf3bf89fb36236c1e0972348d50d80409b6bde895ae75c2",
+      modelSha256: "f872d837d3c90ed2e05227bed711af5671a6fd1c9f7d7e91c911a61f155e99da",
+      outputSha256: "b805c5a9495ee805a3df2e0db8aad622586d1c71ac6b52a302943c8e2a49e7f6",
+    },
     hiddenFill: texture("arcanine-sm1-22", "hidden-background-fill"),
     layers: [
       { id: "far-background", label: "Far background", depthMm: 0, texture: texture("arcanine-sm1-22", "far-background") },

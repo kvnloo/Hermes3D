@@ -11,6 +11,34 @@ const cards = [
 test.use({ viewport: { width: 1280, height: 720 }, video: "on" });
 test.setTimeout(90_000);
 
+test("switches Arcanine between truthful Original and approved HD Art without navigation", async ({ page }) => {
+  const toggleEvidence = join(evidence, "arcanine-sm1-22", "hd-toggle");
+  mkdirSync(toggleEvidence, { recursive: true });
+  await page.goto("/exhibits/pokemon-cards?evidence=1&view=macro", { waitUntil: "domcontentloaded" });
+  const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
+  await expect(page.getByRole("button", { name: "Original" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByText("Original · canonical printing", { exact: true })).toBeVisible();
+  const url = page.url();
+  await page.screenshot({ path: join(toggleEvidence, "desktop-original.png") });
+
+  await page.getByRole("button", { name: "HD Art" }).click();
+  await expect(stage).toHaveAttribute("data-art-mode", "hd");
+  await expect(page.getByText("HD Art · AI-restored illustration", { exact: true })).toBeVisible();
+  expect(page.url()).toBe(url);
+  await page.screenshot({ path: join(toggleEvidence, "desktop-hd-art.png") });
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  await page.screenshot({ path: join(toggleEvidence, "mobile-hd-art-390x844.png") });
+
+  await page.reload();
+  await expect(page.getByRole("button", { name: "HD Art" })).toHaveAttribute("aria-pressed", "true");
+  await page.getByRole("button", { name: /View exact printing Umbreon/i }).click();
+  await expect(page.getByRole("button", { name: "HD Art" })).toBeDisabled();
+  await expect(page.getByText("HD version unavailable", { exact: true })).toBeVisible();
+  await expect(stage).toHaveAttribute("data-art-mode", "original");
+});
+
 for (const [index, card] of cards.entries()) {
   test(`captures exact neutral, exploded, and mobile evidence for ${card.slug}`, async ({ page }) => {
     const cardEvidence = join(evidence, card.slug);

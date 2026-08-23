@@ -5,6 +5,7 @@ import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards
 import { CARD_TWIN_INPUT_INITIAL, reduceCardTwinFullscreen, reduceCardTwinInput, type CardTwinFullscreenState, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { PokemonCardStage } from "./PokemonCardStage";
 import { CARD_TWIN_PAPER_DEFAULTS, loadCardTwinPaperSettings, saveCardTwinPaperSettings, type CardTwinPaperSettings } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPaperMode";
+import { CARD_TWIN_ART_DEFAULT, loadCardTwinArtMode, resolveCardTwinArt, saveCardTwinArtMode, type CardTwinArtMode } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinArtMode";
 
 const revealPhases = ["capture", "lookup", "canonical", "segment", "assemble", "ready"] as const;
 const revealLabels = ["Phone photo", "Exact printing lookup", "Canonical HD", "SAM 2.1 cut", "Layer assembly", "CardTwin ready"];
@@ -23,13 +24,25 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [paperSettings, setPaperSettings] = useState<CardTwinPaperSettings>(CARD_TWIN_PAPER_DEFAULTS);
   const [paperSettingsReady, setPaperSettingsReady] = useState(false);
   const [calibrating, setCalibrating] = useState(false);
+  const [artMode, setArtMode] = useState<CardTwinArtMode>(CARD_TWIN_ART_DEFAULT);
   const inspectRoot = useRef<HTMLDivElement>(null);
   const card = CARD_TWIN_CARDS[cardIndex];
+  const resolvedArt = resolveCardTwinArt(card, artMode);
 
   useEffect(() => {
     setPaperSettings(loadCardTwinPaperSettings(window.localStorage));
     setPaperSettingsReady(true);
   }, []);
+  useEffect(() => {
+    // The selected printing owns a distinct persisted preference; hydrate it when that identity changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setArtMode(loadCardTwinArtMode(window.localStorage, card.id));
+  }, [card.id]);
+  const updateArtMode = (next: CardTwinArtMode) => {
+    if (next === "hd" && !card.approvedHdArt) return;
+    setArtMode(next);
+    saveCardTwinArtMode(window.localStorage, card.id, next);
+  };
   const updatePaperSettings = (next: CardTwinPaperSettings) => {
     setPaperSettings(next);
     saveCardTwinPaperSettings(window.localStorage, next);
@@ -140,7 +153,16 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
       <div ref={inspectRoot} className="hero-cards" data-view={view} data-fullscreen-state={fullscreen} data-motion-source={motionSource} data-input-preference={input.preference} data-display-mode={paperSettings.mode}>
-        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} paperSettings={paperSettings} motionEnabled={input.preference !== "touch" && input.availability !== "denied" && input.availability !== "unavailable"} touchEnabled={input.preference === "touch"} onMotionSource={handleMotionSource} />
+        <PokemonCardStage card={card} artMode={resolvedArt.mode} artImage={resolvedArt.image} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} paperSettings={paperSettings} motionEnabled={input.preference !== "touch" && input.availability !== "denied" && input.availability !== "unavailable"} touchEnabled={input.preference === "touch"} onMotionSource={handleMotionSource} />
+        <section className="art-mode-control" aria-label="Card artwork source">
+          <div role="group" aria-label="Original or HD artwork">
+            <button type="button" aria-pressed={resolvedArt.mode === "original"} onClick={() => updateArtMode("original")}>Original</button>
+            <button type="button" aria-pressed={resolvedArt.mode === "hd"} disabled={!card.approvedHdArt} onClick={() => updateArtMode("hd")}>HD Art</button>
+          </div>
+          <strong>{resolvedArt.mode === "hd" ? "HD Art · AI-restored illustration" : "Original · canonical printing"}</strong>
+          {!card.approvedHdArt && <small>HD version unavailable</small>}
+          {resolvedArt.mode === "hd" && card.approvedHdArt && <details><summary>Evidence</summary><span>{card.approvedHdArt.model} · assembled front only · {card.approvedHdArt.outputSha256.slice(0, 12)}</span></details>}
+        </section>
         {paperSettingsReady && <div className="paper-controls">
           <button type="button" aria-pressed={paperSettings.mode === "paper"} onClick={() => updatePaperSettings({ ...paperSettings, mode: paperSettings.mode === "paper" ? "glass" : "paper" })}>{paperSettings.mode === "paper" ? "Paper · on" : "Paper"}</button>
           {paperSettings.mode === "paper" && <button type="button" onClick={() => setCalibrating((value) => !value)}>Calibrate</button>}
