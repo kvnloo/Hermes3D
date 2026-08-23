@@ -58,11 +58,12 @@ function ResponsiveCamera({ view, reduced }: { view: CardTwinView; reduced: bool
   return null;
 }
 
-function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onReady, onMotionSource, displayMode, partsSheet = false }: {
+function LayeredCard({ card, reduced, exploded, motionEnabled, touchEnabled, contracts, onReady, onMotionSource, displayMode, partsSheet = false }: {
   card: CardTwinCard;
   reduced: boolean;
   exploded: boolean;
   motionEnabled: boolean;
+  touchEnabled: boolean;
   contracts: ContractRefs;
   onReady: () => void;
   onMotionSource: (source: CardTwinMotionSource) => void;
@@ -71,6 +72,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
 }) {
   const root = useRef<THREE.Group>(null);
   const { gl } = useThree();
+  const gestureStart = useRef<{ x: number; y: number } | null>(null);
   const orientation = useRef({ x: 0, y: 0 });
   const presentedInput = useRef({ x: 0, y: 0 });
   const pointer = useRef({ x: 0, y: 0 });
@@ -116,13 +118,43 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
       };
       if (!hasOrientationSample.current) onMotionSource("pointer");
     };
+    const desktopPointer = matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (!desktopPointer) return;
     window.addEventListener("pointermove", handlePointer, { passive: true });
     return () => window.removeEventListener("pointermove", handlePointer);
   }, [onMotionSource, reduced]);
 
+  useEffect(() => {
+    if (!touchEnabled || reduced) return;
+    const element = gl.domElement;
+    const down = (event: PointerEvent) => { gestureStart.current = { x: event.clientX, y: event.clientY }; };
+    const move = (event: PointerEvent) => {
+      const start = gestureStart.current;
+      if (!start) return;
+      const dx = event.clientX - start.x;
+      const dy = event.clientY - start.y;
+      if (Math.abs(dx) < 8 || Math.abs(dx) <= Math.abs(dy)) return;
+      const bounds = element.getBoundingClientRect();
+      pointer.current = { x: ((event.clientX - bounds.left) / Math.max(bounds.width, 1)) * 2 - 1, y: -(((event.clientY - bounds.top) / Math.max(bounds.height, 1)) * 2 - 1) };
+      onMotionSource("touch");
+      event.preventDefault();
+    };
+    const up = () => { gestureStart.current = null; };
+    element.addEventListener("pointerdown", down, { passive: true });
+    element.addEventListener("pointermove", move, { passive: false });
+    element.addEventListener("pointerup", up, { passive: true });
+    element.addEventListener("pointercancel", up, { passive: true });
+    return () => {
+      element.removeEventListener("pointerdown", down);
+      element.removeEventListener("pointermove", move);
+      element.removeEventListener("pointerup", up);
+      element.removeEventListener("pointercancel", up);
+    };
+  }, [gl, onMotionSource, reduced, touchEnabled]);
+
   useFrame(({ clock }, delta) => {
     if (!root.current) return;
-    const source = selectCardTwinMotionSource(motionEnabled, hasOrientationSample.current);
+    const source = touchEnabled ? "pointer" : selectCardTwinMotionSource(motionEnabled, hasOrientationSample.current);
     const targetInput = source === "orientation" ? orientation.current : pointer.current;
     presentedInput.current = dampCardTwinMotion(presentedInput.current, targetInput, delta, reduced ? Infinity : 14);
     const input = presentedInput.current;
@@ -199,7 +231,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   </group>;
 }
 
-export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, paperSettings, motionEnabled = false, onMotionSource = () => undefined }: {
+export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesReady, onTexturesReady, paperSettings, motionEnabled = false, touchEnabled = false, onMotionSource = () => undefined }: {
   card: CardTwinCard;
   reduced: boolean;
   view: CardTwinView;
@@ -208,6 +240,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
   onTexturesReady: () => void;
   paperSettings: CardTwinPaperSettings;
   motionEnabled?: boolean;
+  touchEnabled?: boolean;
   onMotionSource?: (source: CardTwinMotionSource) => void;
 }) {
   const exploded = view === "side";
@@ -231,6 +264,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
     data-display-mode={paperSettings.mode}
     data-foil-motion={reduced ? "disabled" : "sweeping-rim"}
     data-static-composition={reduced ? "assembled-readable" : undefined}
+    data-touch-parallax={touchEnabled ? "enabled" : "disabled"}
     className="webgl-stage"
     style={{ "--paper-brightness": paperSettings.brightness, "--paper-contrast": paperSettings.contrast, "--paper-grain": paperSettings.grain } as CSSProperties}
     aria-label={`Exact ${card.name} ${card.printing} layered CardTwin construction`}
@@ -254,7 +288,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
       <MuseumLighting reduced={reduced} displayMode={paperSettings.mode} />
       <ResponsiveCamera view={view} reduced={reduced} />
       <Suspense fallback={null}>
-        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} partsSheet={view === "parts"} motionEnabled={motionEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} displayMode={paperSettings.mode} />
+        <LayeredCard key={card.id} card={card} reduced={reduced} exploded={exploded} partsSheet={view === "parts"} motionEnabled={motionEnabled} touchEnabled={touchEnabled} contracts={contracts} onReady={onTexturesReady} onMotionSource={onMotionSource} displayMode={paperSettings.mode} />
       </Suspense>
     </Canvas>
   </section>;

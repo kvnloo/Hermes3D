@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
 import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
-import { reduceCardTwinFullscreen, type CardTwinFullscreenState, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
+import { CARD_TWIN_INPUT_INITIAL, reduceCardTwinFullscreen, reduceCardTwinInput, type CardTwinFullscreenState, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { PokemonCardStage } from "./PokemonCardStage";
 import { CARD_TWIN_PAPER_DEFAULTS, loadCardTwinPaperSettings, saveCardTwinPaperSettings, type CardTwinPaperSettings } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPaperMode";
 
@@ -16,8 +16,9 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [texturesReady, setTexturesReady] = useState(false);
   const [view, setView] = useState<"gallery" | "macro" | "side" | "parts">(initialView);
   const [cameraMoving, setCameraMoving] = useState(false);
-  const [motionStatus, setMotionStatus] = useState<"idle" | "orientation" | "calibrated" | "denied" | "unavailable">("idle");
+  const [, setMotionStatus] = useState<"idle" | "orientation" | "calibrated" | "denied" | "unavailable">("idle");
   const [motionSource, setMotionSource] = useState<CardTwinMotionSource>("pointer");
+  const [input, setInput] = useState(CARD_TWIN_INPUT_INITIAL);
   const [fullscreen, setFullscreen] = useState<CardTwinFullscreenState>("gallery");
   const [paperSettings, setPaperSettings] = useState<CardTwinPaperSettings>(CARD_TWIN_PAPER_DEFAULTS);
   const [paperSettingsReady, setPaperSettingsReady] = useState(false);
@@ -57,11 +58,15 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const handleReady = useCallback(() => setTexturesReady(true), []);
   const handleMotionSource = useCallback((source: CardTwinMotionSource) => {
     setMotionSource(source);
-    if (source === "orientation") setMotionStatus("calibrated");
+    if (source === "orientation") {
+      setMotionStatus("calibrated");
+      setInput((state) => reduceCardTwinInput(state, { type: "orientation-sample" }));
+    }
   }, []);
   const enableMotion = async () => {
     if (!("DeviceOrientationEvent" in window)) {
       setMotionStatus("unavailable");
+      setInput((state) => reduceCardTwinInput(state, { type: "orientation-unavailable" }));
       return;
     }
     const OrientationEvent = window.DeviceOrientationEvent as typeof DeviceOrientationEvent & {
@@ -70,9 +75,22 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
     try {
       const permission = OrientationEvent.requestPermission ? await OrientationEvent.requestPermission() : "granted";
       setMotionStatus(permission === "granted" ? "orientation" : "denied");
+      if (permission === "granted") setInput((state) => reduceCardTwinInput(state, { type: "select-gyro" }));
+      else setInput((state) => reduceCardTwinInput(state, { type: "orientation-denied" }));
     } catch {
       setMotionStatus("denied");
+      setInput((state) => reduceCardTwinInput(state, { type: "orientation-denied" }));
     }
+  };
+  const selectTouch = () => {
+    setInput((state) => reduceCardTwinInput(state, { type: "select-touch" }));
+    setMotionSource("touch");
+    window.localStorage.setItem("cardtwin-input-preference", "touch");
+  };
+  const selectAuto = () => {
+    setInput((state) => reduceCardTwinInput(state, { type: "select-auto" }));
+    setMotionSource("pointer");
+    window.localStorage.setItem("cardtwin-input-preference", "auto");
   };
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -121,8 +139,8 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
         <ol data-testid="cardtwin-pipeline">{revealLabels.map((label, index) => <li key={label} data-active={index <= phaseIndex}><i>{index + 1}</i>{label}</li>)}</ol>
         <span className="reveal-status">{revealLabels[reduced ? revealLabels.length - 1 : phaseIndex]}</span>
       </section>
-      <div ref={inspectRoot} className="hero-cards" data-view={view} data-fullscreen-state={fullscreen} data-motion-source={motionSource} data-display-mode={paperSettings.mode}>
-        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} paperSettings={paperSettings} motionEnabled={motionStatus === "orientation" || motionStatus === "calibrated"} onMotionSource={handleMotionSource} />
+      <div ref={inspectRoot} className="hero-cards" data-view={view} data-fullscreen-state={fullscreen} data-motion-source={motionSource} data-input-preference={input.preference} data-display-mode={paperSettings.mode}>
+        <PokemonCardStage card={card} reduced={reduced} view={view} cameraMoving={cameraMoving} texturesReady={texturesReady} onTexturesReady={handleReady} paperSettings={paperSettings} motionEnabled={input.preference !== "touch" && input.availability !== "denied" && input.availability !== "unavailable"} touchEnabled={input.preference === "touch"} onMotionSource={handleMotionSource} />
         {paperSettingsReady && <div className="paper-controls">
           <button type="button" aria-pressed={paperSettings.mode === "paper"} onClick={() => updatePaperSettings({ ...paperSettings, mode: paperSettings.mode === "paper" ? "glass" : "paper" })}>{paperSettings.mode === "paper" ? "Paper · on" : "Paper"}</button>
           {paperSettings.mode === "paper" && <button type="button" onClick={() => setCalibrating((value) => !value)}>Calibrate</button>}
@@ -141,12 +159,17 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
             <i aria-hidden="true" />
           </button>)}
         </aside>
-        {fullscreen === "fullscreen"
-          ? <button type="button" className="inspect-card" onClick={exitInspection}>Exit inspection</button>
-          : <button type="button" className="inspect-card" onClick={inspectCard} disabled={fullscreen === "requesting"}>Inspect selected card</button>}
-        {!reduced && <button type="button" className="motion-control" onClick={enableMotion} disabled={motionStatus === "orientation" || motionStatus === "calibrated"}>
-          {motionStatus === "idle" ? "Enable motion" : motionStatus === "orientation" ? "Hold steady · calibrating" : motionStatus === "calibrated" ? "Orientation · active" : motionStatus === "denied" ? "Motion denied · pointer active" : "Motion unavailable · pointer active"}
-        </button>}
+        <div className="mobile-actions" data-testid="cardtwin-mobile-actions">
+          {fullscreen === "fullscreen"
+            ? <button type="button" className="inspect-card" onClick={exitInspection}>Exit</button>
+            : <button type="button" className="inspect-card" onClick={inspectCard} disabled={fullscreen === "requesting"}>Inspect fullscreen</button>}
+          {!reduced && <div className="input-controls" aria-label="Parallax input source">
+            <button type="button" aria-pressed={input.preference === "auto"} onClick={selectAuto}>Auto</button>
+            <button type="button" aria-pressed={input.preference === "gyro"} onClick={enableMotion}>Gyro</button>
+            <button type="button" aria-pressed={input.preference === "touch"} onClick={selectTouch}>Touch</button>
+            <output>{input.source === "gyro" ? "Gyro active" : input.source === "touch" ? "Touch fallback" : input.availability === "denied" || input.availability === "unavailable" ? "Unavailable" : "Auto"}</output>
+          </div>}
+        </div>
         <div className="layer-ledger" aria-label={`${card.name} semantic layer ledger`}>
           {card.layers.map((layer) => <article key={layer.id} data-card-object="true"><b>{layer.label}</b><span>{layer.depthMm.toFixed(1)} mm · exact RGBA</span></article>)}
         </div>
