@@ -112,6 +112,7 @@ export function ConstructionSite({ state }: { state: BuildSceneState | null }) {
 export function BuildProvenance({ state }: { state: BuildSceneState | null }) {
   if (!state) return null;
   const problem = state.status === "failed" || state.status === "stale";
+  const compilerComplete = state.type === "build.progress";
   return (
     <aside
       data-testid="build-provenance"
@@ -124,7 +125,13 @@ export function BuildProvenance({ state }: { state: BuildSceneState | null }) {
       aria-live="polite"
     >
       <div className="font-semibold tracking-[0.18em]">
-        {problem ? state.status.toUpperCase() : state.status === "ready" ? "BUILD VERIFIED" : "BUILDING IN PROGRESS"}
+        {problem
+          ? state.status.toUpperCase()
+          : state.status === "ready"
+            ? "BUILD VERIFIED"
+            : compilerComplete
+              ? "BUILD COMPLETE · VERIFYING / PRESENTING"
+              : "BUILDING IN PROGRESS"}
       </div>
       <div>{state.assetLabel} · {state.stage} · {state.progress === null ? "INDETERMINATE" : `${Math.round(state.progress)}%`}</div>
       <div className="opacity-70">rev {state.revision} · {state.agentCount} agent{state.agentCount === 1 ? "" : "s"}</div>

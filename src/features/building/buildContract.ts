@@ -61,6 +61,11 @@ const EVENT_TYPES: readonly string[] = [
 const SAFE_ID = /^[a-zA-Z0-9][a-zA-Z0-9._-]{0,63}$/;
 const SAFE_LABEL = /^[a-zA-Z0-9][a-zA-Z0-9 ()&+.,'_-]{0,63}$/;
 const SHORT_REVISION = /^[a-f0-9]{7,12}$/;
+const APPROVED_COMPONENTS = new Set([
+  "museum-annex-frame",
+  "museum-annex-shell",
+  "museum-annex-gallery",
+]);
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -112,8 +117,10 @@ export function parsePublicBuildEvent(value: unknown): PublicBuildEvent {
   if (
     value.componentIds !== undefined &&
     (!Array.isArray(value.componentIds) ||
-      value.componentIds.length > 32 ||
-      !value.componentIds.every((id) => typeof id === "string" && SAFE_ID.test(id)))
+      value.componentIds.length > APPROVED_COMPONENTS.size ||
+      !value.componentIds.every(
+        (id) => typeof id === "string" && SAFE_ID.test(id) && APPROVED_COMPONENTS.has(id),
+      ))
   ) {
     throw new Error("Invalid component IDs");
   }
@@ -127,6 +134,11 @@ export function applyBuildEvent(
   const event = parsePublicBuildEvent(input);
   if (event.type === "build.start") {
     return { ...event, status: "building", finishedVisible: false };
+  }
+  // A reconnect can receive the server-owned READY snapshot before client
+  // storage has restored. It is authoritative and must not replay from zero.
+  if (!current && event.type === "build.complete" && event.stage === "READY") {
+    return { ...event, status: "ready", finishedVisible: true };
   }
   if (!current || event.buildId !== current.buildId) return current ?? {
     ...event,

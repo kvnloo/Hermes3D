@@ -39,6 +39,9 @@ describe("public build event contract", () => {
     expect(() => parsePublicBuildEvent({ ...baseStart, progress: 101 })).toThrow(
       /progress/i,
     );
+    expect(() =>
+      parsePublicBuildEvent({ ...baseStart, componentIds: ["private-component"] }),
+    ).toThrow(/component/i);
   });
 
   it("uses the complete ordered construction stage vocabulary", () => {
@@ -112,6 +115,16 @@ describe("build scene state machine", () => {
     });
     expect(ready.status).toBe("ready");
     expect(ready.finishedVisible).toBe(true);
+  });
+
+  it("accepts the authoritative completed snapshot on a fresh reconnect", () => {
+    const ready = applyBuildEvent(null, {
+      ...baseStart,
+      type: "build.complete",
+      stage: "READY",
+      progress: 100,
+    });
+    expect(ready).toMatchObject({ status: "ready", stage: "READY", finishedVisible: true });
   });
 });
 

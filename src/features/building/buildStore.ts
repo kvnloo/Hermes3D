@@ -5,14 +5,19 @@ const STORAGE_KEY = "hermes3d.build-state.v1";
 
 export function persistBuildState(state: BuildSceneState): void {
   if (typeof localStorage === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch {
+    // Storage can be unavailable in hardened/private browser contexts. The
+    // server replay remains the persistence fallback and rendering continues.
+  }
 }
 
 export function loadPersistedBuildState(): BuildSceneState | null {
   if (typeof localStorage === "undefined") return null;
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return null;
   try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     const { status, finishedVisible, ...eventValue } = parsed;
     const event = parsePublicBuildEvent(eventValue);
@@ -29,5 +34,10 @@ export function loadPersistedBuildState(): BuildSceneState | null {
 }
 
 export function clearPersistedBuildState(): void {
-  if (typeof localStorage !== "undefined") localStorage.removeItem(STORAGE_KEY);
+  if (typeof localStorage === "undefined") return;
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch {
+    // Best-effort test/debug reset in storage-restricted contexts.
+  }
 }
