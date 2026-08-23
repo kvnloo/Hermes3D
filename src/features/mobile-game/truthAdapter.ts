@@ -15,7 +15,9 @@ const allowedTransitions: Record<FixtureTaskStatus, FixtureTaskStatus[]> = {
   review: [],
 };
 
-export function createFixtureTruthAdapter() {
+export function createFixtureTruthAdapter(options: { stale?: boolean; observedAt?: string } = {}) {
+  const stale = options.stale ?? false;
+  const observedAt = options.observedAt ?? "2026-08-22T18:00:00Z";
   const handled = new Set<string>();
   const evidence = new Set<string>();
   const tasks: FixtureTask[] = [{
@@ -27,7 +29,8 @@ export function createFixtureTruthAdapter() {
   }];
 
   return {
-    issue(value: unknown): { status: "applied" | "duplicate" | "rejected" } {
+    issue(value: unknown): { status: "applied" | "duplicate" | "rejected" | "unavailable" } {
+      if (stale) return { status: "unavailable" };
       if (!value || typeof value !== "object" || Array.isArray(value)) return { status: "rejected" };
       const command = value as Record<string, unknown>;
       if (command.version !== 1 || command.action !== "assign" || typeof command.commandId !== "string" || !COMMAND_ID.test(command.commandId) || typeof command.taskId !== "string" || typeof command.agentId !== "string" || Object.keys(command).length !== 5) return { status: "rejected" };
@@ -52,8 +55,8 @@ export function createFixtureTruthAdapter() {
     snapshot: () => ({
       version: 1 as const,
       mode: "synthetic-evidence" as const,
-      stale: false,
-      observedAt: "2026-08-22T18:00:00Z",
+      stale,
+      observedAt,
       tasks: tasks.map((task) => ({ ...task })),
       handledCommandIds: [...handled],
     }),

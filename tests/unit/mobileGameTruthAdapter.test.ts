@@ -17,4 +17,18 @@ describe("mobile game fixture truth adapter", () => {
     expect(adapter.issue({ version: 1, commandId: "cmd-unsafe", action: "delete", taskId: "task-mobile-shell" })).toEqual({ status: "rejected" });
     expect(adapter.issue({ version: 1, commandId: "cmd-unsafe", action: "assign", taskId: "task-mobile-shell", agentId: "agent-atlas" })).toEqual({ status: "applied" });
   });
+
+  it("exposes stale source metadata and refuses commands while disconnected", () => {
+    const adapter = createFixtureTruthAdapter({
+      stale: true,
+      observedAt: "2026-08-22T17:42:00Z",
+    });
+
+    expect(adapter.snapshot()).toMatchObject({
+      stale: true,
+      observedAt: "2026-08-22T17:42:00Z",
+    });
+    expect(adapter.issue({ version: 1, commandId: "cmd-stale", action: "assign", taskId: "task-mobile-shell", agentId: "agent-atlas" })).toEqual({ status: "unavailable" });
+    expect(adapter.snapshot().handledCommandIds).toEqual([]);
+  });
 });
