@@ -65,6 +65,23 @@ export const CARD_TWIN_CARDS: readonly CardTwinCard[] = [
       { id: "outer-frame-text", label: "Foil frame + printing", depthMm: 3.8, texture: texture("leafeon-ex-sv8pt5-144", "outer-frame-text") },
     ],
   },
+  {
+    id: "sawsbuck-tef-166",
+    name: "Sawsbuck",
+    printing: "166/162",
+    set: "Temporal Forces",
+    accent: "#c8864f",
+    canonical: "/exhibits/pokemon-cards/canonical/sawsbuck-tef-166.png",
+    hiddenFill: texture("sawsbuck-tef-166", "hidden-background-fill"),
+    layers: [
+      { id: "forest-distance", label: "Forest distance", depthMm: 0, texture: texture("sawsbuck-tef-166", "forest-distance") },
+      { id: "forest-midground", label: "Autumn forest midground", depthMm: 0.9, texture: texture("sawsbuck-tef-166", "forest-midground") },
+      { id: "body-rear", label: "Rear body + hind feet", depthMm: 1.8, texture: texture("sawsbuck-tef-166", "body-rear") },
+      { id: "body-forward", label: "Forward anatomy + front feet", depthMm: 2.7, texture: texture("sawsbuck-tef-166", "body-forward") },
+      { id: "antlers-foliage", label: "Antler tips + nearest foliage", depthMm: 3.6, texture: texture("sawsbuck-tef-166", "antlers-foliage") },
+      { id: "printing-frame", label: "Printing + identity frame", depthMm: 4.5, texture: texture("sawsbuck-tef-166", "printing-frame") },
+    ],
+  },
 ] as const;
 
 export function getCardTwinCard(id?: string) {

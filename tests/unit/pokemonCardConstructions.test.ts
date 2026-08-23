@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 
 import { premiumCardConstructions } from "@/features/living-museum/exhibits/pokemon-cards/constructions";
+import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
+import { resolvePartsSheetLayout } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinPartsSheet";
 
 describe("premium card constructions", () => {
   it("defines three rights-safe multilayer constructions with strict monotonic depth", () => {
@@ -42,5 +44,23 @@ describe("premium card constructions", () => {
     expect(c.camera.near).toBeGreaterThan(0);
     expect(c.camera.near).toBeLessThan(c.camera.subjectDistance * 0.1);
     expect(c.camera.focusDistance).toBe(c.camera.subjectDistance);
+  });
+});
+
+describe("Sawsbuck CardTwin craft build", () => {
+  it("registers the exact Temporal Forces printing with a depth-ranked cut plan", () => {
+    const sawsbuck = CARD_TWIN_CARDS.find((card) => card.id === "sawsbuck-tef-166");
+    expect(sawsbuck).toMatchObject({ name: "Sawsbuck", set: "Temporal Forces", printing: "166/162" });
+    expect(sawsbuck?.layers.map((layer) => layer.id)).toEqual([
+      "forest-distance", "forest-midground", "body-rear", "body-forward", "antlers-foliage", "printing-frame",
+    ]);
+    expect(sawsbuck?.layers.map((layer) => layer.depthMm)).toEqual([0, 0.9, 1.8, 2.7, 3.6, 4.5]);
+  });
+
+  it("lays every cut piece on a non-overlapping cutting-mat grid", () => {
+    const layout = resolvePartsSheetLayout(6, 3);
+    expect(layout).toHaveLength(6);
+    expect(new Set(layout.map(({ column, row }) => `${column}:${row}`)).size).toBe(6);
+    expect(layout.at(-1)).toEqual({ column: 2, row: 1, x: 2.5, y: -1.7 });
   });
 });

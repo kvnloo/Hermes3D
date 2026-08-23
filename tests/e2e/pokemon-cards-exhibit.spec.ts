@@ -220,3 +220,13 @@ test("macro and side evidence modes isolate the deep construction", async ({ pag
   await page.goto(`${exhibitUrl}&view=side`, { waitUntil: "domcontentloaded" });
   await expect(stage).toHaveAttribute("data-view", "side");
 });
+
+test("Parts Sheet lays every Sawsbuck cut flat on the cutting mat before assembly", async ({ page }) => {
+  await page.getByRole("button", { name: "View exact printing Sawsbuck 166/162" }).click();
+  await page.getByRole("button", { name: "Parts Sheet" }).click();
+  const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
+  await expect(stage).toHaveAttribute("data-view", "parts");
+  await expect(stage).toHaveAttribute("data-parts-sheet", "cutting-mat-flat-lay");
+  await expect(stage.locator("[data-layer-depth]")).toHaveCount(6);
+  await expect(page.getByText("PARTS SHEET · 6 CUTS INSPECTABLE")).toBeVisible();
+});
