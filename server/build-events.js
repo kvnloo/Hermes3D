@@ -23,6 +23,7 @@ function createBuildLifecycle({ revision, now = () => new Date(), quietMs = 700,
   let state = null;
   let active = false;
   let compilerDone = false;
+  let announcedStages = new Set();
 
   const event = (type, stage, progress = null) => ({
     version: 1,
@@ -39,16 +40,25 @@ function createBuildLifecycle({ revision, now = () => new Date(), quietMs = 700,
   });
   const emit = (next) => { state = next; for (const listener of listeners) listener(next); };
   const schedule = (callback, delay) => { const timer = setTimeout(() => { timers.delete(timer); callback(); }, delay); timers.add(timer); };
+  const cancelTimers = () => {
+    for (const timer of timers) clearTimeout(timer);
+    timers.clear();
+    if (quietTimer) { clearTimeout(quietTimer); quietTimer = null; }
+  };
   const start = () => {
+    cancelTimers();
     active = true;
     compilerDone = false;
+    announcedStages = new Set();
     state = null;
+    announcedStages.add("DISCOVER");
     emit(event("build.start", "DISCOVER"));
     STAGES.forEach((stage, index) => schedule(() => {
-      if (!active) return;
+      if (!active || announcedStages.has(stage)) return;
       // Once Next is quiet, the compiler is complete. Continue the bounded
       // visual handoff as presentation/verification instead of implying that
       // compilation is still running.
+      announcedStages.add(stage);
       emit(event(compilerDone ? "build.progress" : "asset.stage", stage));
       if (stage === "VERIFY") schedule(() => { if (active && compilerDone) { emit(event("build.complete", "READY", 100)); active = false; } }, Math.min(stageMs, 1500));
     }, stageMs * (index + 1)));
@@ -59,13 +69,28 @@ function createBuildLifecycle({ revision, now = () => new Date(), quietMs = 700,
     quietTimer = setTimeout(() => {
       quietTimer = null;
       compilerDone = true;
+      const stage = state?.stage ?? "DISCOVER";
       if (state?.stage === "VERIFY") { emit(event("build.complete", "READY", 100)); active = false; }
-      else emit(event("build.progress", state?.stage ?? "DISCOVER"));
+      else if (!announcedStages.has(stage)) {
+        announcedStages.add(stage);
+        emit(event("build.progress", stage));
+      }
     }, quietMs);
   };
-  const fail = () => { if (!active) start(); emit(event("build.fail", state?.stage ?? "DISCOVER")); active = false; };
-  const stale = () => { if (!active) start(); emit(event("build.stale", state?.stage ?? "DISCOVER")); active = false; };
-  const close = () => { if (quietTimer) clearTimeout(quietTimer); for (const timer of timers) clearTimeout(timer); timers.clear(); listeners.clear(); };
+  const endCycle = (type) => {
+    if (!active) start();
+    cancelTimers();
+    // Terminal events must report a stage that this cycle has not already
+    // announced (per-cycle stage uniqueness), so pick the first enum stage
+    // that is still unannounced rather than echoing the current one.
+    const stage = ["DISCOVER", ...STAGES, "READY"].find((s) => !announcedStages.has(s)) ?? "READY";
+    announcedStages.add(stage);
+    emit(event(type, stage));
+    active = false;
+  };
+  const fail = () => endCycle("build.fail");
+  const stale = () => endCycle("build.stale");
+  const close = () => { cancelTimers(); listeners.clear(); };
   return { compilerActivity, fail, stale, current: () => state, subscribe(listener) { listeners.add(listener); if (state) listener(state); return () => listeners.delete(listener); }, close };
 }
 
