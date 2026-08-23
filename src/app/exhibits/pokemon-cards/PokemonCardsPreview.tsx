@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import { CARD_TWIN_CARDS } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
 import { CARD_TWIN_INPUT_INITIAL, reduceCardTwinFullscreen, reduceCardTwinInput, type CardTwinFullscreenState, type CardTwinMotionSource } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinInteraction";
 import { PokemonCardStage } from "./PokemonCardStage";
@@ -25,12 +26,14 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const [paperSettingsReady, setPaperSettingsReady] = useState(false);
   const [calibrating, setCalibrating] = useState(false);
   const [artMode, setArtMode] = useState<CardTwinArtMode>(CARD_TWIN_ART_DEFAULT);
+  const [artModeReady, setArtModeReady] = useState(false);
   const inspectRoot = useRef<HTMLDivElement>(null);
   const galleryScrollPosition = useRef(0);
   const card = CARD_TWIN_CARDS[cardIndex];
   const resolvedArt = resolveCardTwinArt(card, artMode);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- browser-persisted display preferences hydrate after SSR.
     setPaperSettings(loadCardTwinPaperSettings(window.localStorage));
     setPaperSettingsReady(true);
   }, []);
@@ -38,6 +41,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
     // The selected printing owns a distinct persisted preference; hydrate it when that identity changes.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setArtMode(loadCardTwinArtMode(window.localStorage, card.id));
+    setArtModeReady(true);
   }, [card.id]);
   const updateArtMode = (next: CardTwinArtMode) => {
     if (next === "hd" && !card.approvedHdArt) return;
@@ -66,6 +70,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
   const chooseCard = (index: number) => {
     if (index === cardIndex) return;
     setCardIndex(index);
+    setArtModeReady(false);
     setTexturesReady(false);
     setPhaseIndex(reduced ? revealPhases.length - 1 : 0);
   };
@@ -138,7 +143,7 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
     <main data-testid="pokemon-cards-exhibit-active" data-reduced-motion={String(reduced)} className="card-exhibit" style={{ "--card-accent": card.accent } as CSSProperties}>
       <div className="museum-haze" />
       <header data-testid="exhibit-hero" className="exhibit-title">
-        <a href="/" aria-label="Back to museum">Back</a>
+        <Link href="/" aria-label="Back to museum">Back</Link>
         <div><strong>{card.name}</strong><span>{card.set} / {card.printing}</span></div>
         <span>CardTwin</span>
       </header>
@@ -159,10 +164,11 @@ export function PokemonCardsPreview({ initialView }: { initialView: "gallery" | 
           <section className="display-controls" role="group" aria-label="Display">
             <span>Artwork</span>
             <div className="segmented-control" role="group" aria-label="Original or HD artwork">
-              <button type="button" aria-pressed={resolvedArt.mode === "original"} onClick={() => updateArtMode("original")}>Original</button>
-              <button type="button" aria-pressed={resolvedArt.mode === "hd"} disabled={!card.approvedHdArt} onClick={() => updateArtMode("hd")}>HD Art</button>
+              <button type="button" aria-pressed={resolvedArt.mode === "original"} disabled={!artModeReady} onClick={() => updateArtMode("original")}>Original</button>
+              <button type="button" aria-pressed={resolvedArt.mode === "hd"} disabled={!artModeReady || !card.approvedHdArt} onClick={() => updateArtMode("hd")}>HD Art</button>
             </div>
-            <strong>{resolvedArt.mode === "hd" ? "HD Art · AI-restored illustration" : "Original · canonical printing"}</strong>
+            <strong>{resolvedArt.mode === "hd" ? "HD Art · flat preview" : "Original · canonical printing"}</strong>
+            {resolvedArt.mode === "hd" && <small>Assembled front only · layered parallax unavailable</small>}
             {!card.approvedHdArt && <small>HD version unavailable</small>}
             {paperSettingsReady && <><span>Material</span><div className="segmented-control material-control">
               <button type="button" aria-pressed={paperSettings.mode === "glass"} onClick={() => updatePaperSettings({ ...paperSettings, mode: "glass" })}>Glass</button>

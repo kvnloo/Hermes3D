@@ -56,3 +56,27 @@ test("exposes grouped display and input controls with truthful status", async ({
   await expect(page.getByRole("group", { name: "Input" })).toBeVisible();
   await expect(page.getByRole("status")).toContainText(/Auto|Gyro active|Touch fallback|Unavailable/);
 });
+
+test("restores focus to the fullscreen trigger after Exit", async ({ page }) => {
+  await page.goto("/exhibits/pokemon-cards?view=gallery", { waitUntil: "domcontentloaded" });
+  await expect(page.getByTestId("pokemon-card-webgl-stage")).toHaveAttribute("data-textures-ready", "true");
+  await page.locator(".hero-cards").evaluate((root) => {
+    Object.defineProperty(document, "fullscreenElement", { configurable: true, get: () => root.getAttribute("data-fullscreen-mock") === "active" ? root : null });
+    Object.defineProperty(root, "requestFullscreen", { configurable: true, value: async () => {
+      root.setAttribute("data-fullscreen-mock", "active");
+    } });
+    Object.defineProperty(document, "exitFullscreen", { configurable: true, value: async () => {
+      root.removeAttribute("data-fullscreen-mock");
+      document.dispatchEvent(new Event("fullscreenchange"));
+    } });
+  });
+  const inspect = page.getByRole("button", { name: "Inspect fullscreen" });
+  await inspect.focus();
+  await inspect.click();
+  await page.locator(".hero-cards").evaluate((root) => root.setAttribute("data-fullscreen-mock", "active"));
+  await page.evaluate(() => document.dispatchEvent(new Event("fullscreenchange")));
+  const exit = page.getByRole("button", { name: "Exit" });
+  await expect(exit).toBeVisible();
+  await exit.click();
+  await expect(inspect).toBeFocused();
+});

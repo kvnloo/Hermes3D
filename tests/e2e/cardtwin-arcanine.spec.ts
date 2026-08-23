@@ -24,7 +24,8 @@ test("switches Arcanine between truthful Original and approved HD Art without na
 
   await page.getByRole("button", { name: "HD Art" }).click();
   await expect(stage).toHaveAttribute("data-art-mode", "hd");
-  await expect(page.getByText("HD Art · AI-restored illustration", { exact: true })).toBeVisible();
+  await expect(page.getByText("HD Art · flat preview", { exact: true })).toBeVisible();
+  await expect(page.getByText("Assembled front only · layered parallax unavailable", { exact: true })).toBeVisible();
   expect(page.url()).toBe(url);
   await page.screenshot({ path: join(toggleEvidence, "desktop-hd-art.png") });
 
