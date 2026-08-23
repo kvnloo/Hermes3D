@@ -79,7 +79,7 @@ function LayeredCard({ card, reduced, exploded, motionEnabled, contracts, onRead
   const neutral = useRef<{ beta: number; gamma: number } | null>(null);
   const textures = useLoader(THREE.TextureLoader, [card.hiddenFill, ...card.layers.map((layer) => layer.texture)]);
   const surfaceDepths = resolveCardTwinSurfaceDepths(card.layers);
-  const partLayout = resolvePartsSheetLayout(card.layers.length);
+  const partLayout = resolvePartsSheetLayout(card.layers.length, card.layers.length > 6 ? 4 : 3);
 
   useEffect(() => textures.forEach((texture) => {
     texture.colorSpace = THREE.SRGBColorSpace;
@@ -243,6 +243,7 @@ export function PokemonCardStage({ card, reduced, view, cameraMoving, texturesRe
         data-layer-depth={layer.depthMm}
         data-plane-z={resolveCardTwinSurfaceDepths(card.layers)[layer.id]}
         data-layer-texture={layer.texture}
+        data-part-label={view === "parts" ? `${index + 1}. ${layer.label}` : undefined}
         data-parallax-x="0"
         data-parallax-y="0"
       />)}

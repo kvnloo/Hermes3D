@@ -227,6 +227,7 @@ test("Parts Sheet lays every Sawsbuck cut flat on the cutting mat before assembl
   const stage = page.locator('[data-testid="pokemon-card-webgl-stage"]');
   await expect(stage).toHaveAttribute("data-view", "parts");
   await expect(stage).toHaveAttribute("data-parts-sheet", "cutting-mat-flat-lay");
-  await expect(stage.locator("[data-layer-depth]")).toHaveCount(6);
-  await expect(page.getByText("PARTS SHEET · 6 CUTS INSPECTABLE")).toBeVisible();
+  await expect(stage.locator("[data-layer-depth]")).toHaveCount(10);
+  await expect(stage.locator("[data-part-label]")).toHaveCount(10);
+  await expect(page.getByText("PARTS SHEET · 10 CUTS INSPECTABLE")).toBeVisible();
 });

@@ -48,19 +48,29 @@ describe("premium card constructions", () => {
 });
 
 describe("Sawsbuck CardTwin craft build", () => {
-  it("registers the exact Temporal Forces printing with a depth-ranked cut plan", () => {
+  it("registers every approved graph piece exactly once in depth order", () => {
     const sawsbuck = CARD_TWIN_CARDS.find((card) => card.id === "sawsbuck-tef-166");
     expect(sawsbuck).toMatchObject({ name: "Sawsbuck", set: "Temporal Forces", printing: "166/162" });
     expect(sawsbuck?.layers.map((layer) => layer.id)).toEqual([
-      "forest-distance", "forest-midground", "body-rear", "body-forward", "antlers-foliage", "printing-frame",
+      "saw-r00-backing-datum",
+      "saw-r01-far-pink-grove",
+      "saw-r02-far-green-grove",
+      "saw-r03-mid-warm-grove",
+      "saw-r04-ground-flora",
+      "saw-r05-body-rear",
+      "saw-r06-antler-crown",
+      "saw-r07-body-forward",
+      "saw-r08-near-flora",
+      "saw-r09-print-identity-frame",
     ]);
-    expect(sawsbuck?.layers.map((layer) => layer.depthMm)).toEqual([0, 0.9, 1.8, 2.7, 3.6, 4.5]);
+    expect(sawsbuck?.layers.map((layer) => layer.depthMm)).toEqual([0, 0.6, 1.2, 1.8, 2.4, 3, 3.6, 4.2, 4.8, 5.4]);
+    expect(new Set(sawsbuck?.layers.map((layer) => layer.id)).size).toBe(10);
   });
 
   it("lays every cut piece on a non-overlapping cutting-mat grid", () => {
-    const layout = resolvePartsSheetLayout(6, 3);
-    expect(layout).toHaveLength(6);
-    expect(new Set(layout.map(({ column, row }) => `${column}:${row}`)).size).toBe(6);
-    expect(layout.at(-1)).toEqual({ column: 2, row: 1, x: 2.5, y: -1.7 });
+    const layout = resolvePartsSheetLayout(10, 4);
+    expect(layout).toHaveLength(10);
+    expect(new Set(layout.map(({ column, row }) => `${column}:${row}`)).size).toBe(10);
+    expect(layout.at(-1)).toEqual({ column: 1, row: 2, x: -1.25, y: -3.4 });
   });
 });
