@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { isAbsolute, relative, resolve, sep } from "node:path";
 
-const ROOT = resolve(import.meta.dirname, "..");
+const ROOT = process.env.GITOPS_ROOT ? resolve(process.env.GITOPS_ROOT) : resolve(import.meta.dirname, "..");
 const SHA40 = /^[0-9a-f]{40}$/;
 const SHA256 = /^[0-9a-f]{64}$/;
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -114,7 +114,7 @@ function validatePromotion(value,currentDev,trustedReceipt,nightlyManifest,now=D
     if(digest(nightlyManifest)!==trustedReceipt.manifestDigest)fail("trusted receipt manifest substitution detected");
     const exact=nightlyManifest.features.map(({slug,headSha,order})=>({slug,headSha,order}));
     if(canonical(trustedReceipt.features)!==canonical(exact))fail("trusted receipt feature set mismatch");
-    const selected=value.mode==="all"?exact:exact.filter(item=>item.slug===value.features[0].slug);
+    const selected=(value.mode==="all"?exact:exact.filter(item=>item.slug===value.features[0].slug)).map(({slug,headSha},order)=>({slug,headSha,order}));
     if(canonical(value.features)!==canonical(selected))fail("promotion selected set does not match attested nightly set");
   } else fail("trusted nightly receipt and manifest are required");
   return digest(value);
@@ -131,6 +131,11 @@ function verifyPreviewFiles(value,dir){
     if(bytes.length!==value[key].bytes||digest(bytes)!==value[key].digest) fail(`preview ${key} substitution detected`);
   }
 }
+function validateBuild(dir,expectedSha){
+  if(!SHA40.test(expectedSha)) fail("expected build identity must be a full SHA");
+  const actual=readFileSync(resolve(dir,"BUILD_ID"),"utf8").trim();
+  if(actual!==expectedSha) fail("preview build identity is not bound to the exact SHA");
+}
 function defaultScanTargets(){
   const base=process.env.GITHUB_BASE_SHA;
   if(base&&SHA40.test(base)) return committedScanTargets(base,process.env.GITHUB_HEAD_SHA||"HEAD");
@@ -145,5 +150,6 @@ try{
   else if(command==="ownership"){const manifest=load(args[0]||".gitops/nightly-manifest.json");validateNightly(manifest,process.env.NOW?Date.parse(process.env.NOW):Date.now());ownership(manifest);console.log("ownership and collision checks passed");}
   else if(command==="validate-promotion")console.log(validatePromotion(load(args[0]||".gitops/promotion-manifest.json"),args[1],args[2]?load(args[2]):null,args[3]?load(args[3]):null,process.env.NOW?Date.parse(process.env.NOW):Date.now()));
   else if(command==="validate-preview"){const value=load(args[0]);const result=validatePreview(value,process.env.NOW?Date.parse(process.env.NOW):Date.now());if(args[1])verifyPreviewFiles(value,resolve(ROOT,args[1]));console.log(result);}
-  else fail("usage: gitops-policy.mjs validate-nightly|validate-checks|scan|ownership|validate-promotion|validate-preview");
+  else if(command==="validate-build"){validateBuild(resolve(ROOT,args[0]),args[1]);console.log("exact build identity passed");}
+  else fail("usage: gitops-policy.mjs validate-nightly|validate-checks|scan|ownership|validate-promotion|validate-preview|validate-build");
 }catch(error){console.error(`gitops policy failed: ${error.message}`);process.exit(1);}

@@ -26,8 +26,10 @@ jobs:
         run: |
           set -euo pipefail
           node scripts/gitops-policy.mjs validate-nightly "$MANIFEST"
-          expected_base="$(git rev-parse HEAD)"
-          if [[ "$GITHUB_EVENT_NAME" == push ]]; then expected_base="$(git rev-parse HEAD^)"; fi
+          expected_base="$(git rev-parse HEAD^)"
+          if [[ "$GITHUB_EVENT_NAME" == workflow_dispatch ]]; then
+            test "$(git log -1 --format=%H -- "$MANIFEST")" = "$(git rev-parse HEAD)"
+          fi
           test "$(jq -r .base.sha "$MANIFEST")" = "$expected_base"
           jq -c '.features[]' "$MANIFEST" | while read -r feature; do
             pr="$(jq -r .pullRequest <<<"$feature")"; sha="$(jq -r .headSha <<<"$feature")"; branch="$(jq -r .branch <<<"$feature")"; receipt="$(jq -r .publicReceipt <<<"$feature")"

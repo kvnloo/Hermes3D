@@ -15,7 +15,7 @@ This repository uses `dev` as approved development truth and `nightly` only as d
 
 An entry in `.gitops/nightly-manifest.json` is authoritative; a label alone is not. It pins a same-repository Draft PR, exact SHA, order, ownership, opaque public receipt, and expiry. The PR must target `dev`, use `feature/hermes3d/*`, carry `nightly-eligible`, and have no failed check runs. Maximum active features is three.
 
-The manifest's `base.sha` is the `dev` parent onto which the manifest change is applied. This avoids an impossible self-hash while binding each generation to its exact pre-change development baseline. A push composition starts from the resulting `dev` commit (including the reviewed manifest); manual reconciliation requires the manifest to pin current `dev` and therefore normally follows a no-op planning dispatch rather than mutating the file.
+The manifest's `base.sha` is the `dev` parent onto which the manifest change is applied. This avoids an impossible self-hash while binding each generation to its exact pre-change development baseline. A push composition starts from the resulting `dev` commit (including the reviewed manifest). Manual dry-run replay is allowed only while that manifest change is still the exact `dev` HEAD and reuses its pinned parent; any later `dev` commit makes the dispatch stale and fail closed.
 
 Individual promotion is the original feature PR after exact-revision Captain approval. Set promotion is a new Draft `promotion/<digest>` PR replayed onto current `dev` with `.gitops/promotion-manifest.json`. Captain approval is invalid after any head/base/manifest/artifact change. Agents and Actions never mark Ready, approve, or merge.
 

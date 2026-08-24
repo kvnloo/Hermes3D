@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 import path from "node:path";
 
+const gitopsBuildId = process.env.HERMES3D_GITOPS_BUILD_ID?.trim();
+if (gitopsBuildId && !/^[0-9a-f]{40}$/.test(gitopsBuildId)) {
+  throw new Error("HERMES3D_GITOPS_BUILD_ID must be a full commit SHA");
+}
+
 const securityHeaders = [
   {
     key: "Content-Security-Policy",
@@ -57,6 +62,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const nextConfig: NextConfig = {
+  generateBuildId: gitopsBuildId ? async () => gitopsBuildId : undefined,
   turbopack: {
     root: path.resolve(__dirname),
   },
