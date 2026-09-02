@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "mode": "individual",
+  "captainGate": "G1_G2_REQUIRED",
+  "base": {"branch": "dev", "sha": "558803cee784e3c49435b87d4a73cc4c848844ff"},
+  "nightlyAttestation": {"manifestDigest": "0000000000000000000000000000000000000000000000000000000000000000", "treeSha": "558803cee784e3c49435b87d4a73cc4c848844ff", "receiptDigest": "0000000000000000000000000000000000000000000000000000000000000000"},
+  "features": [{"slug": "replace-me", "headSha": "558803cee784e3c49435b87d4a73cc4c848844ff", "order": 0}],
+  "expiresAt": "2099-01-01T00:00:00Z"
+}

@@ -1,1 +1,16 @@
-* @iamlukethedev
+* @kvnloo
+/.github/ @kvnloo
+/.gitops/ @kvnloo
+/scripts/gitops-* @kvnloo
+/package.json @kvnloo
+/package-lock.json @kvnloo
+/server/ @kvnloo
+/next.config.ts @kvnloo
+/public/**/*.glb @kvnloo
+/public/**/*.gltf @kvnloo
+/public/**/*.png @kvnloo
+/public/**/*.jpg @kvnloo
+/public/**/*.jpeg @kvnloo
+/public/**/*.webp @kvnloo
+/public/**/*.mp4 @kvnloo
+/public/**/*.webm @kvnloo
