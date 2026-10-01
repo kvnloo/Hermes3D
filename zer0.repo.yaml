@@ -1,0 +1,51 @@
+version: 1
+repo: kvnloo/Hermes3D
+id: hermes3d
+kind: suite
+summary: Spatial 3D/2D workspace and Studio for visualizing and interacting with agent runtimes through gateway/provider adapters while backend runtime truth remains external.
+
+architecture:
+  subsystems:
+    - id: spatial-office
+      name: Spatial office
+      kind: presentation
+      summary: Renders live agents, activity cues, rooms, desks, and operational spaces in 3D and 2D office views.
+      paths: [src/, public/, assets/]
+    - id: studio
+      name: Studio
+      kind: presentation
+      summary: Stores UI preferences, focused-agent state, desk assignments, and office configuration locally.
+      paths: [src/, server/]
+      depends_on: [spatial-office]
+    - id: runtime-adapters
+      name: Runtime adapter layer
+      kind: integration
+      summary: Connects Hermes, custom HTTP runtimes, and demo gateway sources through a backend-neutral gateway/provider seam.
+      paths: [server/, plugins/, docs/runtime-profiles.md]
+      depends_on: [studio]
+    - id: operational-surfaces
+      name: Operational surfaces
+      kind: interaction
+      summary: Provides chat, standups, PR review, approvals, analytics, monitoring, and session controls as projections over connected runtime state.
+      paths: [src/, docs/]
+      depends_on: [runtime-adapters]
+    - id: test-surface
+      name: UI and integration tests
+      kind: evidence
+      summary: Exercises spatial/UI behavior, runtime integration, Kanban surfaces, and rendering regressions.
+      paths: [tests/, playwright.config.ts, vitest.config.ts]
+      depends_on: [spatial-office, runtime-adapters]
+
+  provides_interfaces: []
+  consumes_interfaces: []
+  produces_representations: []
+  consumes_representations: []
+
+  boundaries:
+    owns: [spatial frontend, Studio state, gateway adapters, office interaction UX]
+    not_here: [agent runtime execution truth, canonical task lifecycle, upstream runtime implementation, Zer0 architecture authority]
+
+  evidence:
+    docs: [README.md, ARCHITECTURE.md, VISION.md, docs/]
+    tests: [tests/]
+    schemas: []
