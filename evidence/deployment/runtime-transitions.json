@@ -1,0 +1,31 @@
+{
+  "baseURL": "http://127.0.0.1:8462",
+  "transitionCount": 20,
+  "results": [
+    {
+      "viewport": {
+        "name": "desktop",
+        "width": 1920,
+        "height": 1080
+      },
+      "printingTransitions": 10,
+      "texturesReady": true,
+      "nativeEscape": true,
+      "focusReturned": true,
+      "errors": []
+    },
+    {
+      "viewport": {
+        "name": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "printingTransitions": 10,
+      "texturesReady": true,
+      "nativeEscape": true,
+      "focusReturned": true,
+      "errors": []
+    }
+  ],
+  "errorCount": 0
+}
