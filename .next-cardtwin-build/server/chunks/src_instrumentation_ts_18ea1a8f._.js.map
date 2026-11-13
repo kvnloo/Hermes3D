@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../src/instrumentation.ts"],"sourcesContent":["// Telemetry intentionally disabled in this fork.\n// Keep Next's instrumentation hook present, but do not register\n// any external telemetry providers.\n\nexport const register = () => {};\n"],"names":[],"mappings":"yDAIwB,KAAO"}

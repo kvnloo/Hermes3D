@@ -1,0 +1,336 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/:path*",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; img-src 'self' data: blob: http: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline' https:; script-src 'self' 'unsafe-inline' blob:; connect-src 'self' ws: wss: http: https:; media-src 'self' blob: data: http: https:; worker-src 'self' blob:; object-src 'none'; upgrade-insecure-requests"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(self), geolocation=(), browsing-topics=()"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains"
+        }
+      ],
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?(?:/)?$"
+    }
+  ],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/agents/[agentId]/settings",
+      "regex": "^/agents/([^/]+?)/settings(?:/)?$",
+      "routeKeys": {
+        "nxtPagentId": "nxtPagentId"
+      },
+      "namedRegex": "^/agents/(?<nxtPagentId>[^/]+?)/settings(?:/)?$"
+    },
+    {
+      "page": "/api/files/[file]",
+      "regex": "^/api/files/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPfile": "nxtPfile"
+      },
+      "namedRegex": "^/api/files/(?<nxtPfile>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/cards/[id]",
+      "regex": "^/cards/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/cards/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/pokedex/[id]",
+      "regex": "^/pokedex/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPid": "nxtPid"
+      },
+      "namedRegex": "^/pokedex/(?<nxtPid>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/[...invalid]",
+      "regex": "^/(.+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPinvalid": "nxtPinvalid"
+      },
+      "namedRegex": "^/(?<nxtPinvalid>.+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/agents",
+      "regex": "^/agents(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/agents(?:/)?$"
+    },
+    {
+      "page": "/api/files/upload",
+      "regex": "^/api/files/upload(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/files/upload(?:/)?$"
+    },
+    {
+      "page": "/api/gateway/agent-state",
+      "regex": "^/api/gateway/agent\\-state(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/gateway/agent\\-state(?:/)?$"
+    },
+    {
+      "page": "/api/gateway/media",
+      "regex": "^/api/gateway/media(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/gateway/media(?:/)?$"
+    },
+    {
+      "page": "/api/gateway/skills/remove",
+      "regex": "^/api/gateway/skills/remove(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/gateway/skills/remove(?:/)?$"
+    },
+    {
+      "page": "/api/health",
+      "regex": "^/api/health(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/health(?:/)?$"
+    },
+    {
+      "page": "/api/office",
+      "regex": "^/api/office(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office(?:/)?$"
+    },
+    {
+      "page": "/api/office/browser-preview",
+      "regex": "^/api/office/browser\\-preview(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/browser\\-preview(?:/)?$"
+    },
+    {
+      "page": "/api/office/call",
+      "regex": "^/api/office/call(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/call(?:/)?$"
+    },
+    {
+      "page": "/api/office/github",
+      "regex": "^/api/office/github(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/github(?:/)?$"
+    },
+    {
+      "page": "/api/office/layout",
+      "regex": "^/api/office/layout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/layout(?:/)?$"
+    },
+    {
+      "page": "/api/office/presence",
+      "regex": "^/api/office/presence(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/presence(?:/)?$"
+    },
+    {
+      "page": "/api/office/publish",
+      "regex": "^/api/office/publish(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/publish(?:/)?$"
+    },
+    {
+      "page": "/api/office/remote-handoff",
+      "regex": "^/api/office/remote\\-handoff(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/remote\\-handoff(?:/)?$"
+    },
+    {
+      "page": "/api/office/remote-message",
+      "regex": "^/api/office/remote\\-message(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/remote\\-message(?:/)?$"
+    },
+    {
+      "page": "/api/office/standup/config",
+      "regex": "^/api/office/standup/config(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/standup/config(?:/)?$"
+    },
+    {
+      "page": "/api/office/standup/meeting",
+      "regex": "^/api/office/standup/meeting(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/standup/meeting(?:/)?$"
+    },
+    {
+      "page": "/api/office/standup/run",
+      "regex": "^/api/office/standup/run(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/standup/run(?:/)?$"
+    },
+    {
+      "page": "/api/office/text",
+      "regex": "^/api/office/text(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/text(?:/)?$"
+    },
+    {
+      "page": "/api/office/voice/reply",
+      "regex": "^/api/office/voice/reply(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/voice/reply(?:/)?$"
+    },
+    {
+      "page": "/api/office/voice/transcribe",
+      "regex": "^/api/office/voice/transcribe(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/office/voice/transcribe(?:/)?$"
+    },
+    {
+      "page": "/api/path-suggestions",
+      "regex": "^/api/path\\-suggestions(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/path\\-suggestions(?:/)?$"
+    },
+    {
+      "page": "/api/runtime/custom",
+      "regex": "^/api/runtime/custom(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/runtime/custom(?:/)?$"
+    },
+    {
+      "page": "/api/studio",
+      "regex": "^/api/studio(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/studio(?:/)?$"
+    },
+    {
+      "page": "/api/task-store",
+      "regex": "^/api/task\\-store(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/task\\-store(?:/)?$"
+    },
+    {
+      "page": "/cards",
+      "regex": "^/cards(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/cards(?:/)?$"
+    },
+    {
+      "page": "/exhibits/pokemon-cards",
+      "regex": "^/exhibits/pokemon\\-cards(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/exhibits/pokemon\\-cards(?:/)?$"
+    },
+    {
+      "page": "/favicon.ico",
+      "regex": "^/favicon\\.ico(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/favicon\\.ico(?:/)?$"
+    },
+    {
+      "page": "/museum",
+      "regex": "^/museum(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/museum(?:/)?$"
+    },
+    {
+      "page": "/office",
+      "regex": "^/office(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/office(?:/)?$"
+    },
+    {
+      "page": "/office/builder",
+      "regex": "^/office/builder(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/office/builder(?:/)?$"
+    },
+    {
+      "page": "/pokedex",
+      "regex": "^/pokedex(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/pokedex(?:/)?$"
+    },
+    {
+      "page": "/spotify/callback",
+      "regex": "^/spotify/callback(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/spotify/callback(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

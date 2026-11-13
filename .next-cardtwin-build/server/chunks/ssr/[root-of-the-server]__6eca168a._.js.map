@@ -1,0 +1,1 @@
+{"version":3,"sources":["../../../../src/app/%5B...invalid%5D/page.tsx"],"sourcesContent":["import { redirect } from \"next/navigation\";\n\nexport default function InvalidRoutePage() {\n  redirect(\"/office\");\n}\n"],"names":[],"mappings":"qUAAA,EAAA,CAAA,CAAA,OAAA,IAAA,EAAA,EAAA,CAAA,CAAA,OAEe,SAAS,IACtB,CAAA,EAAA,EAAA,QAAA,AAAQ,EAAC,UACX"}

@@ -4,6 +4,7 @@ const port = Number(process.env.PLAYWRIGHT_PORT ?? 3107);
 const loopbackHost = [127, 0, 0, 1].join(".");
 export default defineConfig({
   testDir: "./tests/e2e",
+  outputDir: "./artifacts/cardtwin-gauntlet/playwright-results",
   expect: { timeout: 20_000 },
   use: {
     baseURL: `http://${loopbackHost}:${port}`,
@@ -21,6 +22,7 @@ export default defineConfig({
       HERMES_STATE_DIR: path.resolve("./tests/fixtures/gateway-empty-state"),
       NEXT_PUBLIC_GATEWAY_URL: "",
       CARDTWIN_TEST_FIXTURES: "1",
+      CARDTWIN_NEXT_DIST_DIR: ".next-cardtwin-playwright",
     },
   },
 });

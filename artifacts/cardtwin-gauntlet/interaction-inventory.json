@@ -1,0 +1,78 @@
+{
+  "candidateBaseSha": "146cd6db0accfb010a549d3c08b1ff5ea1a49100",
+  "routes": [
+    {
+      "route": "/pokedex",
+      "controls": [
+        {"name":"CardTwin brand","kind":"link","outcome":"/pokedex"},
+        {"name":"Search","kind":"text input","outcome":"submitted as q URL state"},
+        {"name":"Generation","kind":"select","outcome":"submitted as generation URL state"},
+        {"name":"Type","kind":"select","outcome":"submitted as type URL state"},
+        {"name":"Apply","kind":"submit","outcome":"updates URL and results"},
+        {"name":"Clear filters","kind":"conditional link","outcome":"returns to /pokedex"},
+        {"name":"Pokémon result","kind":"link","outcome":"/pokedex/[nationalDexId]"},
+        {"name":"Previous/Next","kind":"conditional links","outcome":"preserve filters and change page"},
+        {"name":"Source","kind":"external link","outcome":"PokeAPI attribution"}
+      ]
+    },
+    {
+      "route": "/pokedex/[id]",
+      "controls": [
+        {"name":"Back to previous view","kind":"button","outcome":"browser history or /pokedex fallback"},
+        {"name":"Evolution species","kind":"links","outcome":"verified species detail routes"},
+        {"name":"Source","kind":"external link","outcome":"exact PokeAPI record"}
+      ],
+      "states":["verified detail","honest 3D unavailable","provider unavailable","useful not found"]
+    },
+    {
+      "route": "/cards",
+      "controls": [
+        {"name":"Search cards","kind":"text input","outcome":"submitted as q URL state"},
+        {"name":"Set","kind":"text input","outcome":"submitted as set URL state"},
+        {"name":"Rarity","kind":"text input","outcome":"submitted as rarity URL state"},
+        {"name":"Apply","kind":"submit","outcome":"updates URL and results"},
+        {"name":"Clear filters","kind":"conditional link","outcome":"returns to /cards"},
+        {"name":"Card result","kind":"link","outcome":"/cards/[exactSourceId]"},
+        {"name":"Previous/Next","kind":"conditional links","outcome":"preserve filters and change page"},
+        {"name":"Source","kind":"external link","outcome":"TCGdex attribution"}
+      ]
+    },
+    {
+      "route": "/cards/[id]",
+      "controls": [
+        {"name":"Back to previous view","kind":"button","outcome":"browser history or /cards fallback"},
+        {"name":"Exact record","kind":"external link","outcome":"exact TCGdex record"},
+        {"name":"CardTwin viewer controls","kind":"conditional controls","outcome":"rendered only when exact identity and every required local asset are available"}
+      ],
+      "states":["exact metadata","CardTwin available","identity unmatched","matched assets unavailable","provider unavailable","useful not found"]
+    }
+  ],
+  "globalNavigation": [
+    {"name":"Pokédex","kind":"link","outcome":"/pokedex"},
+    {"name":"Cards","kind":"link","outcome":"/cards"},
+    {"name":"Scan Later","kind":"disabled button","outcome":"semantic disabled; coming later"},
+    {"name":"Profile Later","kind":"disabled button","outcome":"semantic disabled; coming later"}
+  ],
+  "testedViewports": [
+    {"width":320,"height":844},
+    {"width":360,"height":844},
+    {"width":390,"height":844},
+    {"width":412,"height":915},
+    {"width":844,"height":390},
+    {"width":1920,"height":1080}
+  ],
+  "browserEvidence": {
+    "command": "CI=1 PLAYWRIGHT_PORT=3219 PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium npx playwright test tests/e2e/cardtwin-collection-routes.spec.ts --workers=1 --reporter=line",
+    "coverage": "six behavior journeys at each of six required viewports; 12 full-page catalog screenshots",
+    "latestFullRun": "35 passed, 2 infrastructure/navigation flakes; both cases passed independently and in prior viewport executions",
+    "focusedCorrectionRun": "2 passed",
+    "logs": ["logs/playwright-matrix-red.log", "logs/playwright-corrections-green.log"]
+  },
+  "independentControlExercise": {
+    "seed": 146,
+    "transitionCount": 27,
+    "result": "passed",
+    "runtimeErrors": [],
+    "coverage": ["catalog navigation", "filters", "clear", "browser back", "browser forward", "reload", "contextual back", "keyboard focus"]
+  }
+}

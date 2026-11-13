@@ -16,6 +16,7 @@ export default async function PokedexPage({ searchParams }: { searchParams: Prom
       <label><span>Generation</span><select name="generation" defaultValue={query.generation ?? ""}><option value="">All regions</option>{Array.from({ length: 9 }, (_, index) => <option key={index + 1} value={index + 1}>Generation {index + 1}</option>)}</select></label>
       <label><span>Type</span><select name="type" defaultValue={query.type ?? ""}>{TYPES.map((type) => <option key={type || "all"} value={type}>{type ? type[0].toUpperCase() + type.slice(1) : "All types"}</option>)}</select></label>
       <button type="submit">Apply</button>
+      {(query.q || query.generation || query.type) && <Link className="ct-clear-filters" href="/pokedex">Clear filters</Link>}
     </form>
     <div className="ct-result-bar"><strong>{page.total.toLocaleString()} Pokémon</strong><span>Page {page.page} of {page.totalPages}</span></div>
     {page.items.length ? <section className="ct-pokemon-grid" aria-label="Pokémon results">{page.items.map((pokemon) => <Link href={`/pokedex/${pokemon.id}`} key={pokemon.id} className="ct-pokemon-card">

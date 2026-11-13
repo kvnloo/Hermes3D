@@ -1,0 +1,4 @@
+{
+  "/pokedex/page": "app/pokedex/page.js",
+  "/pokedex/[id]/page": "app/pokedex/[id]/page.js"
+}

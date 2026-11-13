@@ -1,0 +1,3 @@
+{
+  "/api/office/voice/transcribe/route": "app/api/office/voice/transcribe/route.js"
+}

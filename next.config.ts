@@ -58,6 +58,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 const nextConfig: NextConfig = {
+  distDir: process.env.CARDTWIN_NEXT_DIST_DIR || ".next",
   generateBuildId: async () => execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
   turbopack: {
     root: path.resolve(__dirname),

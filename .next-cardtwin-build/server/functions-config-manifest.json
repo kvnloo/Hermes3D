@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "functions": {
+    "/api/files/[file]": {},
+    "/api/files/upload": {},
+    "/api/gateway/agent-state": {},
+    "/api/gateway/media": {},
+    "/api/gateway/skills/remove": {},
+    "/api/health": {},
+    "/api/office": {},
+    "/api/office/browser-preview": {},
+    "/api/office/call": {},
+    "/api/office/github": {},
+    "/api/office/layout": {},
+    "/api/office/presence": {},
+    "/api/office/publish": {},
+    "/api/office/remote-handoff": {},
+    "/api/office/remote-message": {},
+    "/api/office/standup/config": {},
+    "/api/office/standup/meeting": {},
+    "/api/office/standup/run": {},
+    "/api/office/text": {},
+    "/api/office/voice/reply": {},
+    "/api/office/voice/transcribe": {},
+    "/api/path-suggestions": {},
+    "/api/runtime/custom": {},
+    "/api/studio": {}
+  }
+}

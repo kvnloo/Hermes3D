@@ -1,0 +1,20 @@
+npm notice run hermes3d@1.0.0 npx
+npm notice run 'playwright' test tests/e2e/cardtwin-collection-routes.spec.ts --workers=1 --reporter=line --grep desktop cards|seeded independent
+(node:4052462) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1A[2K[WebServer] npm notice run hermes3d@1.0.0 dev
+
+[1A[2K[WebServer] npm notice run node server/index.js --dev
+
+
+Running 2 tests using 1 worker
+
+[1A[2K(node:4052574) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[1/2] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › desktop cards preserve submitted URL filters and page geometry
+[1A[2K[WebServer] (node:4052525) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[2/2] tests/e2e/cardtwin-collection-routes.spec.ts:103:5 › seeded independent exercise completes at least 25 control transitions without dead controls or runtime errors
+[1A[2K  2 passed (19.1s)

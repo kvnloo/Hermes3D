@@ -1,0 +1,10 @@
+c634500241750ecae58fc49ed4fbd7b7189f2b457525c78db28537a9fd013441  next.config.ts
+6f74a5c70a271b91f58579202b6a6b57929038c91abf69f2fee5e5e05468ed72  playwright.config.ts
+b8a77979a71ef872d3bdff86e3b44bb02e2a1f084a9ef6d3a07a0ebedc6a2b0a  src/app/cards/[id]/page.tsx
+a1d268b680ec17548de0c27780bd442e8467e2a45eae4b00700e1810abec0d85  src/app/cards/page.tsx
+249d068eba7098fd9fe19f38ef1846c2d9179a92e2e626b2abf4733d4fb0e15d  src/app/pokedex/page.tsx
+164dfe3bacbc59c88915aeb17f23949abdbea7e9811f6bd1fd97eadca7dd4723  tests/e2e/cardtwin-collection-routes.spec.ts
+f4f80512755645f8cbb5522cca9e297bd000df315a8f2772d774e0a4383c9c7e  src/app/cards/[id]/not-found.tsx
+001b91ae36bb216fa376e9f84127c3bac50b59a4289589050d5fa874d875c5ae  src/app/pokedex/[id]/not-found.tsx
+8b97de09a7c4cfb5fb9e26ed980f1779d5b920d071a7c256e7a120c4b295b40e  src/features/cardtwin/cardTwinAssetAvailability.ts
+3c95059f6fca96c9852cca61d4ae77332911975b2c3ef722e6c0a6816c8518f8  tests/unit/cardTwinAssetAvailability.test.ts

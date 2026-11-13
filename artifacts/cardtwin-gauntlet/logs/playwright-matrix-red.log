@@ -1,0 +1,106 @@
+npm notice run hermes3d@1.0.0 npx
+npm notice run 'playwright' test tests/e2e/cardtwin-collection-routes.spec.ts --workers=1 --reporter=line
+(node:4054345) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[1A[2K[WebServer] npm notice run hermes3d@1.0.0 dev
+
+[1A[2K[WebServer] npm notice run node server/index.js --dev
+
+
+Running 37 tests using 1 worker
+
+[1A[2K(node:4054663) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[1/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-320 catalog preserves URL state, scroll, safe area, and width
+[1A[2K[WebServer] (node:4054485) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+[WebServer] (Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[2/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-320 cards preserve submitted URL filters and page geometry
+[1A[2K[3/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-320 active filters can be cleared without editing every field
+[1A[2K[4/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-320 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K[5/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-320 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K[6/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-320 invalid deep links recover to their parent catalog
+[1A[2K[7/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-360 catalog preserves URL state, scroll, safe area, and width
+[1A[2K[8/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-360 cards preserve submitted URL filters and page geometry
+[1A[2K[9/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-360 active filters can be cleared without editing every field
+[1A[2K[10/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-360 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K[11/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-360 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K[12/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-360 invalid deep links recover to their parent catalog
+[1A[2K[13/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-390 catalog preserves URL state, scroll, safe area, and width
+[1A[2K[14/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-390 cards preserve submitted URL filters and page geometry
+[1A[2K[15/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-390 active filters can be cleared without editing every field
+[1A[2K[16/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-390 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K[17/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-390 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K[18/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-390 invalid deep links recover to their parent catalog
+[1A[2K[19/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-412 catalog preserves URL state, scroll, safe area, and width
+[1A[2K[20/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-412 cards preserve submitted URL filters and page geometry
+[1A[2K[21/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-412 active filters can be cleared without editing every field
+[1A[2K[22/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-412 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K[23/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-412 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K[24/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-412 invalid deep links recover to their parent catalog
+[1A[2K  1) tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-412 invalid deep links recover to their parent catalog 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Pokémon not found' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Pokémon not found' })[22m
+
+
+      91 |     await page.setViewportSize(viewport);
+      92 |     await page.goto("/pokedex/999999");
+    > 93 |     await expect(page.getByRole("heading", { name: "Pokémon not found" })).toBeVisible();
+         |                                                                            ^
+      94 |     await page.getByRole("link", { name: "Return to Pokédex" }).click();
+      95 |     await expect(page).toHaveURL(/\/pokedex$/);
+      96 |     await page.goto("/cards/not-a-real-card");
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:93:76
+
+
+[1A[2K(node:4060120) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[25/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › landscape catalog preserves URL state, scroll, safe area, and width
+[1A[2K[26/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › landscape cards preserve submitted URL filters and page geometry
+[1A[2K[27/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › landscape active filters can be cleared without editing every field
+[1A[2K[28/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › landscape Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K[29/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › landscape card details fail closed when matched CardTwin assets are unavailable
+[1A[2K[30/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › landscape invalid deep links recover to their parent catalog
+[1A[2K[31/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › desktop catalog preserves URL state, scroll, safe area, and width
+[1A[2K[32/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › desktop cards preserve submitted URL filters and page geometry
+[1A[2K[33/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › desktop active filters can be cleared without editing every field
+[1A[2K[34/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › desktop Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K[35/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › desktop card details fail closed when matched CardTwin assets are unavailable
+[1A[2K[36/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › desktop invalid deep links recover to their parent catalog
+[1A[2K[37/37] tests/e2e/cardtwin-collection-routes.spec.ts:103:5 › seeded independent exercise completes at least 25 control transitions without dead controls or runtime errors
+[1A[2K  2) tests/e2e/cardtwin-collection-routes.spec.ts:103:5 › seeded independent exercise completes at least 25 control transitions without dead controls or runtime errors 
+
+    Error: page.reload: net::ERR_ABORTED; maybe frame was detached?
+    Call log:
+    [2m  - waiting for navigation until "load"[22m
+
+
+      124 |   await step("browser back cards", () => page.goBack());
+      125 |   await step("browser forward cards", () => page.goForward());
+    > 126 |   await step("reload cards", () => page.reload());
+          |                                         ^
+      127 |   await step("open pokemon from nav", () => page.getByRole("link", { name: "Pokédex" }).click());
+      128 |   await step("open pokemon deep link", () => page.goto("/pokedex/25"));
+      129 |   await step("pokemon contextual back", () => page.getByRole("button", { name: /back/i }).click());
+        at action (/workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:126:41)
+        at step (/workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:108:11)
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:126:9
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-84058--controls-or-runtime-errors/error-context.md
+
+
+[1A[2K  2 failed
+    tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-412 invalid deep links recover to their parent catalog 
+    tests/e2e/cardtwin-collection-routes.spec.ts:103:5 › seeded independent exercise completes at least 25 control transitions without dead controls or runtime errors 
+  35 passed (2.2m)

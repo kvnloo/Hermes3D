@@ -1,0 +1,315 @@
+diff --git a/next.config.ts b/next.config.ts
+index 5d41ef7..89366ae 100644
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -58,6 +58,7 @@ if (process.env.NODE_ENV === "production") {
+ }
+ 
+ const nextConfig: NextConfig = {
++  distDir: process.env.CARDTWIN_NEXT_DIST_DIR || ".next",
+   generateBuildId: async () => execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+   turbopack: {
+     root: path.resolve(__dirname),
+diff --git a/playwright.config.ts b/playwright.config.ts
+index 44de3f4..c049653 100644
+--- a/playwright.config.ts
++++ b/playwright.config.ts
+@@ -4,6 +4,7 @@ const port = Number(process.env.PLAYWRIGHT_PORT ?? 3107);
+ const loopbackHost = [127, 0, 0, 1].join(".");
+ export default defineConfig({
+   testDir: "./tests/e2e",
++  outputDir: "./artifacts/cardtwin-gauntlet/playwright-results",
+   expect: { timeout: 20_000 },
+   use: {
+     baseURL: `http://${loopbackHost}:${port}`,
+@@ -21,6 +22,7 @@ export default defineConfig({
+       HERMES_STATE_DIR: path.resolve("./tests/fixtures/gateway-empty-state"),
+       NEXT_PUBLIC_GATEWAY_URL: "",
+       CARDTWIN_TEST_FIXTURES: "1",
++      CARDTWIN_NEXT_DIST_DIR: ".next-cardtwin-playwright",
+     },
+   },
+ });
+diff --git a/src/app/cards/[id]/page.tsx b/src/app/cards/[id]/page.tsx
+index 9117494..153a5f1 100644
+--- a/src/app/cards/[id]/page.tsx
++++ b/src/app/cards/[id]/page.tsx
+@@ -5,6 +5,9 @@ import { ContextBack } from "@/features/cardtwin/ContextBack";
+ import { tcgdexProvider } from "@/features/cardtwin/providers/tcgdex";
+ import { findExactCardTwin } from "@/features/cardtwin/cardTwinIdentity";
+ import { PokemonCardsPreview } from "@/app/exhibits/pokemon-cards/PokemonCardsPreview";
++import { cardTwinAssetsAvailable } from "@/features/cardtwin/cardTwinAssetAvailability";
++import { existsSync } from "node:fs";
++import { resolve } from "node:path";
+ import "@/app/exhibits/pokemon-cards/exhibit.css";
+ 
+ export default async function CardDetailPage({ params }: { params: Promise<{ id: string }> }) {
+@@ -14,12 +17,13 @@ export default async function CardDetailPage({ params }: { params: Promise<{ id:
+   try { result = await tcgdexProvider.get(id); } catch { return <CollectionShell active="cards"><CatalogError title="Card detail unavailable" /></CollectionShell>; }
+   if (!result) notFound();
+   const { record, provenance } = result;
+-  const twin = findExactCardTwin({ sourceId: record.id, setName: record.set.name, number: record.number });
++  const matchedTwin = findExactCardTwin({ sourceId: record.id, setName: record.set.name, number: record.number });
++  const twin = matchedTwin && cardTwinAssetsAvailable(matchedTwin, (path) => existsSync(resolve(process.cwd(), path))) ? matchedTwin : null;
+   return <CollectionShell active="cards"><ContextBack fallback="/cards" />
+     <article className="ct-card-detail">
+       <section className="ct-card-image">{record.imageUrl ? <>{/* eslint-disable-next-line @next/next/no-img-element -- exact TCGdex source image. */}<img src={record.imageUrl} alt={`${record.name}, ${record.set.name} ${record.number}`} width="490" height="684" /></> : <div className="ct-image-missing">Canonical image unavailable</div>}</section>
+       <section className="ct-detail-copy"><span>Exact source ID · {record.id}</span><h1>{record.name}</h1><dl className="ct-meta"><div><dt>Set</dt><dd>{record.set.name}</dd></div><div><dt>Number</dt><dd>{record.number}</dd></div><div><dt>Rarity</dt><dd>{record.rarity ?? "Not listed"}</dd></div><div><dt>Source</dt><dd>TCGdex</dd></div></dl>
+-      {twin ? <div className="ct-depth-ready"><strong>CardTwin depth available</strong><p>Exact printing matched to the processed local catalog.</p></div> : <div className="ct-depth-empty"><strong>CardTwin depth not available</strong><p>This exact printing has no approved semantic-layer reconstruction.</p></div>}</section>
++      {twin ? <div className="ct-depth-ready"><strong>CardTwin depth available</strong><p>Exact printing matched to the processed local catalog.</p></div> : <div className="ct-depth-empty"><strong>CardTwin depth not available</strong><p>{matchedTwin ? "The approved reconstruction assets are not installed on this deployment." : "This exact printing has no approved semantic-layer reconstruction."}</p></div>}</section>
+     </article>{twin && <section data-testid="cardtwin-detail-embed" className="ct-cardtwin-embed" aria-label={`${record.name} CardTwin depth viewer`}><PokemonCardsPreview initialView="macro" initialCardId={twin.id} /></section>}<footer className="ct-attribution">{provenance.attribution} <a href={record.sourceUrl}>Exact record</a></footer>
+   </CollectionShell>;
+ }
+diff --git a/src/app/cards/page.tsx b/src/app/cards/page.tsx
+index 416b573..f408165 100644
+--- a/src/app/cards/page.tsx
++++ b/src/app/cards/page.tsx
+@@ -9,7 +9,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Promis
+   try { page = await tcgdexProvider.list(query); } catch { return <CollectionShell active="cards"><CatalogError title="Card catalog unavailable" /></CollectionShell>; }
+   return <CollectionShell active="cards">
+     <section className="ct-hero ct-card-hero"><span>Exact printings</span><h1>Card archive</h1><p>Canonical IDs, set numbers and source images. Ownership, condition and prices are intentionally absent.</p></section>
+-    <form className="ct-filters ct-card-filters" action="/cards"><label><span>Search cards</span><input name="q" defaultValue={query.q} placeholder="Name or exact card ID" /></label><label><span>Set</span><input name="set" defaultValue={query.set} placeholder="Set ID or exact name" /></label><label><span>Rarity</span><input name="rarity" defaultValue={query.rarity} placeholder="Exact rarity" /></label><button type="submit">Apply</button></form>
++    <form className="ct-filters ct-card-filters" action="/cards"><label><span>Search cards</span><input name="q" defaultValue={query.q} placeholder="Name or exact card ID" /></label><label><span>Set</span><input name="set" defaultValue={query.set} placeholder="Set ID or exact name" /></label><label><span>Rarity</span><input name="rarity" defaultValue={query.rarity} placeholder="Exact rarity" /></label><button type="submit">Apply</button>{(query.q || query.set || query.rarity) && <Link className="ct-clear-filters" href="/cards">Clear filters</Link>}</form>
+     <div className="ct-result-bar"><strong>{page.total.toLocaleString()} printings</strong><span>Page {page.page} of {page.totalPages}</span></div>
+     {page.items.length ? <section className="ct-card-grid" aria-label="Card results">{page.items.map((card) => <Link href={`/cards/${encodeURIComponent(card.id)}`} key={card.id} className="ct-card-tile">{card.imageUrl ? <>{/* eslint-disable-next-line @next/next/no-img-element -- TCGdex image provenance remains exact. */}<img loading="lazy" width="245" height="342" src={card.imageUrl} alt={`${card.name}, ${card.set.name} ${card.number}`} /></> : <div className="ct-image-missing">Image unavailable</div>}<strong>{card.name}</strong><span>{card.set.name} #{card.number}</span><small>{card.rarity ?? "Rarity not listed"}</small></Link>)}</section> : <section className="ct-state"><strong>No cards found</strong><p>Try another exact card name, ID, set or rarity.</p></section>}
+     <nav className="ct-pagination" aria-label="Card pages">{page.page > 1 && <Link href={buildCatalogHref("/cards", { ...query, page: page.page - 1 })}>Previous</Link>}<span>{page.page} / {page.totalPages}</span>{page.page < page.totalPages && <Link href={buildCatalogHref("/cards", { ...query, page: page.page + 1 })}>Next</Link>}</nav>
+diff --git a/src/app/pokedex/page.tsx b/src/app/pokedex/page.tsx
+index 4e2ecc7..04a8546 100644
+--- a/src/app/pokedex/page.tsx
++++ b/src/app/pokedex/page.tsx
+@@ -16,6 +16,7 @@ export default async function PokedexPage({ searchParams }: { searchParams: Prom
+       <label><span>Generation</span><select name="generation" defaultValue={query.generation ?? ""}><option value="">All regions</option>{Array.from({ length: 9 }, (_, index) => <option key={index + 1} value={index + 1}>Generation {index + 1}</option>)}</select></label>
+       <label><span>Type</span><select name="type" defaultValue={query.type ?? ""}>{TYPES.map((type) => <option key={type || "all"} value={type}>{type ? type[0].toUpperCase() + type.slice(1) : "All types"}</option>)}</select></label>
+       <button type="submit">Apply</button>
++      {(query.q || query.generation || query.type) && <Link className="ct-clear-filters" href="/pokedex">Clear filters</Link>}
+     </form>
+     <div className="ct-result-bar"><strong>{page.total.toLocaleString()} Pokémon</strong><span>Page {page.page} of {page.totalPages}</span></div>
+     {page.items.length ? <section className="ct-pokemon-grid" aria-label="Pokémon results">{page.items.map((pokemon) => <Link href={`/pokedex/${pokemon.id}`} key={pokemon.id} className="ct-pokemon-card">
+diff --git a/tests/e2e/cardtwin-collection-routes.spec.ts b/tests/e2e/cardtwin-collection-routes.spec.ts
+index b5e3669..9a478c9 100644
+--- a/tests/e2e/cardtwin-collection-routes.spec.ts
++++ b/tests/e2e/cardtwin-collection-routes.spec.ts
+@@ -1,9 +1,26 @@
+ import { expect, test } from "@playwright/test";
+ 
+-const viewports = [{ name: "mobile", width: 390, height: 844 }, { name: "desktop", width: 1920, height: 1080 }] as const;
++const viewports = [
++  { name: "mobile-320", width: 320, height: 844 },
++  { name: "mobile-360", width: 360, height: 844 },
++  { name: "mobile-390", width: 390, height: 844 },
++  { name: "mobile-412", width: 412, height: 915 },
++  { name: "landscape", width: 844, height: 390 },
++  { name: "desktop", width: 1920, height: 1080 },
++] as const;
++
++function observeRuntimeErrors(page: import("@playwright/test").Page) {
++  const errors: string[] = [];
++  page.on("pageerror", (error) => errors.push(`pageerror: ${error.message}`));
++  page.on("console", (message) => {
++    if (message.type() === "error") errors.push(`console: ${message.text()}`);
++  });
++  return errors;
++}
+ 
+ for (const viewport of viewports) {
+   test(`${viewport.name} catalog preserves URL state, scroll, safe area, and width`, async ({ page }) => {
++    const runtimeErrors = observeRuntimeErrors(page);
+     await page.setViewportSize(viewport);
+     await page.goto("/pokedex?q=pika&generation=1&type=electric&page=1");
+     await expect(page).toHaveURL(/q=pika.*generation=1.*type=electric/);
+@@ -16,9 +33,12 @@ for (const viewport of viewports) {
+     expect(geometry.overflow).toBeLessThanOrEqual(1);
+     expect(geometry.scrollAllowed).toBeTruthy();
+     expect(geometry.navBottom).not.toBe("0px");
++    await page.screenshot({ path: `artifacts/cardtwin-gauntlet/screenshots/${viewport.name}-pokedex.png`, fullPage: true });
++    expect(runtimeErrors).toEqual([]);
+   });
+ 
+   test(`${viewport.name} cards preserve submitted URL filters and page geometry`, async ({ page }) => {
++    const runtimeErrors = observeRuntimeErrors(page);
+     await page.setViewportSize(viewport);
+     await page.goto("/cards");
+     await page.getByLabel("Search cards").fill("Pikachu");
+@@ -26,8 +46,19 @@ for (const viewport of viewports) {
+     await page.getByLabel("Rarity").fill("Rare");
+     await page.getByRole("button", { name: "Apply" }).click();
+     await expect(page).toHaveURL(/\/cards\?q=Pikachu&set=Base\+Set&rarity=Rare/);
++    await expect(page.locator("body")).toBeVisible();
+     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+     expect(overflow).toBeLessThanOrEqual(1);
++    await page.screenshot({ path: `artifacts/cardtwin-gauntlet/screenshots/${viewport.name}-cards.png`, fullPage: true });
++    expect(runtimeErrors).toEqual([]);
++  });
++
++  test(`${viewport.name} active filters can be cleared without editing every field`, async ({ page }) => {
++    await page.setViewportSize(viewport);
++    await page.goto("/pokedex?q=pika&generation=1&type=electric");
++    await page.getByRole("link", { name: "Clear filters" }).click();
++    await expect(page).toHaveURL(/\/pokedex$/);
++    await expect(page.getByLabel("Search")).toHaveValue("");
+   });
+ 
+   test(`${viewport.name} Pokémon detail exercises contextual Back and honest empty 3D catalog`, async ({ page }) => {
+@@ -40,16 +71,77 @@ for (const viewport of viewports) {
+     await expect(page).toHaveURL(/\/pokedex\?q=pika$/);
+   });
+ 
+-  test(`${viewport.name} card details exercise Back and exact CardTwin available/unavailable states`, async ({ page }) => {
++  test(`${viewport.name} card details fail closed when matched CardTwin assets are unavailable`, async ({ page }) => {
+     await page.setViewportSize(viewport);
++    const pageErrors: string[] = [];
++    page.on("pageerror", (error) => pageErrors.push(error.message));
+     await page.goto("/cards?q=Arcanine");
+     await page.goto("/cards/sm1-22");
+-    await expect(page.getByTestId("cardtwin-detail-embed")).toBeVisible();
+-    await expect(page.getByTestId("pokemon-card-webgl-stage")).toBeVisible();
++    await expect(page.getByText("CardTwin depth not available")).toBeVisible();
++    await expect(page.getByTestId("cardtwin-detail-embed")).toHaveCount(0);
++    expect(pageErrors).toEqual([]);
+     await page.getByRole("button", { name: /back/i }).click();
+     await expect(page).toHaveURL(/\/cards\?q=Arcanine$/);
+     await page.goto("/cards/base1-4");
+     await expect(page.getByText("CardTwin depth not available")).toBeVisible();
+     await expect(page.getByTestId("cardtwin-detail-embed")).toHaveCount(0);
+   });
+-}
+\ No newline at end of file
++
++  test(`${viewport.name} invalid deep links recover to their parent catalog`, async ({ page }) => {
++    await page.setViewportSize(viewport);
++    await page.goto("/pokedex/999999");
++    await expect(page.getByRole("heading", { name: "Pokémon not found" })).toBeVisible();
++    await page.getByRole("link", { name: "Return to Pokédex" }).click();
++    await expect(page).toHaveURL(/\/pokedex$/);
++    await page.goto("/cards/not-a-real-card");
++    await expect(page.getByRole("heading", { name: "Card not found" })).toBeVisible();
++    await page.getByRole("link", { name: "Return to cards" }).click();
++    await expect(page).toHaveURL(/\/cards$/);
++  });
++}
++
++test("seeded independent exercise completes at least 25 control transitions without dead controls or runtime errors", async ({ page }) => {
++  await page.setViewportSize({ width: 390, height: 844 });
++  const runtimeErrors = observeRuntimeErrors(page);
++  const exercised: string[] = [];
++  const step = async (name: string, action: () => Promise<unknown>) => {
++    await action();
++    exercised.push(name);
++  };
++
++  await step("open pokedex", () => page.goto("/pokedex"));
++  await step("search pokemon", () => page.getByLabel("Search").fill("pika"));
++  await step("choose generation", () => page.getByLabel("Generation").selectOption("1"));
++  await step("choose type", () => page.getByLabel("Type").selectOption("electric"));
++  await step("apply pokemon filters", () => page.getByRole("button", { name: "Apply" }).click());
++  await step("clear pokemon filters", () => page.getByRole("link", { name: "Clear filters" }).click());
++  await step("open cards from nav", () => page.getByRole("link", { name: "Cards" }).click());
++  await step("search cards", () => page.getByLabel("Search cards").fill("Pikachu"));
++  await step("filter card set", () => page.getByLabel("Set").fill("Base Set"));
++  await step("filter card rarity", () => page.getByLabel("Rarity").fill("Rare"));
++  await step("apply card filters", () => page.getByRole("button", { name: "Apply" }).click());
++  await step("clear card filters", () => page.getByRole("link", { name: "Clear filters" }).click());
++  await step("browser back cards", () => page.goBack());
++  await step("browser forward cards", () => page.goForward());
++  await step("reload cards", () => page.reload());
++  await step("open pokemon from nav", () => page.getByRole("link", { name: "Pokédex" }).click());
++  await step("open pokemon deep link", () => page.goto("/pokedex/25"));
++  await step("pokemon contextual back", () => page.getByRole("button", { name: /back/i }).click());
++  await step("reload pokemon catalog", () => page.reload());
++  await step("open cards after pokemon", () => page.getByRole("link", { name: "Cards" }).click());
++  await step("open card deep link", () => page.goto("/cards/sm1-22"));
++  await step("card contextual back", () => page.getByRole("button", { name: /back/i }).click());
++  await step("reload card catalog", () => page.reload());
++  await step("open pokedex after card", () => page.getByRole("link", { name: "Pokédex" }).click());
++  await step("keyboard focus", () => page.keyboard.press("Tab"));
++  await step("keyboard reverse focus", () => page.keyboard.press("Shift+Tab"));
++  await step("final reload", () => page.reload());
++
++  await expect(page.getByRole("navigation", { name: "Collection navigation" })).toBeVisible();
++  expect(exercised.length).toBeGreaterThanOrEqual(25);
++  expect(runtimeErrors).toEqual([]);
++  await test.info().attach("seeded-control-exercise", {
++    body: JSON.stringify({ seed: 146, count: exercised.length, exercised, runtimeErrors }, null, 2),
++    contentType: "application/json",
++  });
++});
+\ No newline at end of file
+diff --git a/src/app/cards/[id]/not-found.tsx b/src/app/cards/[id]/not-found.tsx
+new file mode 100644
+index 0000000..0037a30
+--- /dev/null
++++ b/src/app/cards/[id]/not-found.tsx
+@@ -0,0 +1,6 @@
++import Link from "next/link";
++import { CollectionShell } from "@/features/cardtwin/CollectionShell";
++
++export default function CardNotFound() {
++  return <CollectionShell active="cards"><section className="ct-state"><h1>Card not found</h1><p>No verified printing matches this exact card ID.</p><Link href="/cards">Return to cards</Link></section></CollectionShell>;
++}
+diff --git a/src/app/pokedex/[id]/not-found.tsx b/src/app/pokedex/[id]/not-found.tsx
+new file mode 100644
+index 0000000..bd4e8e4
+--- /dev/null
++++ b/src/app/pokedex/[id]/not-found.tsx
+@@ -0,0 +1,6 @@
++import Link from "next/link";
++import { CollectionShell } from "@/features/cardtwin/CollectionShell";
++
++export default function PokemonNotFound() {
++  return <CollectionShell active="pokedex"><section className="ct-state"><h1>Pokémon not found</h1><p>No verified species matches this National Dex ID.</p><Link href="/pokedex">Return to Pokédex</Link></section></CollectionShell>;
++}
+diff --git a/src/features/cardtwin/cardTwinAssetAvailability.ts b/src/features/cardtwin/cardTwinAssetAvailability.ts
+new file mode 100644
+index 0000000..197eed7
+--- /dev/null
++++ b/src/features/cardtwin/cardTwinAssetAvailability.ts
+@@ -0,0 +1,11 @@
++import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
++
++const PUBLIC_ASSET_PREFIX = "/exhibits/pokemon-cards/";
++
++export function cardTwinAssetsAvailable(card: CardTwinCard, exists: (path: string) => boolean) {
++  const assets = [card.canonical, card.hiddenFill, ...card.layers.map((layer) => layer.texture)];
++  return assets.every((asset) => {
++    if (!asset.startsWith(PUBLIC_ASSET_PREFIX) || asset.includes("..")) return false;
++    return exists(`public${asset}`);
++  });
++}
+\ No newline at end of file
+diff --git a/tests/unit/cardTwinAssetAvailability.test.ts b/tests/unit/cardTwinAssetAvailability.test.ts
+new file mode 100644
+index 0000000..cf45b05
+--- /dev/null
++++ b/tests/unit/cardTwinAssetAvailability.test.ts
+@@ -0,0 +1,31 @@
++import { describe, expect, it } from "vitest";
++import { cardTwinAssetsAvailable } from "@/features/cardtwin/cardTwinAssetAvailability";
++import type { CardTwinCard } from "@/features/living-museum/exhibits/pokemon-cards/cardTwinCatalog";
++
++const card: CardTwinCard = {
++  id: "test-card",
++  name: "Test",
++  printing: "1/1",
++  set: "Test Set",
++  accent: "#fff",
++  canonical: "/exhibits/pokemon-cards/test-card/canonical.png",
++  hiddenFill: "/exhibits/pokemon-cards/test-card/layers/hidden.png",
++  layers: [{ id: "hero", label: "Hero", depthMm: 1, texture: "/exhibits/pokemon-cards/test-card/layers/hero.png" }],
++};
++
++describe("cardTwinAssetsAvailable", () => {
++  it("returns true only when every viewer texture is present", () => {
++    const present = new Set([
++      "public/exhibits/pokemon-cards/test-card/canonical.png",
++      "public/exhibits/pokemon-cards/test-card/layers/hidden.png",
++      "public/exhibits/pokemon-cards/test-card/layers/hero.png",
++    ]);
++    expect(cardTwinAssetsAvailable(card, (path) => present.has(path))).toBe(true);
++    present.delete("public/exhibits/pokemon-cards/test-card/layers/hidden.png");
++    expect(cardTwinAssetsAvailable(card, (path) => present.has(path))).toBe(false);
++  });
++
++  it("rejects non-public asset paths instead of probing outside the asset root", () => {
++    expect(cardTwinAssetsAvailable({ ...card, hiddenFill: "/../secret.png" }, () => true)).toBe(false);
++  });
++});

@@ -1,0 +1,456 @@
+npm notice run hermes3d@1.0.0 npx
+npm notice run 'playwright' test tests/e2e/cardtwin-collection-routes.spec.ts --workers=1 --reporter=line
+(node:4077632) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+Running 37 tests using 1 worker
+
+[1A[2K(node:4078025) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[1/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-320 catalog preserves URL state, scroll, safe area, and width
+[1A[2K  1) tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-320 catalog preserves URL state, scroll, safe area, and width 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mnot[2m.[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: not [32m"0px"[39m
+
+      33 |     expect(geometry.overflow).toBeLessThanOrEqual(1);
+      34 |     expect(geometry.scrollAllowed).toBeTruthy();
+    > 35 |     expect(geometry.navBottom).not.toBe("0px");
+         |                                    ^
+      36 |     await page.screenshot({ path: `artifacts/cardtwin-gauntlet/screenshots/${viewport.name}-pokedex.png`, fullPage: true });
+      37 |     expect(runtimeErrors).toEqual([]);
+      38 |   });
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:35:36
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-7ccd1--scroll-safe-area-and-width/error-context.md
+
+
+[1A[2K(node:4079216) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[2/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-320 cards preserve submitted URL filters and page geometry
+[1A[2K  2) tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-320 cards preserve submitted URL filters and page geometry 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('Search cards')[22m
+
+
+      42 |     await page.setViewportSize(viewport);
+      43 |     await page.goto("/cards");
+    > 44 |     await page.getByLabel("Search cards").fill("Pikachu");
+         |                                           ^
+      45 |     await page.getByLabel("Set").fill("Base Set");
+      46 |     await page.getByLabel("Rarity").fill("Rare");
+      47 |     await page.getByRole("button", { name: "Apply" }).click();
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:44:43
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-599af-L-filters-and-page-geometry/error-context.md
+
+
+[1A[2K(node:4082092) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[3/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-320 active filters can be cleared without editing every field
+[1A[2K  3) tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-320 active filters can be cleared without editing every field 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByRole('link', { name: 'Clear filters' })[22m
+
+
+      57 |     await page.setViewportSize(viewport);
+      58 |     await page.goto("/pokedex?q=pika&generation=1&type=electric");
+    > 59 |     await page.getByRole("link", { name: "Clear filters" }).click();
+         |                                                             ^
+      60 |     await expect(page).toHaveURL(/\/pokedex$/);
+      61 |     await expect(page.getByLabel("Search")).toHaveValue("");
+      62 |   });
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:59:61
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-89a71-without-editing-every-field/error-context.md
+
+
+[1A[2K(node:4083799) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[4/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-320 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K  4) tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-320 Pokémon detail exercises contextual Back and honest empty 3D catalog 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('3D model unavailable')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByText('3D model unavailable')[22m
+
+
+      66 |     await page.goto("/pokedex?q=pika");
+      67 |     await page.goto("/pokedex/25");
+    > 68 |     await expect(page.getByText("3D model unavailable")).toBeVisible();
+         |                                                          ^
+      69 |     await expect(page.getByRole("heading", { name: "Evolution" })).toBeVisible();
+      70 |     await page.getByRole("button", { name: /back/i }).click();
+      71 |     await expect(page).toHaveURL(/\/pokedex\?q=pika$/);
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:68:58
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-862d2-and-honest-empty-3D-catalog/error-context.md
+
+
+[1A[2K(node:4085416) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[5/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-320 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K  5) tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-320 card details fail closed when matched CardTwin assets are unavailable 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('CardTwin depth not available')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByText('CardTwin depth not available')[22m
+
+
+      78 |     await page.goto("/cards?q=Arcanine");
+      79 |     await page.goto("/cards/sm1-22");
+    > 80 |     await expect(page.getByText("CardTwin depth not available")).toBeVisible();
+         |                                                                  ^
+      81 |     await expect(page.getByTestId("cardtwin-detail-embed")).toHaveCount(0);
+      82 |     expect(pageErrors).toEqual([]);
+      83 |     await page.getByRole("button", { name: /back/i }).click();
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:80:66
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-fa78e-Twin-assets-are-unavailable/error-context.md
+
+
+[1A[2K(node:4087156) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[6/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-320 invalid deep links recover to their parent catalog
+[1A[2K  6) tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-320 invalid deep links recover to their parent catalog 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Pokémon not found' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Pokémon not found' })[22m
+
+
+      91 |     await page.setViewportSize(viewport);
+      92 |     await page.goto("/pokedex/999999");
+    > 93 |     await expect(page.getByRole("heading", { name: "Pokémon not found" })).toBeVisible();
+         |                                                                            ^
+      94 |     await page.getByRole("link", { name: "Return to Pokédex" }).click();
+      95 |     await expect(page).toHaveURL(/\/pokedex$/);
+      96 |     await page.goto("/cards/not-a-real-card");
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:93:76
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-82da2-ver-to-their-parent-catalog/error-context.md
+
+
+[1A[2K(node:4088570) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[7/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-360 catalog preserves URL state, scroll, safe area, and width
+[1A[2K  7) tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-360 catalog preserves URL state, scroll, safe area, and width 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('navigation', { name: 'Collection navigation' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByRole('navigation', { name: 'Collection navigation' })[22m
+
+
+      25 |     await page.goto("/pokedex?q=pika&generation=1&type=electric&page=1");
+      26 |     await expect(page).toHaveURL(/q=pika.*generation=1.*type=electric/);
+    > 27 |     await expect(page.getByRole("navigation", { name: "Collection navigation" })).toBeVisible();
+         |                                                                                   ^
+      28 |     const geometry = await page.evaluate(() => ({
+      29 |       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+      30 |       scrollAllowed: getComputedStyle(document.documentElement).overflowY !== "hidden" && getComputedStyle(document.body).overflowY !== "hidden",
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:27:83
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-26335--scroll-safe-area-and-width/error-context.md
+
+
+[1A[2K(node:4090365) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[8/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-360 cards preserve submitted URL filters and page geometry
+[1A[2K  8) tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-360 cards preserve submitted URL filters and page geometry 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('Search cards')[22m
+
+
+      42 |     await page.setViewportSize(viewport);
+      43 |     await page.goto("/cards");
+    > 44 |     await page.getByLabel("Search cards").fill("Pikachu");
+         |                                           ^
+      45 |     await page.getByLabel("Set").fill("Base Set");
+      46 |     await page.getByLabel("Rarity").fill("Rare");
+      47 |     await page.getByRole("button", { name: "Apply" }).click();
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:44:43
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-81a1d-L-filters-and-page-geometry/error-context.md
+
+
+[1A[2K(node:4092092) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[9/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-360 active filters can be cleared without editing every field
+[1A[2K[10/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-360 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K  9) tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-360 Pokémon detail exercises contextual Back and honest empty 3D catalog 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('3D model unavailable')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByText('3D model unavailable')[22m
+
+
+      66 |     await page.goto("/pokedex?q=pika");
+      67 |     await page.goto("/pokedex/25");
+    > 68 |     await expect(page.getByText("3D model unavailable")).toBeVisible();
+         |                                                          ^
+      69 |     await expect(page.getByRole("heading", { name: "Evolution" })).toBeVisible();
+      70 |     await page.getByRole("button", { name: /back/i }).click();
+      71 |     await expect(page).toHaveURL(/\/pokedex\?q=pika$/);
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:68:58
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-855dd-and-honest-empty-3D-catalog/error-context.md
+
+
+[1A[2K(node:4093688) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[11/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-360 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K  10) tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-360 card details fail closed when matched CardTwin assets are unavailable 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('CardTwin depth not available')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByText('CardTwin depth not available')[22m
+
+
+      78 |     await page.goto("/cards?q=Arcanine");
+      79 |     await page.goto("/cards/sm1-22");
+    > 80 |     await expect(page.getByText("CardTwin depth not available")).toBeVisible();
+         |                                                                  ^
+      81 |     await expect(page.getByTestId("cardtwin-detail-embed")).toHaveCount(0);
+      82 |     expect(pageErrors).toEqual([]);
+      83 |     await page.getByRole("button", { name: /back/i }).click();
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:80:66
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-c220b-Twin-assets-are-unavailable/error-context.md
+
+
+[1A[2K(node:4095064) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[12/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-360 invalid deep links recover to their parent catalog
+[1A[2K  11) tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-360 invalid deep links recover to their parent catalog 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Pokémon not found' })
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Pokémon not found' })[22m
+
+
+      91 |     await page.setViewportSize(viewport);
+      92 |     await page.goto("/pokedex/999999");
+    > 93 |     await expect(page.getByRole("heading", { name: "Pokémon not found" })).toBeVisible();
+         |                                                                            ^
+      94 |     await page.getByRole("link", { name: "Return to Pokédex" }).click();
+      95 |     await expect(page).toHaveURL(/\/pokedex$/);
+      96 |     await page.goto("/cards/not-a-real-card");
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:93:76
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-c4f12-ver-to-their-parent-catalog/error-context.md
+
+
+[1A[2K(node:4096196) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[13/37] tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-390 catalog preserves URL state, scroll, safe area, and width
+[1A[2K  12) tests/e2e/cardtwin-collection-routes.spec.ts:22:7 › mobile-390 catalog preserves URL state, scroll, safe area, and width 
+
+    Error: [2mexpect([22m[31mreceived[39m[2m).[22mnot[2m.[22mtoBe[2m([22m[32mexpected[39m[2m) // Object.is equality[22m
+
+    Expected: not [32m"0px"[39m
+
+      33 |     expect(geometry.overflow).toBeLessThanOrEqual(1);
+      34 |     expect(geometry.scrollAllowed).toBeTruthy();
+    > 35 |     expect(geometry.navBottom).not.toBe("0px");
+         |                                    ^
+      36 |     await page.screenshot({ path: `artifacts/cardtwin-gauntlet/screenshots/${viewport.name}-pokedex.png`, fullPage: true });
+      37 |     expect(runtimeErrors).toEqual([]);
+      38 |   });
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:35:36
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-d295d--scroll-safe-area-and-width/error-context.md
+
+
+[1A[2K(node:4096486) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[14/37] tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-390 cards preserve submitted URL filters and page geometry
+[1A[2K  13) tests/e2e/cardtwin-collection-routes.spec.ts:40:7 › mobile-390 cards preserve submitted URL filters and page geometry 
+
+    [31mTest timeout of 30000ms exceeded.[39m
+
+    Error: locator.fill: Test timeout of 30000ms exceeded.
+    Call log:
+    [2m  - waiting for getByLabel('Search cards')[22m
+
+
+      42 |     await page.setViewportSize(viewport);
+      43 |     await page.goto("/cards");
+    > 44 |     await page.getByLabel("Search cards").fill("Pikachu");
+         |                                           ^
+      45 |     await page.getByLabel("Set").fill("Base Set");
+      46 |     await page.getByLabel("Rarity").fill("Rare");
+      47 |     await page.getByRole("button", { name: "Apply" }).click();
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:44:43
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-2ab2c-L-filters-and-page-geometry/error-context.md
+
+
+[1A[2K(node:4098484) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[15/37] tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-390 active filters can be cleared without editing every field
+[1A[2K  14) tests/e2e/cardtwin-collection-routes.spec.ts:56:7 › mobile-390 active filters can be cleared without editing every field 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoHaveValue[2m([22m[32mexpected[39m[2m)[22m failed
+
+    Locator: getByLabel('Search')
+    Expected: [32m""[39m
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toHaveValue" with timeout 20000ms[22m
+    [2m  - waiting for getByLabel('Search')[22m
+
+
+      59 |     await page.getByRole("link", { name: "Clear filters" }).click();
+      60 |     await expect(page).toHaveURL(/\/pokedex$/);
+    > 61 |     await expect(page.getByLabel("Search")).toHaveValue("");
+         |                                             ^
+      62 |   });
+      63 |
+      64 |   test(`${viewport.name} Pokémon detail exercises contextual Back and honest empty 3D catalog`, async ({ page }) => {
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:61:45
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-18392-without-editing-every-field/error-context.md
+
+
+[1A[2K(node:4100229) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[16/37] tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-390 Pokémon detail exercises contextual Back and honest empty 3D catalog
+[1A[2K  15) tests/e2e/cardtwin-collection-routes.spec.ts:64:7 › mobile-390 Pokémon detail exercises contextual Back and honest empty 3D catalog 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('3D model unavailable')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByText('3D model unavailable')[22m
+
+
+      66 |     await page.goto("/pokedex?q=pika");
+      67 |     await page.goto("/pokedex/25");
+    > 68 |     await expect(page.getByText("3D model unavailable")).toBeVisible();
+         |                                                          ^
+      69 |     await expect(page.getByRole("heading", { name: "Evolution" })).toBeVisible();
+      70 |     await page.getByRole("button", { name: /back/i }).click();
+      71 |     await expect(page).toHaveURL(/\/pokedex\?q=pika$/);
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:68:58
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-84aa1-and-honest-empty-3D-catalog/error-context.md
+
+
+[1A[2K(node:4101869) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[17/37] tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-390 card details fail closed when matched CardTwin assets are unavailable
+[1A[2K  16) tests/e2e/cardtwin-collection-routes.spec.ts:74:7 › mobile-390 card details fail closed when matched CardTwin assets are unavailable 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByText('CardTwin depth not available')
+    Expected: visible
+    Timeout: 20000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 20000ms[22m
+    [2m  - waiting for getByText('CardTwin depth not available')[22m
+
+
+      78 |     await page.goto("/cards?q=Arcanine");
+      79 |     await page.goto("/cards/sm1-22");
+    > 80 |     await expect(page.getByText("CardTwin depth not available")).toBeVisible();
+         |                                                                  ^
+      81 |     await expect(page.getByTestId("cardtwin-detail-embed")).toHaveCount(0);
+      82 |     expect(pageErrors).toEqual([]);
+      83 |     await page.getByRole("button", { name: /back/i }).click();
+        at /workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/t_05025d63/tests/e2e/cardtwin-collection-routes.spec.ts:80:66
+
+    Error Context: artifacts/cardtwin-gauntlet/playwright-results/cardtwin-collection-routes-dcfa7-Twin-assets-are-unavailable/error-context.md
+
+
+[1A[2K(node:4103295) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+[1A[2K[18/37] tests/e2e/cardtwin-collection-routes.spec.ts:90:7 › mobile-390 invalid deep links recover to their parent catalog
