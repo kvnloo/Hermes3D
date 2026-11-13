@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { EventEmitter } from "node:events";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { PassThrough } from "node:stream";
 import {
   ConfigStore,
   DESTINATION,
+  JsonStore,
   MemoryStore,
   QuotaBudget,
   RelayEngine,
@@ -202,6 +206,40 @@ describe("YouTube chat Telegram relay", () => {
     await relay.ingest("chat", [message("stale", "must-never-send")], "url");
     expect(sent).toEqual([]);
     expect(relay.config.mode).toBe("off");
+  });
+
+  it("does not deliver when another runtime transitions mode while the send is in flight", async () => {
+    const stateStore = new MemoryStore();
+    const configStore = new TestConfigStore(config({ mode: "continuous" }));
+    const sent: string[] = [];
+    const controller = await new RelayEngine({ stateStore, configStore, send: async () => {} }).init();
+    const relay = await new RelayEngine({
+      stateStore,
+      configStore,
+      send: async (text: string) => {
+        await controller.transitionMode("off");
+        sent.push(text);
+      },
+      now: () => 0,
+    }).init();
+    await relay.ingest("chat", [message("prime", "prime")], "url");
+    await relay.ingest("chat", [message("stale", "must-never-send")], "url").catch(() => {});
+    expect(controller.config.mode).toBe("off");
+    expect(sent).toEqual([]);
+  });
+
+  it("persists fail-closed off state after quarantining malformed JSON", async () => {
+    const root = await mkdtemp(join(tmpdir(), "relay-v3-review-"));
+    const path = join(root, "state.json");
+    try {
+      await writeFile(path, "{malformed", { mode: 0o600 });
+      const configStore = new TestConfigStore(config({ mode: "summary" }));
+      await expect(new RelayEngine({ stateStore: new JsonStore(path), configStore, send: async () => {} }).init()).rejects.toThrow("failed closed");
+      const persisted = JSON.parse(await readFile(path, "utf8"));
+      expect(persisted.config.mode).toBe("off");
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
   });
 
   it("migrates v2 once using persisted mode and purges legacy content", async () => {
