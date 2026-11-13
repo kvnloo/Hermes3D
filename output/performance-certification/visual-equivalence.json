@@ -1,0 +1,9 @@
+{
+  "width": 1920,
+  "height": 1080,
+  "mean_absolute_channel_error": 3.6092393261316875,
+  "rms_channel_error": 16.078913201850803,
+  "changed_pixel_count": 1204889,
+  "changed_pixel_percent": 58.10614390432099,
+  "max_channel_difference": 237
+}
