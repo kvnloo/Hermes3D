@@ -2,9 +2,9 @@
 
 ## Scope and evidence standard
 
-This is a process study, not an asset recipe. No reference frame, crop, trace, or pixel from either reel is included here or in CardTwin output.
+This is a process study, not an asset recipe. No reference frame, crop, trace, or pixel from any reel is included here or in CardTwin output.
 
-The two supplied reels were retrieved directly and reviewed as moving footage. The first is a `mr.shadowbox` build whose caption reports more than 400 separately cut parts, many donor cards, 108 hours of labor, and substantial work deciding the correct depths.[1] The second is 3Devious Art's Alakazam EX reveal; its caption reports roughly 200 pieces and about 20 hours of work.[2]
+The three supplied reels were retrieved directly and reviewed as moving footage. The first is a `mr.shadowbox` build whose caption reports more than 400 separately cut parts, many donor cards, 108 hours of labor, and substantial work deciding the correct depths.[1] The second is 3Devious Art's Alakazam EX reveal; its caption reports roughly 200 pieces and about 20 hours of work.[2] The third is 3Devious Art's 60-second Squirtle process Short, which clearly shows cutting, dry-fitting, edge treatment, local spacing, and final tilt inspection at a much smaller part count.[3]
 
 Important limitation: these are edited reveal/process reels, not a continuous bench recording. They establish the finished construction language and show selected operations, but do not expose every adhesive placement or the exact thickness of every spacer. Instagram profile enumeration was unavailable without an authenticated backend, so this document does **not** claim a complete survey of every public reel. Any item below marked **craft inference** is a conservative construction requirement derived from visible geometry, not an asserted hidden action by either artist.
 
@@ -19,6 +19,25 @@ For CardTwin, the faithful abstraction is therefore:
 - hidden continuation behind foreground cuts so motion never reveals holes;
 - rigid assembly first, restrained motion second;
 - no generated replacement of visible canonical pixels.
+
+## Squirtle process reference: a compact minimum viable shadowbox
+
+The Squirtle Short is especially useful because it shows the bench sequence rather than only a finished reveal.[3] The artist visibly works from at least one cut donor plus an intact registered base card; a second matching printed/card copy appears to supply the base artwork, but the edited footage does not prove the exact total donor count, so **two copies is the visible minimum, not a definitive bill of materials**.
+
+Observed sequence:
+
+1. A donor art window is cut along printed scenery contours.
+2. Small vegetation/scenery fragments are lifted and handled separately.
+3. Squirtle is cut as its own registered island from a matching copy.
+4. Exposed cut edges are darkened with a marker before assembly.
+5. The main art aperture is mounted above the intact printed background with a dark local spacer/carrier.
+6. Squirtle is dry-fitted and then attached above the recessed scene.
+7. A final foreground water/wave fragment is cut and added nearest the viewer.
+8. The completed card is tilted by hand; the rigid stack, local shadows, and occlusion changes create the effect.
+
+The visible depth order is approximately: intact canonical card/background → recessed scene field → aperture/frame and scenery rim → Squirtle → foreground water accent. The subject is not animated independently. The illusion comes from physical separation, exact registration, edge finishing, and viewing-angle change.
+
+This establishes a useful CardTwin baseline below the 200–400-piece showcase builds: even a compact result needs more structure than “background / character.” A minimum credible digital scene should preserve the intact canonical card, aperture/scenery rim, subject island, at least one foreground occluder, hidden continuation beneath every lifted piece, and strictly registered rigid depth.
 
 ## Observed construction language
 
@@ -181,3 +200,5 @@ Before re-cutting any asset, create the occlusion graph and depth-ranked compone
 [1] [mr.shadowbox layered-card reel](https://www.instagram.com/reel/DTrCMWSiAKE)
 
 [2] [3Devious Art Alakazam EX reel](https://www.instagram.com/reel/DPXJINojumu)
+
+[3] [3Devious Art Squirtle 3D card process Short](https://youtube.com/shorts/JzbWxgtK7E0)

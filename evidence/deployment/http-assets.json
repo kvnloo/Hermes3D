@@ -1,0 +1,974 @@
+{
+  "baseURL": "http://127.0.0.1:8462",
+  "total": 97,
+  "static": 54,
+  "textures": 41,
+  "failures": [],
+  "largestTextures": [
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/approved-hd-art.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 36093452,
+      "sourceBytes": 36093452,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/lanczos-x4-baseline.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 13454429,
+      "sourceBytes": 13454429,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/realesrgan-x4plus-baseline.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 13342536,
+      "sourceBytes": 13342536,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/flux2-klein-sr-seed220149.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3807629,
+      "sourceBytes": 3807629,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/hidden-background-fill.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1097493,
+      "sourceBytes": 1097493,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/far-background.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1097312,
+      "sourceBytes": 1097312,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/hero.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1097285,
+      "sourceBytes": 1097285,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/outer-frame-text.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1095845,
+      "sourceBytes": 1095845,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/hidden-background-fill.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1004848,
+      "sourceBytes": 1004848,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/far-background.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 973355,
+      "sourceBytes": 973355,
+      "ok": true
+    }
+  ],
+  "results": [
+    {
+      "kind": "static",
+      "url": "/_next/static/e7ec75560052d67556346cdb5088899f2c2c32f6/_buildManifest.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 219,
+      "sourceBytes": 219,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/e7ec75560052d67556346cdb5088899f2c2c32f6/_ssgManifest.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 80,
+      "sourceBytes": 80,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/e7ec75560052d67556346cdb5088899f2c2c32f6/_clientMiddlewareManifest.json",
+      "status": 200,
+      "mime": "application/json",
+      "bytes": 2,
+      "sourceBytes": 2,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/1bcd0e671759a44c-s.a3ed597e.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 25408,
+      "sourceBytes": 25408,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/68757d6cddeff913-s.e6cd1753.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 8848,
+      "sourceBytes": 8848,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/5e05ae5b48faa55e-s.6b5ea6af.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 4336,
+      "sourceBytes": 4336,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/6ff74e33ebd7bca3-s.140490a3.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 4320,
+      "sourceBytes": 4320,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/23b7a97ae3b5c134-s.p.2902b61f.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 10120,
+      "sourceBytes": 10120,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/e15f58668ad64cb8-s.319fa961.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 16296,
+      "sourceBytes": 16296,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/effe91970fc4db64-s.p.19510058.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 10060,
+      "sourceBytes": 10060,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/2039e8342bda6056-s.51680477.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 5664,
+      "sourceBytes": 5664,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/99e609270109b47d-s.p.64b9304e.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 10052,
+      "sourceBytes": 10052,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/e390973e931a41c5-s.a82ecf4e.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 4348,
+      "sourceBytes": 4348,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/favicon.0b3bf435.ico",
+      "status": 200,
+      "mime": "image/x-icon",
+      "bytes": 25931,
+      "sourceBytes": 25931,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/2e95a7d252b9825a-s.10086973.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 8960,
+      "sourceBytes": 8960,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/2fe89d53234c61d4-s.cb53f04b.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 8860,
+      "sourceBytes": 8860,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/7fea77d1d19108bf-s.c949a514.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 19684,
+      "sourceBytes": 19684,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/02263ebadd758ea4-s.8da66e7f.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 4036,
+      "sourceBytes": 4036,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/9a4838fcda0d1bca-s.bf5f8a12.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 4116,
+      "sourceBytes": 4116,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/fabcf92ba1ccea36-s.p.19f28380.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 8596,
+      "sourceBytes": 8596,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/a7afbb44bec2bb18-s.1dcddae6.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 5500,
+      "sourceBytes": 5500,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/03fc1b4a8d284b5e-s.p.af4fcd24.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 40240,
+      "sourceBytes": 40240,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/90c51ce8fb754fe8-s.323431dc.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 9612,
+      "sourceBytes": 9612,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/59b15b4bcd7b1eb5-s.afa48be3.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 5476,
+      "sourceBytes": 5476,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/1a69062cfe6f77f8-s.b36ae37c.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 5548,
+      "sourceBytes": 5548,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/57215795b8570f5c-s.0f2c7ba8.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 25868,
+      "sourceBytes": 25868,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/media/e532fa1b9921e1cd-s.764b43eb.woff2",
+      "status": 200,
+      "mime": "font/woff2",
+      "bytes": 4000,
+      "sourceBytes": 4000,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/906dc0ec86c8f399.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 1191694,
+      "sourceBytes": 1191694,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/88b20cde6eff1844.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 4873,
+      "sourceBytes": 4873,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/822ccfb628a7fa08.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 29697,
+      "sourceBytes": 29697,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/a70c0211e114b173.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 25638,
+      "sourceBytes": 25638,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/133b5ac8ae7543d7.css",
+      "status": 200,
+      "mime": "text/css",
+      "bytes": 966,
+      "sourceBytes": 966,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/82abf2d65f5428ae.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 33299,
+      "sourceBytes": 33299,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/b4c1ca1d034aacc4.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 1131,
+      "sourceBytes": 1131,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/439dba59aa93e51d.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 423,
+      "sourceBytes": 423,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/a6dad97d9634a72d.js.map",
+      "status": 200,
+      "mime": "application/json",
+      "bytes": 115717,
+      "sourceBytes": 115717,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/155c8d39da2ffa34.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 1851930,
+      "sourceBytes": 1851930,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/045c83caa4d15373.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 202006,
+      "sourceBytes": 202006,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/c63ca9c34cb60491.css",
+      "status": 200,
+      "mime": "text/css",
+      "bytes": 12763,
+      "sourceBytes": 12763,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/7d6514a90169e63d.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 111078,
+      "sourceBytes": 111078,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/bfb87f2c93375a0a.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 883285,
+      "sourceBytes": 883285,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/turbopack-ca032a8e4e83a2ce.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 10268,
+      "sourceBytes": 10268,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/ed12c11b501afd60.css",
+      "status": 200,
+      "mime": "text/css",
+      "bytes": 4632,
+      "sourceBytes": 4632,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/24eefdf5864d5d23.css",
+      "status": 200,
+      "mime": "text/css",
+      "bytes": 263721,
+      "sourceBytes": 263721,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/a6dad97d9634a72d.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 112594,
+      "sourceBytes": 112594,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/6fea03cd0c5c287b.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 25779,
+      "sourceBytes": 25779,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/13c724a89c13dc09.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 40144,
+      "sourceBytes": 40144,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/32026b5730336d1a.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 23977,
+      "sourceBytes": 23977,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/0bd6498bda341889.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 30681,
+      "sourceBytes": 30681,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/ef4de222377ef7d9.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 37247,
+      "sourceBytes": 37247,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/ab8efa039d3d8f64.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 51310,
+      "sourceBytes": 51310,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/ff1a16fafef87110.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 282,
+      "sourceBytes": 282,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/65c39ef2824db637.js",
+      "status": 200,
+      "mime": "application/javascript",
+      "bytes": 25779,
+      "sourceBytes": 25779,
+      "ok": true
+    },
+    {
+      "kind": "static",
+      "url": "/_next/static/chunks/29acf86201627763.css",
+      "status": 200,
+      "mime": "text/css",
+      "bytes": 25125,
+      "sourceBytes": 25125,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/canonical/arcanine-sm1-22.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 681465,
+      "sourceBytes": 681465,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/canonical/leafeon-ex-sv8pt5-144.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 780956,
+      "sourceBytes": 780956,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/canonical/sawsbuck-tef-166.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 520396,
+      "sourceBytes": 520396,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/canonical/umbreon-vmax-swsh7-215.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 792631,
+      "sourceBytes": 792631,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/far-background-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3463,
+      "sourceBytes": 3463,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/far-background.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 973355,
+      "sourceBytes": 973355,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/foreground-architecture-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 2253,
+      "sourceBytes": 2253,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/foreground-architecture.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 972634,
+      "sourceBytes": 972634,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/hero-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3245,
+      "sourceBytes": 3245,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/hero.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 973312,
+      "sourceBytes": 973312,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/hidden-background-fill-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3426,
+      "sourceBytes": 3426,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/hidden-background-fill.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1004848,
+      "sourceBytes": 1004848,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/outer-card-frame-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1989,
+      "sourceBytes": 1989,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/layers/outer-card-frame.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 972135,
+      "sourceBytes": 972135,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/umbreon-vmax-swsh7-215/source/umbreon-vmax-swsh7-215.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 792631,
+      "sourceBytes": 792631,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/far-background-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3348,
+      "sourceBytes": 3348,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/far-background.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1097312,
+      "sourceBytes": 1097312,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/hero-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3071,
+      "sourceBytes": 3071,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/hero.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1097285,
+      "sourceBytes": 1097285,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/hidden-background-fill-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3071,
+      "sourceBytes": 3071,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/hidden-background-fill.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1097493,
+      "sourceBytes": 1097493,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/outer-frame-text-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1984,
+      "sourceBytes": 1984,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/layers/outer-frame-text.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1095845,
+      "sourceBytes": 1095845,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/leafeon-ex-sv8pt5-144/source/leafeon-ex-sv8pt5-144.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 780956,
+      "sourceBytes": 780956,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/approved-hd-art.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 36093452,
+      "sourceBytes": 36093452,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/flux2-klein-hero-mask-raw-seed220150.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 197661,
+      "sourceBytes": 197661,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/flux2-klein-hero-mask-thresholded-seed220150.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 753910,
+      "sourceBytes": 753910,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/flux2-klein-sr-seed220149.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 3807629,
+      "sourceBytes": 3807629,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/lanczos-x4-baseline.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 13454429,
+      "sourceBytes": 13454429,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/derivatives/realesrgan-x4plus-baseline.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 13342536,
+      "sourceBytes": 13342536,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/far-background-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 2277,
+      "sourceBytes": 2277,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/far-background.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 850978,
+      "sourceBytes": 850978,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/foreground-effects-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1241,
+      "sourceBytes": 1241,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/foreground-effects.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 850472,
+      "sourceBytes": 850472,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/hero-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 2409,
+      "sourceBytes": 2409,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/hero.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 850908,
+      "sourceBytes": 850908,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/hidden-background-fill-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 2256,
+      "sourceBytes": 2256,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/hidden-background-fill.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 805060,
+      "sourceBytes": 805060,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/outer-frame-text-mask.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 1981,
+      "sourceBytes": 1981,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/layers/outer-frame-text.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 850002,
+      "sourceBytes": 850002,
+      "ok": true
+    },
+    {
+      "kind": "texture",
+      "url": "/exhibits/pokemon-cards/arcanine-sm1-22/source/arcanine-sm1-22.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 681465,
+      "sourceBytes": 681465,
+      "ok": true
+    },
+    {
+      "kind": "html",
+      "url": "/exhibits/pokemon-cards?evidence=1&view=macro",
+      "status": 200,
+      "mime": "text/html",
+      "bytes": 15673,
+      "sourceBytes": null,
+      "ok": true
+    },
+    {
+      "kind": "health",
+      "url": "/api/health",
+      "status": 200,
+      "mime": "application/json",
+      "bytes": 52,
+      "sourceBytes": null,
+      "ok": true
+    }
+  ]
+}
