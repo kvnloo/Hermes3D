@@ -1,0 +1,10 @@
+{
+  "source": "requestAnimationFrame intervals delivered from the headed Chromium renderer",
+  "samples": 1185,
+  "medianMs": 48.20000000000073,
+  "p95Ms": 79.59999999999854,
+  "p99Ms": 211,
+  "p999Ms": 845.9000000000001,
+  "maxMs": 973.6999999999998,
+  "captureWallMs": 70046
+}

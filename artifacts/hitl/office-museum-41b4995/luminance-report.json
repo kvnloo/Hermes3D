@@ -1,0 +1,82 @@
+{
+  "desktop-arrival.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 0,
+    "max": 255,
+    "mean": 101.97,
+    "dark_fraction": 0.1109
+  },
+  "desktop-call-of-duty.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 4,
+    "max": 255,
+    "mean": 117.73,
+    "dark_fraction": 0.0882
+  },
+  "desktop-halo.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 4,
+    "max": 255,
+    "mean": 113.94,
+    "dark_fraction": 0.1446
+  },
+  "desktop-obsidian-vault.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 1,
+    "max": 255,
+    "mean": 106.27,
+    "dark_fraction": 0.1566
+  },
+  "desktop-office.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 0,
+    "max": 255,
+    "mean": 73.62,
+    "dark_fraction": 0.2541
+  },
+  "desktop-pokemon-cards.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 0,
+    "max": 255,
+    "mean": 107.88,
+    "dark_fraction": 0.1038
+  },
+  "desktop-pokemon-game.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 4,
+    "max": 255,
+    "mean": 128.78,
+    "dark_fraction": 0.076
+  },
+  "desktop-star-wars-game.png": {
+    "width": 1920,
+    "height": 1080,
+    "min": 4,
+    "max": 255,
+    "mean": 122.68,
+    "dark_fraction": 0.0838
+  },
+  "mobile-arrival.png": {
+    "width": 390,
+    "height": 844,
+    "min": 0,
+    "max": 255,
+    "mean": 74.28,
+    "dark_fraction": 0.2356
+  },
+  "mobile-office.png": {
+    "width": 390,
+    "height": 844,
+    "min": 0,
+    "max": 254,
+    "mean": 14.76,
+    "dark_fraction": 0.919
+  }
+}

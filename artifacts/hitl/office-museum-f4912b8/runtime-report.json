@@ -1,0 +1,24 @@
+{
+  "revision": "f4912b857bb1e4925da71f7d0290b8c81fdead39",
+  "url": "http://127.0.0.1:3132/office?room=museum&exhibit=obsidian-vault",
+  "slugs": [
+    "pokemon-cards",
+    "pokemon-game",
+    "star-wars-game",
+    "call-of-duty",
+    "halo",
+    "obsidian-vault"
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 3080 Ti/PCIe/SSE2, OpenGL ES 3.2)",
+    "contextLost": false,
+    "width": 1920,
+    "height": 1080
+  },
+  "errors": [],
+  "serverPort": 3132,
+  "serverPid": 1757225,
+  "display": ":1",
+  "browser": "/usr/bin/chromium",
+  "profile": "/tmp/museum-cert-profile-1760594"
+}

@@ -1,0 +1,53 @@
+{
+  "revision": "0cae5782c3c0d22f936b8d8a71be1952d9a4852b",
+  "baseURL": "http://127.0.0.1:3147",
+  "serverPid": 1312685,
+  "display": ":1",
+  "browser": "/usr/bin/chromium",
+  "processInfo": [
+    {
+      "type": "browser",
+      "id": 1396911,
+      "cpuTime": 0.56
+    },
+    {
+      "type": "GPU",
+      "id": 1397040,
+      "cpuTime": 0.16
+    },
+    {
+      "type": "network.mojom.NetworkService",
+      "id": 1397052,
+      "cpuTime": 0.06
+    },
+    {
+      "type": "storage.mojom.StorageService",
+      "id": 1397080,
+      "cpuTime": 0.01
+    }
+  ],
+  "gpu": {
+    "renderer": "ANGLE (NVIDIA Corporation, NVIDIA GeForce RTX 3080 Ti/PCIe/SSE2, OpenGL 4.5.0)",
+    "vendor": "Google Inc. (NVIDIA Corporation)",
+    "contextLost": false,
+    "width": 1920,
+    "height": 1080
+  },
+  "errors": [
+    "pageerror: CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline' blob:\".",
+    "pageerror: CompileError: WebAssembly.instantiate(): Compiling or instantiating WebAssembly module violates the following Content Security policy directive because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self' 'unsafe-inline' blob:\"."
+  ],
+  "videoPath": "/workspace/zer0/products/content-creation/hermes3d-live/engine/.worktrees/full-feature-nightly/artifacts/hitl/office-museum-0cae578-final/video/3a56ac528000e26fc5a5a3fee7ffff7b.webm",
+  "captureStartedAt": "2026-08-23T02:11:52.146Z",
+  "captureEndedAt": "2026-08-23T02:13:02.192Z",
+  "frameTime": {
+    "source": "requestAnimationFrame intervals delivered from the headed Chromium renderer",
+    "samples": 1185,
+    "medianMs": 48.20000000000073,
+    "p95Ms": 79.59999999999854,
+    "p99Ms": 211,
+    "p999Ms": 845.9000000000001,
+    "maxMs": 973.6999999999998,
+    "captureWallMs": 70046
+  }
+}
