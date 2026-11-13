@@ -1,0 +1,28 @@
+{
+  "commit": "9a4373458342666f6f5837a536ef8725a86f6391",
+  "environment": "Chromium headless SwiftShader; not real-phone evidence",
+  "httpStatus": 200,
+  "consoleErrors": [],
+  "failedRequests": [],
+  "canvasCss": [
+    300,
+    150
+  ],
+  "drawingBuffer": [
+    300,
+    150
+  ],
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "dpr": 1,
+  "frames": 909,
+  "sampledFps": 20.328794205063637,
+  "frameTimeMs": {
+    "median": 50,
+    "p95": 83.40000000000146,
+    "p99": 100
+  },
+  "usedJsHeapBytes": 5499757,
+  "longTasks": [],
+  "loadEventMs": 214.7000000178814,
+  "canvasVisible": true
+}

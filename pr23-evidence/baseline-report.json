@@ -1,0 +1,137 @@
+{
+  "commit": "35763d95c9ba27a6496a27211b03ed2a0b311182",
+  "environment": "Chromium headless SwiftShader; not real-phone evidence",
+  "httpStatus": 200,
+  "consoleErrors": [],
+  "failedRequests": [],
+  "canvasCss": [
+    960,
+    1080
+  ],
+  "drawingBuffer": [
+    960,
+    1080
+  ],
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "dpr": 1,
+  "frames": 2,
+  "sampledFps": 0.9160445197636592,
+  "frameTimeMs": {
+    "median": 1133.300000000003,
+    "p95": 1133.300000000003,
+    "p99": 1133.300000000003
+  },
+  "usedJsHeapBytes": 174710126,
+  "longTasks": [
+    {
+      "start": 159.5,
+      "duration": 53
+    },
+    {
+      "start": 338.80000001192093,
+      "duration": 56
+    },
+    {
+      "start": 412,
+      "duration": 1261
+    },
+    {
+      "start": 1720,
+      "duration": 431
+    },
+    {
+      "start": 2249,
+      "duration": 55
+    },
+    {
+      "start": 2308.5,
+      "duration": 94
+    },
+    {
+      "start": 2601.5,
+      "duration": 1311
+    },
+    {
+      "start": 3915.300000011921,
+      "duration": 2034
+    },
+    {
+      "start": 6016.9000000059605,
+      "duration": 75
+    },
+    {
+      "start": 6444.9000000059605,
+      "duration": 1194
+    },
+    {
+      "start": 7666.100000023842,
+      "duration": 130
+    },
+    {
+      "start": 7796.5,
+      "duration": 9944
+    },
+    {
+      "start": 17743.90000000596,
+      "duration": 75
+    },
+    {
+      "start": 17840.90000000596,
+      "duration": 449
+    },
+    {
+      "start": 18483.600000023842,
+      "duration": 3179
+    },
+    {
+      "start": 21712.40000000596,
+      "duration": 160
+    },
+    {
+      "start": 21872.80000001192,
+      "duration": 10862
+    },
+    {
+      "start": 32738.90000000596,
+      "duration": 76
+    },
+    {
+      "start": 32868.20000001788,
+      "duration": 230
+    },
+    {
+      "start": 33267.70000001788,
+      "duration": 975
+    },
+    {
+      "start": 34299,
+      "duration": 3176
+    },
+    {
+      "start": 37482.10000002384,
+      "duration": 148
+    },
+    {
+      "start": 37630.5,
+      "duration": 9111
+    },
+    {
+      "start": 46747.20000001788,
+      "duration": 87
+    },
+    {
+      "start": 46846.90000000596,
+      "duration": 308
+    },
+    {
+      "start": 68922.20000001788,
+      "duration": 64
+    },
+    {
+      "start": 70479.90000000596,
+      "duration": 57
+    }
+  ],
+  "loadEventMs": 238.40000000596046,
+  "canvasVisible": true
+}

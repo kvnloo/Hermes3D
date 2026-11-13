@@ -1,0 +1,35 @@
+{
+  "commit": "35763d95c9ba27a6496a27211b03ed2a0b311182",
+  "environment": "Chromium headless SwiftShader; not real-phone evidence",
+  "httpStatus": 200,
+  "consoleErrors": [
+    "Failed to load resource: the server responded with a status of 404 (Not Found)"
+  ],
+  "failedRequests": [],
+  "canvasCss": [
+    300,
+    150
+  ],
+  "drawingBuffer": [
+    300,
+    150
+  ],
+  "renderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+  "dpr": 1,
+  "frames": 809,
+  "sampledFps": 18.71312023353234,
+  "frameTimeMs": {
+    "median": 50,
+    "p95": 100,
+    "p99": 133.29999999999927
+  },
+  "usedJsHeapBytes": 5494069,
+  "longTasks": [
+    {
+      "start": 21727.80000001192,
+      "duration": 156
+    }
+  ],
+  "loadEventMs": 213.7000000178814,
+  "canvasVisible": true
+}
