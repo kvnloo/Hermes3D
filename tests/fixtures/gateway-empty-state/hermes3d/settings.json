@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "gateway": {
+    "url": "ws://localhost:18789",
+    "token": "",
+    "adapterType": "hermes",
+    "profiles": {
+      "hermes": {
+        "url": "ws://localhost:18789",
+        "token": ""
+      },
+      "demo": {
+        "url": "ws://localhost:18789",
+        "token": ""
+      },
+      "local": {
+        "url": "http://localhost:7770",
+        "token": ""
+      },
+      "hermes3d": {
+        "url": "http://localhost:3000/api/runtime/custom",
+        "token": ""
+      },
+      "custom": {
+        "url": "http://localhost:7770",
+        "token": ""
+      }
+    }
+  },
+  "activeFloorId": "hermes",
+  "officeFloors": {
+    "hermes": {
+      "floorId": "hermes",
+      "provider": "hermes",
+      "runtimeProfileId": "hermes-default",
+      "gatewayUrl": null,
+      "status": "error",
+      "lastKnownGoodAt": null,
+      "lastErrorCode": "GATEWAY_ERROR",
+      "lastErrorMessage": "Timed out connecting to the gateway. Check that it is running, or change the gateway address and try again. Verify that the gateway is reachable at the configured URL, that origin and credentials meet the gateway's requirements, and (if testing locally with a self-built gateway) consider `npm run demo-gateway` to isolate the problem."
+    }
+  },
+  "focused": {},
+  "avatars": {},
+  "deskAssignments": {},
+  "analytics": {},
+  "voiceReplies": {},
+  "office": {},
+  "standup": {},
+  "taskBoard": {
+    "ws://localhost:18789": {
+      "cards": [],
+      "selectedCardId": null
+    }
+  }
+}

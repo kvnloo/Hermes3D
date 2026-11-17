@@ -1,0 +1,54 @@
+Connecting to your runtime...
+
+KANBAN BOARD
+LUKE HEADQUARTERS
+0
+ADD
+HERMES • DISCONNECTED
+0 working
+·
+0 idle
+·
+0 error
+·
+quiet
+·
+drag · scroll · space+drag · dbl-click
+
+PUBLIC DIRECTORY PREVIEW
+
+zer0
+
+No live activity or private data
+
+GOVERNANCE ROLES
+Captain
+Company authority
+First Mate
+Portfolio orchestration
+Second Mates
+Persistent project leadership
+Crewmates
+Task execution
+Verifiers
+Independent review
+MESH TOPOLOGY PREVIEW
+
+Static directory - no live connectivity data
+
+0
+mbp
+Telegram Gateway
+
+Mesh: transport | Kanban: lifecycle authority | Keel: authorization and evidence | Live backend: disconnected
+
+OPEN HQ
+MARKETPLACE
+ANALYTICS
+AGENT EVENT CONSOLE
+AGENTS 0 | EVENTS 0/0
+Copy JSON
+Download JSON
+Clear
+Expand
+CHAT
